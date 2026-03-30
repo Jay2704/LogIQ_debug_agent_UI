@@ -17,42 +17,28 @@ Open [http://localhost:5173](http://localhost:5173).
 
 ## UI screenshots
 
-Add PNG (or JPG/WebP) files under [`assets/`](assets/) using the filenames below so the images render on GitHub. Paths are relative to the repo root.
+PNG files live under [`src/assets/`](src/assets/). Paths below are relative to the repo root so images render on GitHub.
 
 ### Dashboard
 
-![Dashboard — command center](assets/dashboard.png)
+![Dashboard — command center](src/assets/dashboard.png)
 
 ### Jobs
 
-![Jobs — workspace](assets/jobs.png)
-
-### Job detail
-
-![Job detail — RCA & investigation](assets/job-detail.png)
+![Jobs — workspace](src/assets/jobs.png)
 
 ### Anomalies
 
-![Anomalies](assets/anomalies.png)
+![Anomalies](src/assets/anomalies.png)
 
 ### Insights
 
-![Insights — analytics](assets/insights.png)
-
-### Utilities
-
-![Utilities — log tools](assets/utilities.png)
+![Insights — analytics](src/assets/Insights.png)
 
 ### Reports
 
-![Reports](assets/reports.png)
-
-### Authentication
-
-![Login](assets/login.png)
-
-![Sign up](assets/signup.png)
+![Reports](src/assets/reports.png)
 
 ---
 
-*If an image is missing, the link above will show as broken until you add the matching file (e.g. `assets/dashboard.png`).*
+You can add more captures to `src/assets/` when ready, for example: `job-detail.png`, `utilities.png`, `login.png`, `signup.png`.
