@@ -14,7 +14,8 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { RemediationChecklist } from "@/components/job/RemediationChecklist";
 import { SimilarIncidentsPanel } from "@/components/job/SimilarIncidentsPanel";
 import { JobReportSummaryCard } from "@/components/job/JobReportSummaryCard";
-import { getJobDetailBundle, getReportByAnomalyId } from "@/data/mock";
+import { PageLoading } from "@/components/ui/PageLoading";
+import { useJobDetailData } from "@/api/hooks";
 import { formatDateTime } from "@/lib/utils";
 
 const triggerLabels = {
@@ -27,17 +28,36 @@ const triggerLabels = {
 
 export function JobDetail() {
   const { jobId } = useParams<{ jobId: string }>();
-  const bundle = jobId ? getJobDetailBundle(jobId) : undefined;
-  const report = bundle
-    ? getReportByAnomalyId(bundle.job.anomalyId)
-    : undefined;
+  const { bundle, report, loading, error } = useJobDetailData(jobId);
+
+  if (loading) {
+    return <PageLoading message="Loading investigation…" />;
+  }
+
+  if (error) {
+    return (
+      <EmptyState
+        icon={MessageSquareWarning}
+        title="Could not load job"
+        description={error.message}
+        action={
+          <Link
+            to="/jobs"
+            className="rounded-xl bg-cta-primary px-5 py-2.5 text-sm font-semibold text-white shadow-glow-cta ring-1 ring-sky-400/30 hover:bg-cta-primary-hover"
+          >
+            Back to jobs
+          </Link>
+        }
+      />
+    );
+  }
 
   if (!bundle) {
     return (
       <EmptyState
         icon={MessageSquareWarning}
         title="Job not found"
-        description="No mock job matches this ID. Open Jobs and pick a job from the table."
+        description="No job matches this ID. Open Jobs and pick a job from the table."
         action={
           <Link
             to="/jobs"

@@ -3,7 +3,8 @@ import { JobsTable } from "@/components/ui/JobsTable";
 import { SearchInput } from "@/components/ui/SearchInput";
 import { FilterDropdown, type FilterOption } from "@/components/ui/FilterDropdown";
 import { RunDebugButton } from "@/components/ui/RunDebugButton";
-import { mockJobs } from "@/data/mock";
+import { useJobs } from "@/api/hooks";
+import { PageLoading } from "@/components/ui/PageLoading";
 import type { JobStatus, TriggerType } from "@/types";
 
 const statusOptions: FilterOption[] = [
@@ -24,13 +25,15 @@ const triggerOptions: FilterOption[] = [
 ];
 
 export function Jobs() {
+  const { data: jobs, loading, error } = useJobs();
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("all");
   const [trigger, setTrigger] = useState("all");
 
   const filtered = useMemo(() => {
+    if (!jobs) return [];
     const q = query.trim().toLowerCase();
-    return mockJobs.filter((j) => {
+    return jobs.filter((j) => {
       const matchQ =
         !q ||
         j.id.toLowerCase().includes(q) ||
@@ -41,7 +44,19 @@ export function Jobs() {
         trigger === "all" || j.trigger === (trigger as TriggerType);
       return matchQ && matchS && matchT;
     });
-  }, [query, status, trigger]);
+  }, [jobs, query, status, trigger]);
+
+  if (loading) {
+    return <PageLoading message="Loading jobs…" />;
+  }
+
+  if (error) {
+    return (
+      <div className="rounded-card border border-red-500/20 bg-red-500/5 p-6 text-sm text-red-300">
+        {error.message}
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

@@ -1,8 +1,23 @@
 import { ReportArtifactCard } from "@/components/ui/ReportArtifactCard";
-import { mockReports } from "@/data/mock";
+import { PageLoading } from "@/components/ui/PageLoading";
+import { useReportsList } from "@/api/hooks";
 
 export function Reports() {
-  const sorted = [...mockReports].sort(
+  const { data, loading, error } = useReportsList();
+
+  if (loading) {
+    return <PageLoading message="Loading reports…" />;
+  }
+
+  if (error) {
+    return (
+      <div className="rounded-card border border-red-500/20 bg-red-500/5 p-6 text-sm text-red-300">
+        {error.message}
+      </div>
+    );
+  }
+
+  const sorted = [...(data ?? [])].sort(
     (a, b) =>
       new Date(b.generatedAt).getTime() - new Date(a.generatedAt).getTime()
   );

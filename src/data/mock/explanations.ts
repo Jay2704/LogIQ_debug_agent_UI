@@ -1,4 +1,4 @@
-import type { EvidenceItem, Job, SimilarIncident } from "@/types";
+import type { EvidenceItem, SimilarIncident } from "@/types";
 import { mockAnomalies } from "./anomalies";
 import { mockJobs } from "./jobs";
 import { mockRcaByJobId } from "./rca";
@@ -270,10 +270,3 @@ export function getJobDetailBundle(jobId: string) {
   };
 }
 
-export function getInsightSummary(jobs: Job[]) {
-  const total = jobs.length;
-  const running = jobs.filter((j) => j.status === "running").length;
-  const completed = jobs.filter((j) => j.status === "completed").length;
-  const failed = jobs.filter((j) => j.status === "failed").length;
-  return { total, running, completed, failed };
-}

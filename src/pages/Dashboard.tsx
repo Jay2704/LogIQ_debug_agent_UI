@@ -14,27 +14,42 @@ import { Link } from "react-router-dom";
 import { KpiCard } from "@/components/ui/KpiCard";
 import { RunDebugButton } from "@/components/ui/RunDebugButton";
 import { StatusBadge } from "@/components/ui/StatusBadge";
-import { mockAnomalies, mockJobs, mockRcaByJobId } from "@/data/mock";
-import { getInsightSummary } from "@/data/mock/explanations";
+import { useDashboardData } from "@/api/hooks";
+import { PageLoading } from "@/components/ui/PageLoading";
+import { computeJobStatusSummary } from "@/lib/insights";
 import { cn, formatDateTime } from "@/lib/utils";
 
 export function Dashboard() {
-  const { total, running, completed, failed } = getInsightSummary(mockJobs);
-  const recent = [...mockJobs]
+  const { jobs, anomalies, rcaByJobId, loading, error } = useDashboardData();
+
+  if (loading) {
+    return <PageLoading message="Loading dashboard…" />;
+  }
+
+  if (error) {
+    return (
+      <div className="rounded-card border border-red-500/20 bg-red-500/5 p-6 text-sm text-red-300">
+        {error.message}
+      </div>
+    );
+  }
+
+  const { total, running, completed, failed } = computeJobStatusSummary(jobs);
+  const recent = [...jobs]
     .sort(
       (a, b) =>
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     )
     .slice(0, 5);
 
-  const recentAnomalies = [...mockAnomalies]
+  const recentAnomalies = [...anomalies]
     .sort(
       (a, b) =>
         new Date(b.detectedAt).getTime() - new Date(a.detectedAt).getTime()
     )
     .slice(0, 3);
 
-  const confidences = Object.values(mockRcaByJobId).map((r) => r.confidence);
+  const confidences = Object.values(rcaByJobId).map((r) => r.confidence);
   const avgConf =
     confidences.filter((c) => c > 0).reduce((a, b) => a + b, 0) /
     Math.max(1, confidences.filter((c) => c > 0).length);

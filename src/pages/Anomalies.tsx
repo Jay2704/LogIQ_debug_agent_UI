@@ -4,16 +4,31 @@ import {
   AnomalyStatusBadge,
   SeverityBadge,
 } from "@/components/ui/StatusBadge";
-import { mockAnomalies, mockJobs } from "@/data/mock";
+import { PageLoading } from "@/components/ui/PageLoading";
+import { useAnomaliesData } from "@/api/hooks";
 import { formatDateTime } from "@/lib/utils";
 
-function anomalyJobLink(anomalyId: string) {
-  const job = mockJobs.find((j) => j.anomalyId === anomalyId);
+function anomalyJobLink(anomalyId: string, jobs: { id: string; anomalyId: string }[]) {
+  const job = jobs.find((j) => j.anomalyId === anomalyId);
   return job ? `/jobs/${job.id}` : "/jobs";
 }
 
 export function Anomalies() {
-  const sorted = [...mockAnomalies].sort(
+  const { anomalies, jobs, loading, error } = useAnomaliesData();
+
+  if (loading || !anomalies || !jobs) {
+    return <PageLoading message="Loading anomalies…" />;
+  }
+
+  if (error) {
+    return (
+      <div className="rounded-card border border-red-500/20 bg-red-500/5 p-6 text-sm text-red-300">
+        {error.message}
+      </div>
+    );
+  }
+
+  const sorted = [...anomalies].sort(
     (a, b) =>
       new Date(b.detectedAt).getTime() - new Date(a.detectedAt).getTime()
   );
@@ -53,7 +68,7 @@ export function Anomalies() {
             <div className="mt-4 flex items-center justify-between border-t border-white/[0.06] pt-4">
               <span className="text-xs text-slate-500">{a.signalType}</span>
               <Link
-                to={anomalyJobLink(a.id)}
+                to={anomalyJobLink(a.id, jobs)}
                 className="inline-flex items-center gap-1 text-xs font-semibold text-sky-400 transition hover:text-sky-300"
               >
                 Open RCA details

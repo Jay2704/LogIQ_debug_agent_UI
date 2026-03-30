@@ -14,7 +14,8 @@ import {
 } from "recharts";
 import { KpiCard } from "@/components/ui/KpiCard";
 import { ChartCard } from "@/components/ui/ChartCard";
-import { mockInsightMetrics } from "@/data/mock";
+import { PageLoading } from "@/components/ui/PageLoading";
+import { useInsightMetrics } from "@/api/hooks";
 import { Clock, Layers, Radar } from "lucide-react";
 
 const axisLine = { stroke: "#475569", strokeOpacity: 0.9 };
@@ -30,7 +31,21 @@ const tooltipStyle = {
 };
 
 export function Insights() {
-  const m = mockInsightMetrics;
+  const { data, loading, error } = useInsightMetrics();
+
+  if (loading) {
+    return <PageLoading message="Loading insights…" />;
+  }
+
+  if (error || !data) {
+    return (
+      <div className="rounded-card border border-red-500/20 bg-red-500/5 p-6 text-sm text-red-300">
+        {error?.message ?? "Unable to load metrics."}
+      </div>
+    );
+  }
+
+  const m = data;
 
   return (
     <div className="space-y-8">
