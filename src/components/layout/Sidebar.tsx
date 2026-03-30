@@ -9,6 +9,7 @@ import {
   Settings2,
   Wrench,
 } from "lucide-react";
+import { navActiveInsetShadow, navItemActiveGradient } from "@/lib/ctaTheme";
 import { cn } from "@/lib/utils";
 import { ui } from "@/lib/ui";
 
@@ -48,10 +49,13 @@ export function Sidebar() {
               cn(
                 "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium outline-none transition-all duration-200",
                 ui.focusRing,
-                "ring-offset-2 ring-offset-surface-975",
                 isActive
-                  ? "bg-nav-active text-white shadow-insetNav ring-1 ring-white/[0.08] backdrop-blur-md"
-                  : "text-slate-400 hover:bg-white/[0.04] hover:text-slate-100 active:scale-[0.99]"
+                  ? cn(
+                      navItemActiveGradient,
+                      navActiveInsetShadow,
+                      "text-white ring-1 ring-white/[0.08] backdrop-blur-md"
+                    )
+                  : "text-slate-400 hover:bg-blue-500/[0.08] hover:text-slate-100 active:scale-[0.99]"
               )
             }
           >

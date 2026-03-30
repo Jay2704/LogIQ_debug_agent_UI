@@ -8,16 +8,16 @@
   }
   body {
     @apply min-h-screen font-sans text-slate-200;
-    background-color: #080d18;
+    background-color: #0a0f1a;
     background-image:
       radial-gradient(
         ellipse 120% 90% at 50% -25%,
-        rgba(37, 99, 235, 0.16),
+        rgba(59, 130, 246, 0.14),
         transparent 55%
       ),
       radial-gradient(
         ellipse 70% 50% at 100% 0%,
-        rgba(124, 58, 237, 0.1),
+        rgba(139, 92, 246, 0.1),
         transparent 50%
       ),
       radial-gradient(
@@ -25,7 +25,7 @@
         rgba(14, 116, 144, 0.06),
         transparent 50%
       ),
-      linear-gradient(180deg, #0a101f 0%, #080d18 35%, #070b14 100%);
+      linear-gradient(180deg, #0f172a 0%, #0a0f1a 38%, #070b14 100%);
     background-attachment: fixed;
   }
 }
@@ -35,7 +35,7 @@
     @apply space-y-2;
   }
   .ui-section-eyebrow {
-    @apply text-[11px] font-bold uppercase tracking-[0.18em] text-sky-500/90;
+    @apply text-[11px] font-bold uppercase tracking-[0.18em] text-blue-400;
   }
   .ui-page-title {
     @apply text-2xl font-bold tracking-tight text-white sm:text-3xl;

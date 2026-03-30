@@ -111,7 +111,7 @@ export function Dashboard() {
           <div className="flex shrink-0 flex-col items-stretch gap-3 sm:items-end">
             <div className="rounded-2xl bg-gradient-to-r from-sky-500/30 via-blue-600/25 to-violet-600/25 p-[1px] shadow-[0_0_40px_-8px_rgba(56,189,248,0.35)]">
               <div className="rounded-2xl bg-surface-975/95 p-1.5">
-                <RunDebugButton className="w-full justify-center px-8 py-4 text-base shadow-glow-cta sm:w-auto" />
+                <RunDebugButton className="w-full justify-center px-8 py-4 text-base sm:w-auto" />
               </div>
             </div>
             <p className="text-center text-[11px] text-slate-500 sm:text-right">

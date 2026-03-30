@@ -1,4 +1,6 @@
 import { Link } from "react-router-dom";
+import { ctaButtonGradient, ctaGlowBlueOnly } from "@/lib/ctaTheme";
+import { cn } from "@/lib/utils";
 
 export function NotFound() {
   return (
@@ -10,7 +12,11 @@ export function NotFound() {
       </p>
       <Link
         to="/"
-        className="mt-6 rounded-xl bg-cta-primary px-5 py-2.5 text-sm font-semibold text-white shadow-glow-cta ring-1 ring-sky-400/25 transition hover:bg-cta-primary-hover"
+        className={cn(
+          "mt-6 rounded-xl px-5 py-2.5 text-sm font-semibold text-white ring-1 ring-blue-400/30 transition",
+          ctaButtonGradient,
+          ctaGlowBlueOnly
+        )}
       >
         Back to dashboard
       </Link>

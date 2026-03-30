@@ -18,7 +18,8 @@ import { SimilarIncidentsPanel } from "@/components/job/SimilarIncidentsPanel";
 import { JobReportSummaryCard } from "@/components/job/JobReportSummaryCard";
 import { PageLoading } from "@/components/ui/PageLoading";
 import { useJobDetailData } from "@/api/hooks";
-import { formatDateTime } from "@/lib/utils";
+import { ctaButtonGradient, ctaGlowBlueOnly } from "@/lib/ctaTheme";
+import { cn, formatDateTime } from "@/lib/utils";
 
 const triggerLabels = {
   alert: "Alert",
@@ -55,7 +56,11 @@ export function JobDetail() {
         action={
           <Link
             to="/jobs"
-            className="rounded-xl bg-cta-primary px-5 py-2.5 text-sm font-semibold text-white shadow-glow-cta ring-1 ring-sky-400/30 hover:bg-cta-primary-hover"
+            className={cn(
+              "rounded-xl px-5 py-2.5 text-sm font-semibold text-white ring-1 ring-blue-400/35",
+              ctaButtonGradient,
+              ctaGlowBlueOnly
+            )}
           >
             Back to jobs
           </Link>
@@ -73,7 +78,11 @@ export function JobDetail() {
         action={
           <Link
             to="/jobs"
-            className="rounded-xl bg-cta-primary px-5 py-2.5 text-sm font-semibold text-white shadow-glow-cta ring-1 ring-sky-400/30 hover:bg-cta-primary-hover"
+            className={cn(
+              "rounded-xl px-5 py-2.5 text-sm font-semibold text-white ring-1 ring-blue-400/35",
+              ctaButtonGradient,
+              ctaGlowBlueOnly
+            )}
           >
             Back to jobs
           </Link>

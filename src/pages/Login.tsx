@@ -6,6 +6,7 @@ import { AuthLayout } from "@/components/auth/AuthLayout";
 import { AuthField, AuthInput } from "@/components/auth/AuthField";
 import { submitLoginPlaceholder } from "@/lib/authHandlers";
 import { hasFieldErrors, validateLogin } from "@/lib/authValidation";
+import { ctaButtonGradient, ctaGlowBlueOnly } from "@/lib/ctaTheme";
 import { cn } from "@/lib/utils";
 import type { AuthSubmitStatus, LoginFormValues } from "@/types";
 
@@ -140,10 +141,12 @@ export function Login() {
           disabled={disabled}
           className={cn(
             "relative flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold text-white",
-            "bg-cta-primary shadow-glow-cta ring-1 ring-sky-400/30 transition-all duration-200",
-            "hover:bg-cta-primary-hover hover:shadow-[0_0_0_1px_rgba(56,189,248,0.35)]",
+            ctaButtonGradient,
+            ctaGlowBlueOnly,
+            "ring-1 ring-blue-400/35 transition-all duration-200",
+            "hover:shadow-[0_0_0_1px_rgba(56,189,248,0.35)]",
             "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400/70",
-            "disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-cta-primary"
+            "disabled:cursor-not-allowed disabled:opacity-60"
           )}
         >
           {loading ? (

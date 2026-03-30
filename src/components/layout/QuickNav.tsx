@@ -1,4 +1,5 @@
 import { Link, NavLink } from "react-router-dom";
+import { navActiveInsetShadow, navItemActiveGradient } from "@/lib/ctaTheme";
 import { cn } from "@/lib/utils";
 import { ui } from "@/lib/ui";
 
@@ -24,9 +25,12 @@ export function QuickNav() {
             cn(
               "whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-semibold outline-none transition-all duration-200",
               ui.focusRing,
-              "ring-offset-2 ring-offset-surface-975",
               isActive
-                ? "bg-nav-active text-white shadow-insetNav ring-1 ring-white/[0.08] backdrop-blur-sm"
+                ? cn(
+                    navItemActiveGradient,
+                    navActiveInsetShadow,
+                    "text-white ring-1 ring-white/[0.08] backdrop-blur-sm"
+                  )
                 : "text-slate-500 hover:bg-white/[0.04] hover:text-slate-200"
             )
           }

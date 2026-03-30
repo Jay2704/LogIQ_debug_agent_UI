@@ -1,5 +1,6 @@
 import { Play } from "lucide-react";
 import { Link } from "react-router-dom";
+import { ctaButtonGradient, ctaGlowBlueOnly } from "@/lib/ctaTheme";
 import { cn } from "@/lib/utils";
 
 interface RunDebugButtonProps {
@@ -17,9 +18,11 @@ export function RunDebugButton({
       className={cn(
         "group relative inline-flex items-center justify-center gap-2.5 overflow-hidden rounded-xl px-7 py-3.5",
         "text-sm font-semibold tracking-wide text-white",
-        "bg-cta-primary shadow-glow-cta transition-all duration-300",
-        "ring-1 ring-sky-400/30 ring-offset-2 ring-offset-surface-960",
-        "hover:bg-cta-primary-hover hover:shadow-[0_0_0_1px_rgba(56,189,248,0.45),0_12px_48px_-6px_rgba(37,99,235,0.55),0_0_72px_-8px_rgba(139,92,246,0.3)]",
+        ctaButtonGradient,
+        ctaGlowBlueOnly,
+        "transition-all duration-300",
+        "ring-1 ring-blue-400/35",
+        "hover:shadow-[0_0_0_1px_rgba(96,165,250,0.45),0_12px_48px_-6px_rgba(59,130,246,0.35),0_0_64px_-10px_rgba(96,165,250,0.22)]",
         "hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99]",
         "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400/70",
         className

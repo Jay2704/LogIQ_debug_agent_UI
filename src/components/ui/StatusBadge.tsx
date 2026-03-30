@@ -15,10 +15,10 @@ const jobStatusConfig: Record<
     label: "Queued",
     hint: "Waiting in pipeline",
     className:
-      "bg-slate-600/25 text-slate-200 ring-1 ring-inset ring-slate-400/35",
-    dot: "bg-slate-400 shadow-[0_0_6px_rgba(148,163,184,0.5)]",
+      "bg-blue-500/18 text-sky-300 ring-1 ring-inset ring-blue-400/40",
+    dot: "bg-blue-400 shadow-[0_0_6px_rgba(96,165,250,0.45)]",
     workflowClass:
-      "bg-slate-600/20 text-slate-100 ring-1 ring-inset ring-slate-400/30",
+      "bg-blue-500/[0.16] text-sky-200 ring-1 ring-inset ring-blue-400/35",
   },
   running: {
     label: "Running",
