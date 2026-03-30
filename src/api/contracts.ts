@@ -1,9 +1,11 @@
 import type {
   Anomaly,
   AnomalyActivityPoint,
+  CreateJobInput,
   InsightMetrics,
   Job,
   JobDetailBundle,
+  RcaAssistiveExplanation,
   RcaResult,
   ReportArtifact,
   TopRootCauseFileRow,
@@ -18,6 +20,8 @@ import type {
 export interface JobsService {
   list(): Promise<Job[]>;
   getDetailBundle(jobId: string): Promise<JobDetailBundle | undefined>;
+  /** POST /api/v1/jobs — creates a job row on the backend (or mock session). */
+  create(input: CreateJobInput): Promise<Job>;
 }
 
 export interface AnomaliesService {
@@ -27,6 +31,20 @@ export interface AnomaliesService {
 /** RCA aggregates used by dashboard and future insights views. */
 export interface RcaService {
   getByJobIdMap(): Promise<Record<string, RcaResult>>;
+  /** Live backend: anomaly-driven deterministic RCA result (may be null if no candidates). */
+  getResultsByAnomalyId(
+    anomalyId: string,
+    jobId: string
+  ): Promise<RcaResult | null>;
+  /** Live backend: assistive explanation layer (LLM narrative). */
+  getExplanationByAnomalyId(
+    anomalyId: string
+  ): Promise<RcaAssistiveExplanation>;
+}
+
+/** Triggers backend RCA pipeline for an anomaly (POST /debug-agent/run). */
+export interface DebugAgentService {
+  run(anomalyId: string): Promise<void>;
 }
 
 export interface ReportsService {
@@ -57,6 +75,7 @@ export interface LogIQApi {
   jobs: JobsService;
   anomalies: AnomaliesService;
   rca: RcaService;
+  debugAgent: DebugAgentService;
   reports: ReportsService;
   insights: InsightsService;
   dashboard: DashboardService;

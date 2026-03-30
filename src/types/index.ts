@@ -8,10 +8,15 @@ export type {
   AnomalySeverity,
   AnomalyStatus,
 } from "./domain/common";
-export type { Job } from "./domain/job";
+export type { Job, CreateJobInput } from "./domain/job";
 export type { Anomaly } from "./domain/anomaly";
 export type { RcaResult } from "./domain/rca";
-export type { JobExplanation, EvidenceItem } from "./domain/explanation";
+export type {
+  JobExplanation,
+  EvidenceItem,
+  AssistiveSourceHint,
+  RcaAssistiveExplanation,
+} from "./domain/explanation";
 export type {
   SimilarIncident,
   JobDetailBundle,

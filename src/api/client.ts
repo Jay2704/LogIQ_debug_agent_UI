@@ -5,11 +5,12 @@ import { createMockApi } from "@/api/mock/mockApi";
 
 /**
  * Factory for the active API implementation.
- * - Default: in-memory mock (fixtures under `src/data/mock/`).
- * - When `VITE_USE_HTTP=true` and `VITE_API_URL` is set: HTTP client (implement `createHttpApi` first).
+ * - Default: in-memory mock (`src/data/mock/`) — no network, no backend required.
+ * - HTTP: when {@link import('./config').USE_HTTP_API} is true, all requests use
+ *   {@link import('./config').API_BASE_URL} inside {@link import('./http/createHttpApi').createHttpApi}.
  *
  * Pages and hooks import the singleton {@link api} — not this function — so swapping
- * transports is a one-line change here.
+ * transports is centralized in `src/api/config.ts` and this file.
  */
 export function createApiClient(): LogIQApi {
   if (USE_HTTP_API && API_BASE_URL) {

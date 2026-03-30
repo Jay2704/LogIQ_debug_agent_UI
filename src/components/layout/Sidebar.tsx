@@ -9,6 +9,7 @@ import {
   Settings2,
   Wrench,
 } from "lucide-react";
+import { USE_HTTP_API } from "@/api/config";
 import { navActiveInsetShadow, navItemActiveGradient } from "@/lib/ctaTheme";
 import { cn } from "@/lib/utils";
 import { ui } from "@/lib/ui";
@@ -80,8 +81,28 @@ export function Sidebar() {
         <div className="rounded-xl border border-white/[0.06] bg-surface-900/55 p-3 shadow-inner backdrop-blur-sm">
           <p className="text-xs font-medium text-slate-400">Environment</p>
           <p className="mt-1 font-mono text-[11px] text-slate-500">
-            mock · no backend
+            {USE_HTTP_API ? (
+              <>
+                <span className="text-emerald-400/90">live API</span>
+                <span className="text-slate-600"> · </span>
+                <span className="text-slate-500">origin from env</span>
+              </>
+            ) : (
+              <>
+                <span className="text-slate-500">mock</span>
+                <span className="text-slate-600"> · </span>
+                <span className="text-slate-500">no backend</span>
+              </>
+            )}
           </p>
+          {import.meta.env.DEV ? (
+            <Link
+              to="/dev/integration-check"
+              className="mt-2 block text-[11px] font-medium text-amber-400/85 transition hover:text-amber-300"
+            >
+              Dev: integration check
+            </Link>
+          ) : null}
           <Link
             to="/login"
             className="mt-3 block text-xs font-semibold text-sky-400/90 transition hover:text-sky-300"

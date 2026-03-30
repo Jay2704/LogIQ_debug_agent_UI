@@ -12,6 +12,7 @@ import { Settings } from "@/pages/Settings";
 import { Signup } from "@/pages/Signup";
 import { Utilities } from "@/pages/Utilities";
 import { UtilityDetail } from "@/pages/UtilityDetail";
+import { DevIntegrationCheck } from "@/pages/DevIntegrationCheck";
 
 export default function App() {
   return (
@@ -28,6 +29,12 @@ export default function App() {
         <Route path="utilities" element={<Utilities />} />
         <Route path="utilities/:toolId" element={<UtilityDetail />} />
         <Route path="settings" element={<Settings />} />
+        {import.meta.env.DEV ? (
+          <Route
+            path="dev/integration-check"
+            element={<DevIntegrationCheck />}
+          />
+        ) : null}
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>

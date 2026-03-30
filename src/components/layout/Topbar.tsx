@@ -2,6 +2,7 @@ import type { FormEvent } from "react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Bell, Moon, UserRound } from "lucide-react";
+import { ApiModeBadge } from "@/components/layout/ApiModeBadge";
 import { SearchInput } from "@/components/ui/SearchInput";
 import { cn } from "@/lib/utils";
 import { ui } from "@/lib/ui";
@@ -15,7 +16,7 @@ export function Topbar() {
     const trimmed = q.trim();
     if (!trimmed) return;
     if (trimmed.startsWith("dbg_")) {
-      navigate(`/jobs/${trimmed}`);
+      navigate(`/jobs/${encodeURIComponent(trimmed)}`);
       return;
     }
     if (trimmed.startsWith("anomaly_")) {
@@ -35,7 +36,8 @@ export function Topbar() {
           aria-label="Global search"
         />
       </form>
-      <div className="ml-auto flex shrink-0 items-center gap-1 sm:gap-2">
+      <div className="ml-auto flex shrink-0 items-center gap-2 sm:gap-3">
+        <ApiModeBadge />
         <Link
           to="/login"
           className="rounded-lg px-2 py-1.5 text-xs font-semibold text-sky-400 transition hover:bg-white/[0.04] hover:text-sky-300 sm:px-2.5"

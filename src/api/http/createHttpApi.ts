@@ -1,60 +1,154 @@
 import type { LogIQApi } from "@/api/contracts";
+import { createMockApi } from "@/api/mock/mockApi";
+import type { CreateJobInput } from "@/types";
+import { logApiDebug } from "./debugLog";
+import { joinApiUrl } from "./apiUrl";
+import { buildJobDetailBundleFromApiJob } from "./jobDetailMerge";
+import {
+  parseApiJobJson,
+  parseApiJobListJson,
+} from "./parseApiJob";
+import { parseRcaExplanationJson, parseRcaResultsJson } from "./parseRcaApi";
 
-function notImplemented(operation: string): never {
+/**
+ * “Hybrid” HTTP client: real `fetch` calls for backend-supported routes, while anomalies,
+ * reports, insights, dashboard, and utilities delegate to the in-memory mock implementation
+ * until those APIs exist — keeps Insights/Reports/Utilities pages working in HTTP mode.
+ *
+ * All request URLs use {@link joinApiUrl} with the configured origin (`VITE_API_BASE_URL`).
+ */
+
+async function readJsonOrNull(res: Response): Promise<unknown> {
+  const text = await res.text();
+  if (!text.trim()) return null;
+  try {
+    return JSON.parse(text) as unknown;
+  } catch {
+    return null;
+  }
+}
+
+async function httpError(res: Response, label: string): Promise<never> {
+  const detail = await res.text().catch(() => "");
   throw new Error(
-    `[LogIQ API] HTTP not implemented: ${operation}. Implement fetch calls in createHttpApi or use the mock client.`
+    `[LogIQ API] ${label} ${res.status} ${res.statusText}${detail ? `: ${detail.slice(0, 280)}` : ""}`
   );
 }
 
-/**
- * Future HTTP client — must return the same shapes as {@link LogIQApi} (see `@/types`).
- *
- * Suggested mapping (adjust to your OpenAPI):
- * - `jobs.list` → `GET /v1/jobs`
- * - `jobs.getDetailBundle` → `GET /v1/jobs/:id/detail` (or composed resources)
- * - `anomalies.list` → `GET /v1/anomalies`
- * - `rca.getByJobIdMap` → `GET /v1/rca` or per-job endpoints
- * - `reports.*` → `GET /v1/reports`, `GET /v1/reports/by-anomaly/:id`
- * - `insights.getMetrics` → `GET /v1/insights/metrics`
- * - `dashboard.*` → `GET /v1/dashboard/anomaly-activity`, `.../top-root-cause-files`
- */
+/** Wraps `fetch` so offline / DNS failures surface as `[LogIQ API] Network error` instead of raw TypeError. */
+async function fetchNetwork(url: string, init?: RequestInit): Promise<Response> {
+  try {
+    return await fetch(url, init);
+  } catch (e: unknown) {
+    const msg = e instanceof Error ? e.message : String(e);
+    throw new Error(`[LogIQ API] Network error (no response): ${msg}`);
+  }
+}
+
 export function createHttpApi(baseUrl: string): LogIQApi {
-  const root = baseUrl.replace(/\/$/, "");
+  const mocks = createMockApi();
 
   return {
     jobs: {
-      list: async () => notImplemented(`GET ${root}/jobs`),
-      getDetailBundle: async (jobId: string) =>
-        notImplemented(`GET ${root}/jobs/${jobId}/detail-bundle`),
+      list: async () => {
+        const url = joinApiUrl(baseUrl, "/api/v1/jobs");
+        const res = await fetchNetwork(url);
+        if (!res.ok) await httpError(res, "GET /api/v1/jobs");
+        const json: unknown = await readJsonOrNull(res);
+        return parseApiJobListJson(json);
+      },
+      getDetailBundle: async (jobId: string) => {
+        const url = joinApiUrl(
+          baseUrl,
+          `/api/v1/jobs/${encodeURIComponent(jobId)}`
+        );
+        logApiDebug("job detail fetch", { routeJobId: jobId, url });
+        const res = await fetchNetwork(url);
+        if (res.status === 404) return undefined;
+        if (!res.ok) await httpError(res, "GET job");
+        const json: unknown = await readJsonOrNull(res);
+        if (json === null || json === undefined) {
+          logApiDebug("job detail empty body", { routeJobId: jobId });
+          return undefined;
+        }
+        const apiJob = parseApiJobJson(json);
+        return buildJobDetailBundleFromApiJob(apiJob, jobId);
+      },
+      create: async (input: CreateJobInput) => {
+        const url = joinApiUrl(baseUrl, "/api/v1/jobs");
+        const res = await fetchNetwork(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            job_type: input.jobType,
+            anomaly_id: input.anomalyId,
+            run_id: input.runId,
+            triggered_by_user_id: input.triggeredByUserId,
+            trigger_source: input.triggerSource,
+          }),
+        });
+        if (!res.ok) await httpError(res, "POST /api/v1/jobs");
+        const json: unknown = await readJsonOrNull(res);
+        if (json === null || json === undefined) {
+          throw new Error("[LogIQ API] POST /api/v1/jobs: empty response body");
+        }
+        return parseApiJobJson(json);
+      },
     },
-    anomalies: {
-      list: async () => notImplemented(`GET ${root}/anomalies`),
+    anomalies: mocks.anomalies,
+    debugAgent: {
+      run: async (anomalyId: string) => {
+        const url = joinApiUrl(baseUrl, "/debug-agent/run");
+        const body = { anomaly_id: anomalyId };
+        logApiDebug("debug-agent/run", { url, body });
+        const res = await fetchNetwork(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+        if (!res.ok) await httpError(res, "POST /debug-agent/run");
+      },
     },
     rca: {
-      getByJobIdMap: async () => notImplemented(`GET ${root}/rca/by-job`),
+      getByJobIdMap: () => mocks.rca.getByJobIdMap(),
+      getResultsByAnomalyId: async (anomalyId: string, jobId: string) => {
+        const url = joinApiUrl(
+          baseUrl,
+          `/api/v1/rca/results/${encodeURIComponent(anomalyId)}`
+        );
+        logApiDebug("rca/results fetch", { anomalyId, jobId, url });
+        const res = await fetchNetwork(url);
+        if (res.status === 404) {
+          logApiDebug("rca/results 404", { anomalyId });
+          return null;
+        }
+        if (!res.ok) await httpError(res, "GET rca/results");
+        const json = await readJsonOrNull(res);
+        const parsed = parseRcaResultsJson(json, jobId);
+        logApiDebug("rca/results parsed", { anomalyId, hasCandidate: parsed !== null });
+        return parsed;
+      },
+      getExplanationByAnomalyId: async (anomalyId: string) => {
+        const url = joinApiUrl(
+          baseUrl,
+          `/api/v1/rca/explanation/${encodeURIComponent(anomalyId)}`
+        );
+        logApiDebug("rca/explanation fetch", { anomalyId, url });
+        const res = await fetchNetwork(url);
+        if (res.status === 404) {
+          logApiDebug("rca/explanation 404 — empty assistive fallback", {
+            anomalyId,
+          });
+          return parseRcaExplanationJson(null);
+        }
+        if (!res.ok) await httpError(res, "GET rca/explanation");
+        const json = await readJsonOrNull(res);
+        return parseRcaExplanationJson(json);
+      },
     },
-    reports: {
-      list: async () => notImplemented(`GET ${root}/reports`),
-      getByAnomalyId: async (anomalyId: string) =>
-        notImplemented(`GET ${root}/reports?anomalyId=${anomalyId}`),
-    },
-    insights: {
-      getMetrics: async () => notImplemented(`GET ${root}/insights/metrics`),
-    },
-    dashboard: {
-      getAnomalyActivity: async () =>
-        notImplemented(`GET ${root}/dashboard/anomaly-activity`),
-      getTopRootCauseFiles: async () =>
-        notImplemented(`GET ${root}/dashboard/top-root-cause-files`),
-    },
-    utilities: {
-      listTools: async () => notImplemented(`GET ${root}/utilities/tools`),
-      getTool: async (id: string) =>
-        notImplemented(`GET ${root}/utilities/tools/${id}`),
-      getMostUsedToolIds: async () =>
-        notImplemented(`GET ${root}/utilities/tools/most-used`),
-      getRecentRuns: async () =>
-        notImplemented(`GET ${root}/utilities/runs/recent`),
-    },
+    reports: mocks.reports,
+    insights: mocks.insights,
+    dashboard: mocks.dashboard,
+    utilities: mocks.utilities,
   };
 }

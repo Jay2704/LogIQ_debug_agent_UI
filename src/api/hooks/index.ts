@@ -1,8 +1,22 @@
 export { useJobs } from "./useJobs";
-export { useDashboardData } from "./useDashboardData";
-export type { DashboardDataState } from "./useDashboardData";
+export {
+  useDashboardJobs,
+  useDashboardEnrichment,
+} from "./useDashboardData";
+export type {
+  DashboardJobsState,
+  DashboardEnrichmentState,
+} from "./useDashboardData";
 export { useJobDetailData } from "./useJobDetailData";
-export type { JobDetailState } from "./useJobDetailData";
+export type {
+  JobDetailState,
+  JobDetailNotFoundReason,
+} from "./useJobDetailData";
+export { useRcaInvestigation } from "./useRcaInvestigation";
+export type {
+  InvestigationPhase,
+  UseRcaInvestigationResult,
+} from "./useRcaInvestigation";
 export { useAnomaliesData } from "./useAnomaliesData";
 export { useInsightMetrics } from "./useInsightMetrics";
 export { useReportsList } from "./useReportsList";

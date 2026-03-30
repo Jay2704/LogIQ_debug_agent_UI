@@ -257,6 +257,11 @@ const limitationsNotes: Record<string, string> = {
     "Search ranking and recommendation side effects not evaluated.",
 };
 
+/** Mock assistive text keyed by job id (fixtures). */
+export function getMockExplanationTextForJob(jobId: string): string {
+  return explanations[jobId] ?? "";
+}
+
 export function getJobDetailBundle(jobId: string) {
   const job = mockJobs.find((j) => j.id === jobId);
   if (!job) return undefined;

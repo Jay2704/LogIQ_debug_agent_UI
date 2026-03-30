@@ -4,6 +4,7 @@ import { ChevronRight, Cpu } from "lucide-react";
 import type { Job } from "@/types";
 import { StatusBadge } from "./StatusBadge";
 import { formatDateTime } from "@/lib/utils";
+import { getJobRouteId } from "@/lib/jobRoute";
 import { cn } from "@/lib/utils";
 
 const triggerLabels: Record<Job["trigger"], string> = {
@@ -66,7 +67,7 @@ export function JobsTable({ jobs, emptyMessage, footer }: JobsTableProps) {
           <tbody>
             {jobs.map((job) => (
               <tr
-                key={job.id}
+                key={getJobRouteId(job)}
                 className={cn(
                   "group border-b border-blue-500/[0.05] transition-colors duration-150",
                   "hover:bg-gradient-to-r hover:from-sky-500/[0.06] hover:via-blue-500/[0.04] hover:to-transparent",
@@ -75,7 +76,7 @@ export function JobsTable({ jobs, emptyMessage, footer }: JobsTableProps) {
               >
                 <td className="px-5 py-3.5 pl-6 align-middle">
                   <span className="font-mono text-[13px] font-medium text-slate-100 transition group-hover:text-white">
-                    {job.id}
+                    {getJobRouteId(job)}
                   </span>
                 </td>
                 <td className="max-w-[200px] px-4 py-3.5 align-middle">
@@ -94,7 +95,7 @@ export function JobsTable({ jobs, emptyMessage, footer }: JobsTableProps) {
                 </td>
                 <td className="px-4 py-3.5 align-middle">
                   <span className="font-mono text-[12px] text-violet-300/95">
-                    {job.anomalyId}
+                    {job.anomalyId ?? "—"}
                   </span>
                 </td>
                 <td className="px-4 py-3.5 align-middle">
@@ -115,7 +116,7 @@ export function JobsTable({ jobs, emptyMessage, footer }: JobsTableProps) {
                 </td>
                 <td className="px-5 py-3.5 pr-6 text-right align-middle">
                   <Link
-                    to={`/jobs/${job.id}`}
+                    to={`/jobs/${encodeURIComponent(getJobRouteId(job))}`}
                     className={cn(
                       "inline-flex items-center justify-center gap-1 rounded-lg border border-sky-500/25",
                       "bg-sky-500/[0.08] px-3 py-1.5 text-xs font-semibold text-sky-300",

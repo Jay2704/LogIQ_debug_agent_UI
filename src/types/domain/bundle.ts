@@ -19,6 +19,11 @@ export interface SimilarIncident {
  */
 export interface JobDetailBundle {
   job: Job;
+  /**
+   * `api` when the job row was loaded from the HTTP API; investigation sections may still use
+   * mock fixtures until backend endpoints exist.
+   */
+  jobRowSource?: "api" | "mock";
   anomaly: Anomaly;
   rca: RcaResult;
   /** Assistive narrative (often markdown); parallel to {@link JobExplanation} */

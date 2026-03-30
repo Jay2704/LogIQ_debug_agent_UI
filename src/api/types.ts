@@ -8,6 +8,7 @@ export type {
   AnomalySeverity,
   AnomalyStatus,
   Job,
+  CreateJobInput,
   Anomaly,
   RcaResult,
   JobExplanation,

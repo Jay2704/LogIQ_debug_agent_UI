@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { Activity, ListTodo } from "lucide-react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Activity, ListTodo, Plus, RefreshCw } from "lucide-react";
 import { JobsTable } from "@/components/ui/JobsTable";
 import { JobsListFooter } from "@/components/ui/JobsListFooter";
 import { JobsEmptyState } from "@/components/ui/JobsEmptyState";
@@ -8,7 +9,12 @@ import { SearchInput } from "@/components/ui/SearchInput";
 import { FilterDropdown, type FilterOption } from "@/components/ui/FilterDropdown";
 import { RunDebugButton } from "@/components/ui/RunDebugButton";
 import { useJobs } from "@/api/hooks";
+import { CreateJobModal } from "@/components/jobs/CreateJobModal";
+import { FeedbackNotice } from "@/components/ui/FeedbackNotice";
 import { computeJobStatusSummary } from "@/lib/insights";
+import { getJobRouteId } from "@/lib/jobRoute";
+import { ctaButtonGradient, ctaGlowBlueOnly } from "@/lib/ctaTheme";
+import { cn } from "@/lib/utils";
 import type { JobStatus, TriggerType } from "@/types";
 
 const PAGE_SIZE = 8;
@@ -31,7 +37,10 @@ const triggerOptions: FilterOption[] = [
 ];
 
 export function Jobs() {
-  const { data: jobs, loading, error } = useJobs();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { data: jobs, loading, error, refetch } = useJobs();
+  const [createOpen, setCreateOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("all");
   const [trigger, setTrigger] = useState("all");
@@ -42,10 +51,13 @@ export function Jobs() {
     const q = query.trim().toLowerCase();
     return jobs.filter((j) => {
       const service = (j.service ?? "").toLowerCase();
+      const anomaly = (j.anomalyId ?? "").toLowerCase();
+      const routeId = getJobRouteId(j).toLowerCase();
       const matchQ =
         !q ||
+        routeId.includes(q) ||
         j.id.toLowerCase().includes(q) ||
-        j.anomalyId.toLowerCase().includes(q) ||
+        anomaly.includes(q) ||
         service.includes(q);
       const matchS =
         status === "all" || j.status === (status as JobStatus);
@@ -58,6 +70,14 @@ export function Jobs() {
   useEffect(() => {
     setVisibleCount(PAGE_SIZE);
   }, [query, status, trigger]);
+
+  useEffect(() => {
+    const s = location.state as { refreshJobs?: boolean } | undefined;
+    if (s?.refreshJobs) {
+      void refetch();
+      navigate(".", { replace: true, state: {} });
+    }
+  }, [location.state, navigate, refetch]);
 
   const displayed = useMemo(
     () => filtered.slice(0, visibleCount),
@@ -85,7 +105,22 @@ export function Jobs() {
               Investigations across services — filter, triage, open the workspace.
             </p>
           </div>
-          <RunDebugButton />
+          <div className="flex shrink-0 flex-wrap gap-3">
+            <button
+              type="button"
+              disabled
+              className={cn(
+                "inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-white opacity-50",
+                ctaButtonGradient,
+                ctaGlowBlueOnly,
+                "ring-1 ring-blue-400/35"
+              )}
+            >
+              <Plus className="h-4 w-4" />
+              New job
+            </button>
+            <RunDebugButton to="/" />
+          </div>
         </div>
         <JobsTableSkeleton rows={8} />
       </div>
@@ -94,8 +129,27 @@ export function Jobs() {
 
   if (error) {
     return (
-      <div className="rounded-card border border-red-500/20 bg-red-500/5 p-6 text-sm text-red-300">
-        {error.message}
+      <div className="space-y-6">
+        <FeedbackNotice tone="error" title="Could not load jobs">
+          <p>{error.message}</p>
+          <p className="mt-2 text-xs text-red-200/75">
+            Check <span className="font-mono">VITE_API_BASE_URL</span> and that the jobs
+            API is running.
+          </p>
+        </FeedbackNotice>
+        <button
+          type="button"
+          onClick={() => refetch()}
+          className={cn(
+            "inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-white",
+            ctaButtonGradient,
+            ctaGlowBlueOnly,
+            "ring-1 ring-blue-400/35 transition hover:-translate-y-0.5 active:translate-y-0"
+          )}
+        >
+          <RefreshCw className="h-4 w-4" aria-hidden />
+          Retry
+        </button>
       </div>
     );
   }
@@ -106,6 +160,17 @@ export function Jobs() {
 
   return (
     <div className="space-y-8">
+      <CreateJobModal
+        isOpen={createOpen}
+        onClose={() => setCreateOpen(false)}
+        onCreated={(job) => {
+          void refetch();
+          navigate(`/jobs/${encodeURIComponent(getJobRouteId(job))}`, {
+            state: { fromCreate: true },
+          });
+        }}
+      />
+
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
         <div className="max-w-2xl">
           <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-sky-500/90">
@@ -149,8 +214,21 @@ export function Jobs() {
             </div>
           ) : null}
         </div>
-        <div className="shrink-0 lg:pt-1">
-          <RunDebugButton />
+        <div className="flex shrink-0 flex-wrap items-center gap-3 lg:pt-1">
+          <button
+            type="button"
+            onClick={() => setCreateOpen(true)}
+            className={cn(
+              "inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-white",
+              ctaButtonGradient,
+              ctaGlowBlueOnly,
+              "ring-1 ring-blue-400/35 transition hover:-translate-y-0.5 active:translate-y-0"
+            )}
+          >
+            <Plus className="h-4 w-4" />
+            New job
+          </button>
+          <RunDebugButton to="/" />
         </div>
       </div>
 

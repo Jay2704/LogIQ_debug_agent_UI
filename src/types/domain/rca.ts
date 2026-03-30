@@ -9,6 +9,8 @@ export interface RcaResult {
   confidence: number;
   rank: number;
   evidenceRef: string;
+  /** Primary candidate status from backend (e.g. confirmed / tentative) */
+  candidateStatus?: string;
   steps: {
     triage: "pending" | "done" | "active";
     rca: "pending" | "done" | "active";

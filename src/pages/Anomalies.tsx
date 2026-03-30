@@ -6,11 +6,17 @@ import {
 } from "@/components/ui/StatusBadge";
 import { PageLoading } from "@/components/ui/PageLoading";
 import { useAnomaliesData } from "@/api/hooks";
+import { getJobRouteId } from "@/lib/jobRoute";
 import { formatDateTime } from "@/lib/utils";
 
-function anomalyJobLink(anomalyId: string, jobs: { id: string; anomalyId: string }[]) {
+function anomalyJobLink(
+  anomalyId: string,
+  jobs: { id: string; jobId?: string; anomalyId: string }[]
+) {
   const job = jobs.find((j) => j.anomalyId === anomalyId);
-  return job ? `/jobs/${job.id}` : "/jobs";
+  return job
+    ? `/jobs/${encodeURIComponent(getJobRouteId(job))}`
+    : "/jobs";
 }
 
 export function Anomalies() {
