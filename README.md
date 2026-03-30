@@ -1,18 +1,5 @@
 # LogIQ Debug Agent — Frontend
 
-Frontend for the **LogIQ Debug Agent** project: a dark, premium UI for deterministic root-cause analysis, investigations, insights, and standalone log utilities.
-
-## Tech stack
-
-- React 18 · TypeScript · Vite · Tailwind CSS · React Router · Recharts
-
-## Quick start
-
-```bash
-npm install
-npm run dev
-```
-
 Open [http://localhost:5173](http://localhost:5173).
 
 ## UI screenshots
