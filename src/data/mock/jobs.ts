@@ -1,0 +1,68 @@
+import type { Job } from "@/types";
+
+export const mockJobs: Job[] = [
+  {
+    id: "job-8f2a",
+    anomalyId: "anom-k9x1",
+    status: "running",
+    trigger: "alert",
+    createdAt: "2026-03-29T14:22:11Z",
+    service: "checkout-api",
+  },
+  {
+    id: "job-7d41",
+    anomalyId: "anom-m3pq",
+    status: "completed",
+    trigger: "manual",
+    createdAt: "2026-03-29T13:05:44Z",
+    service: "auth-service",
+  },
+  {
+    id: "job-6c90",
+    anomalyId: "anom-r7nw",
+    status: "completed",
+    trigger: "webhook",
+    createdAt: "2026-03-29T11:18:02Z",
+    service: "payments-worker",
+  },
+  {
+    id: "job-5b33",
+    anomalyId: "anom-j2lm",
+    status: "failed",
+    trigger: "alert",
+    createdAt: "2026-03-29T09:41:29Z",
+    service: "inventory-svc",
+  },
+  {
+    id: "job-4a12",
+    anomalyId: "anom-h8vx",
+    status: "completed",
+    trigger: "scheduled",
+    createdAt: "2026-03-28T22:07:55Z",
+    service: "search-indexer",
+  },
+  {
+    id: "job-391f",
+    anomalyId: "anom-b4yt",
+    status: "queued",
+    trigger: "api",
+    createdAt: "2026-03-28T19:33:12Z",
+    service: "notifications",
+  },
+  {
+    id: "job-280e",
+    anomalyId: "anom-c6zd",
+    status: "completed",
+    trigger: "manual",
+    createdAt: "2026-03-28T16:02:08Z",
+    service: "billing-ledger",
+  },
+  {
+    id: "job-170d",
+    anomalyId: "anom-f1qs",
+    status: "completed",
+    trigger: "alert",
+    createdAt: "2026-03-28T08:14:41Z",
+    service: "edge-gateway",
+  },
+];

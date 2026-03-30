@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply antialiased;
+  }
+  body {
+    @apply min-h-screen font-sans text-slate-200;
+    background-color: #080d18;
+    background-image:
+      radial-gradient(
+        ellipse 120% 90% at 50% -25%,
+        rgba(37, 99, 235, 0.16),
+        transparent 55%
+      ),
+      radial-gradient(
+        ellipse 70% 50% at 100% 0%,
+        rgba(124, 58, 237, 0.1),
+        transparent 50%
+      ),
+      radial-gradient(
+        ellipse 60% 45% at 0% 80%,
+        rgba(14, 116, 144, 0.06),
+        transparent 50%
+      ),
+      linear-gradient(180deg, #0a101f 0%, #080d18 35%, #070b14 100%);
+    background-attachment: fixed;
+  }
+}
+
+@layer components {
+  .ui-page-title {
+    @apply text-2xl font-bold tracking-tight text-white sm:text-3xl;
+  }
+  .ui-page-desc {
+    @apply mt-1.5 max-w-2xl text-sm leading-relaxed text-slate-500;
+  }
+  .ui-card {
+    @apply rounded-card border border-blue-500/[0.12] bg-gradient-to-br from-surface-850/90 via-surface-925/95 to-surface-960 shadow-card;
+  }
+  .ui-card-elevated {
+    @apply rounded-card border border-indigo-500/20 bg-gradient-to-br from-surface-825/80 via-surface-950 to-surface-975 shadow-card-premium;
+  }
+}
+
+@layer utilities {
+  .text-gradient-blue {
+    @apply bg-gradient-to-r from-sky-400 to-cyan-300 bg-clip-text text-transparent;
+  }
+  .text-gradient-violet {
+    @apply bg-gradient-to-r from-violet-400 to-fuchsia-300 bg-clip-text text-transparent;
+  }
+}
