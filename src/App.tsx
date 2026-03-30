@@ -5,13 +5,17 @@ import { Dashboard } from "@/pages/Dashboard";
 import { Insights } from "@/pages/Insights";
 import { JobDetail } from "@/pages/JobDetail";
 import { Jobs } from "@/pages/Jobs";
+import { Login } from "@/pages/Login";
 import { NotFound } from "@/pages/NotFound";
 import { Reports } from "@/pages/Reports";
 import { Settings } from "@/pages/Settings";
+import { Signup } from "@/pages/Signup";
 
 export default function App() {
   return (
     <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
       <Route path="/" element={<AppLayout />}>
         <Route index element={<Dashboard />} />
         <Route path="jobs" element={<Jobs />} />

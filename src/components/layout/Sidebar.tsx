@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import {
   Activity,
   AlertTriangle,
@@ -76,6 +76,12 @@ export function Sidebar() {
           <p className="mt-1 font-mono text-[11px] text-slate-500">
             mock · no backend
           </p>
+          <Link
+            to="/login"
+            className="mt-3 block text-xs font-semibold text-sky-400/90 transition hover:text-sky-300"
+          >
+            Sign in (demo)
+          </Link>
         </div>
       </div>
     </aside>

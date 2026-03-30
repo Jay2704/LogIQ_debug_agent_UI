@@ -22,3 +22,12 @@ export type {
   AnomalyActivityPoint,
   TopRootCauseFileRow,
 } from "./domain/dashboard";
+
+export type {
+  AuthTeamRole,
+  LoginFormValues,
+  SignupFormValues,
+  AuthSubmitStatus,
+  AuthSubmitResult,
+} from "./auth";
+export { TEAM_ROLE_OPTIONS } from "./auth";
