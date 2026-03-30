@@ -1,10 +1,12 @@
 import type {
   Anomaly,
+  AnomalyActivityPoint,
   InsightMetrics,
   Job,
   JobDetailBundle,
   RcaResult,
   ReportArtifact,
+  TopRootCauseFileRow,
 } from "@/types";
 
 /**
@@ -34,6 +36,12 @@ export interface InsightsService {
   getMetrics(): Promise<InsightMetrics>;
 }
 
+/** Dashboard-only widgets (activity spark, top files) — separate from heavy insights API. */
+export interface DashboardService {
+  getAnomalyActivity(): Promise<AnomalyActivityPoint[]>;
+  getTopRootCauseFiles(): Promise<TopRootCauseFileRow[]>;
+}
+
 /** Root API surface — one place to mock or replace with fetch-based client. */
 export interface LogIQApi {
   jobs: JobsService;
@@ -41,4 +49,5 @@ export interface LogIQApi {
   rca: RcaService;
   reports: ReportsService;
   insights: InsightsService;
+  dashboard: DashboardService;
 }

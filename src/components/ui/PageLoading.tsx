@@ -12,12 +12,15 @@ export function PageLoading({
   return (
     <div
       className={cn(
-        "flex min-h-[40vh] flex-col items-center justify-center gap-2 text-center",
+        "flex min-h-[40vh] flex-col items-center justify-center gap-4 text-center",
         className
       )}
     >
-      <div className="h-8 w-8 animate-spin rounded-full border-2 border-sky-500/30 border-t-sky-400" />
-      <p className="text-sm text-slate-500">{message}</p>
+      <div className="relative h-10 w-10">
+        <div className="absolute inset-0 rounded-full border-2 border-sky-500/20" />
+        <div className="absolute inset-0 animate-spin rounded-full border-2 border-transparent border-t-sky-400 border-r-sky-500/40" />
+      </div>
+      <p className="text-sm font-medium text-slate-500">{message}</p>
     </div>
   );
 }

@@ -1,5 +1,6 @@
-import { Database, GitBranch, ShieldCheck } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 import type { RcaResult } from "@/types";
+import { EvidenceMetadataRow } from "@/components/job/EvidenceMetadataRow";
 import { ConfidenceProgressBar } from "./ConfidenceProgressBar";
 import { splitRootCausePath } from "@/lib/utils";
 import { cn } from "@/lib/utils";
@@ -7,6 +8,8 @@ import { cn } from "@/lib/utils";
 interface RcaResultCardProps {
   rca: RcaResult;
   className?: string;
+  /** When false, omit the in-card title — use with a page-level “Deterministic Root Cause” heading */
+  showHeading?: boolean;
 }
 
 function RootCausePathBlock({ path }: { path: string }) {
@@ -51,78 +54,86 @@ function RootCausePathBlock({ path }: { path: string }) {
   );
 }
 
-export function RcaResultCard({ rca, className }: RcaResultCardProps) {
+export function RcaResultCard({
+  rca,
+  className,
+  showHeading = true,
+}: RcaResultCardProps) {
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-card border-2 border-violet-500/35 bg-gradient-to-br from-violet-500/[0.14] via-surface-900/98 to-surface-975 p-6 shadow-[0_0_0_1px_rgba(139,92,246,0.2),0_16px_56px_-20px_rgba(0,0,0,0.6),0_0_80px_-24px_rgba(139,92,246,0.25)]",
-        "ring-1 ring-inset ring-white/[0.06]",
+        "relative overflow-hidden rounded-2xl border-2 border-violet-500/40 bg-gradient-to-br from-violet-500/[0.18] via-[#0a0f1c] to-surface-975 p-6 sm:p-8",
+        "shadow-[0_0_0_1px_rgba(139,92,246,0.25),0_20px_64px_-24px_rgba(0,0,0,0.65),0_0_100px_-30px_rgba(139,92,246,0.35)]",
+        "ring-1 ring-inset ring-white/[0.07]",
         className
       )}
     >
-      <div className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-violet-500/10 blur-3xl" />
+      <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-violet-500/15 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-16 -left-16 h-48 w-48 rounded-full bg-sky-500/10 blur-3xl" />
       <div className="relative">
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div className="flex items-start gap-3">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-violet-500/25 ring-1 ring-violet-400/40">
-              <ShieldCheck className="h-5 w-5 text-violet-300" strokeWidth={2} />
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div className="flex items-start gap-4">
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-violet-500/30 ring-1 ring-violet-400/45 shadow-[0_0_32px_-8px_rgba(139,92,246,0.5)]">
+              <ShieldCheck className="h-7 w-7 text-violet-200" strokeWidth={1.75} />
             </div>
-            <div>
-              <h3 className="text-lg font-bold tracking-tight text-white">
-                Deterministic Root Cause{" "}
-                <span className="text-slate-400">(Source of Truth)</span>
-              </h3>
-              <p className="mt-1 max-w-xl text-xs leading-relaxed text-slate-500">
-                Ranked from traces, metrics, and code correlation — auditable and
-                replayable.
-              </p>
+            <div className="min-w-0">
+              {showHeading ? (
+                <>
+                  <h3 className="text-xl font-bold tracking-tight text-white sm:text-2xl">
+                    Deterministic Root Cause{" "}
+                    <span className="font-medium text-slate-500">
+                      (Source of Truth)
+                    </span>
+                  </h3>
+                  <p className="mt-2 max-w-xl text-sm leading-relaxed text-slate-500">
+                    Ranked from traces, metrics, and code correlation — auditable and
+                    replayable.
+                  </p>
+                </>
+              ) : (
+                <p className="text-sm font-medium text-slate-400">
+                  Ranked anchor · reproducible from evidence store
+                </p>
+              )}
             </div>
           </div>
           {rca.rank > 0 ? (
-            <div className="rounded-lg border border-emerald-500/25 bg-emerald-500/10 px-3 py-1.5 text-center">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-400/90">
+            <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/[0.12] px-4 py-2 text-center shadow-inner">
+              <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-emerald-400/95">
                 Rank
               </p>
-              <p className="font-mono text-xl font-bold tabular-nums text-emerald-300">
+              <p className="font-mono text-2xl font-bold tabular-nums leading-tight text-emerald-300">
                 #{rca.rank}
               </p>
             </div>
           ) : null}
         </div>
 
-        <div className="mt-6">
-          <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">
+        <div className="mt-8">
+          <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
             Root cause location
           </p>
           <RootCausePathBlock path={rca.rootCausePath} />
         </div>
 
-        <div className="mt-4 flex flex-wrap gap-2 border-t border-white/[0.06] pt-4">
-          <div className="flex min-w-0 flex-1 items-center gap-2 rounded-lg border border-blue-500/15 bg-surface-950/80 px-3 py-2 font-mono text-[11px] text-slate-400 shadow-inner">
-            <Database className="h-3.5 w-3.5 shrink-0 text-sky-500" />
-            <span className="shrink-0 font-semibold uppercase tracking-wide text-slate-500">
-              evidence_ref
-            </span>
-            <span className="min-w-0 truncate text-sky-200/90" title={rca.evidenceRef}>
-              {rca.evidenceRef}
-            </span>
-          </div>
-          <div className="flex items-center gap-2 rounded-lg border border-slate-600/40 bg-surface-950/80 px-3 py-2 font-mono text-[11px] text-slate-400 shadow-inner">
-            <GitBranch className="h-3.5 w-3.5 shrink-0 text-slate-500" />
-            <span className="font-semibold uppercase tracking-wide text-slate-500">
-              job
-            </span>
-            <span className="text-slate-300">{rca.jobId}</span>
-          </div>
+        <div className="mt-6">
+          <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
+            Evidence metadata
+          </p>
+          <EvidenceMetadataRow
+            fileId={rca.fileId}
+            evidenceRef={rca.evidenceRef}
+            runId={rca.runId}
+          />
         </div>
 
         {rca.confidence > 0 ? (
-          <div className="mt-6">
+          <div className="mt-8">
             <ConfidenceProgressBar value={rca.confidence} variant="hero" />
           </div>
         ) : (
-          <p className="mt-6 rounded-lg border border-amber-500/20 bg-amber-500/5 px-4 py-3 text-sm text-amber-200/90">
-            Confidence Score pending — complete the RCA step to produce a ranked
+          <p className="mt-8 rounded-xl border border-amber-500/25 bg-amber-500/[0.06] px-4 py-3.5 text-sm leading-relaxed text-amber-200/95">
+            Confidence score pending — complete the RCA step to produce a ranked
             deterministic result.
           </p>
         )}

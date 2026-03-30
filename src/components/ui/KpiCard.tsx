@@ -14,7 +14,7 @@ const variantStyles: Record<
   string
 > = {
   default:
-    "border-blue-500/[0.1] from-surface-825/90 via-surface-925 to-surface-960 shadow-card",
+    "border-white/[0.08] from-surface-825/90 via-surface-925 to-surface-960 shadow-card",
   blue:
     "border-blue-500/25 from-blue-500/[0.12] via-surface-900/95 to-surface-960 shadow-glow-blue",
   violet:

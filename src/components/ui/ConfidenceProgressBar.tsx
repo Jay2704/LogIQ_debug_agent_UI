@@ -37,35 +37,41 @@ export function ConfidenceProgressBar({
     return (
       <div
         className={cn(
-          "rounded-xl border border-white/[0.08] bg-surface-975/90 p-4 shadow-inner",
+          "rounded-2xl border border-white/[0.1] bg-gradient-to-br from-surface-950/95 to-[#060a12] p-5 shadow-inner",
           className
         )}
       >
-        <div className="flex flex-wrap items-end justify-between gap-2">
-          <div>
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div className="min-w-0">
             {showLabel ? (
-              <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500">
-                Confidence Score
+              <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-500">
+                Confidence score
               </p>
             ) : null}
-            <p className="mt-1 text-xs text-slate-500">
-              Model certainty for this Deterministic Root Cause ranking
+            <p className="mt-1 text-xs leading-relaxed text-slate-500">
+              Deterministic match strength for this ranked file — not LLM
+              confidence.
             </p>
           </div>
-          <p
-            className={cn(
-              "font-mono text-4xl font-bold tabular-nums leading-none tracking-tight",
-              pctColor
-            )}
-          >
-            {(value * 100).toFixed(0)}
-            <span className="text-2xl font-semibold text-slate-500">%</span>
-          </p>
+          <div className="flex shrink-0 flex-col items-end">
+            <p
+              className={cn(
+                "font-mono text-5xl font-bold tabular-nums leading-none tracking-tight",
+                "drop-shadow-[0_0_24px_rgba(56,189,248,0.25)]",
+                pctColor
+              )}
+            >
+              {(value * 100).toFixed(0)}
+            </p>
+            <span className="mt-2 font-mono text-sm font-semibold text-slate-500">
+              / 100
+            </span>
+          </div>
         </div>
-        <div className="mt-4 h-3.5 overflow-hidden rounded-full border border-white/[0.06] bg-surface-900 shadow-inner">
+        <div className="mt-5 h-4 overflow-hidden rounded-full border border-white/[0.08] bg-surface-950 shadow-[inset_0_2px_6px_rgba(0,0,0,0.45)]">
           <div
             className={cn(
-              "h-full rounded-full bg-gradient-to-r shadow-[0_0_24px_-4px_rgba(56,189,248,0.45)]",
+              "h-full rounded-full bg-gradient-to-r shadow-[0_0_28px_-4px_rgba(56,189,248,0.55)]",
               barColor
             )}
             style={{ width: `${pct}%` }}
@@ -80,7 +86,7 @@ export function ConfidenceProgressBar({
       {showLabel ? (
         <div className="mb-2 flex items-center justify-between text-xs">
           <span className="font-semibold text-slate-500">Confidence Score</span>
-          <span className="font-mono tabular-nums font-semibold text-slate-100">
+          <span className="font-mono font-semibold tabular-nums text-slate-100">
             {(value * 100).toFixed(0)}%
           </span>
         </div>

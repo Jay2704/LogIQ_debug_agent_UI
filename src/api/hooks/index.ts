@@ -6,3 +6,4 @@ export type { JobDetailState } from "./useJobDetailData";
 export { useAnomaliesData } from "./useAnomaliesData";
 export { useInsightMetrics } from "./useInsightMetrics";
 export { useReportsList } from "./useReportsList";
+export { useDashboardWidgets } from "./useDashboardWidgets";

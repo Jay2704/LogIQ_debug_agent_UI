@@ -9,6 +9,18 @@ export function formatDateTime(iso: string) {
   }).format(d);
 }
 
+export function formatRelativeShort(iso: string) {
+  const d = new Date(iso);
+  const diffMs = Date.now() - d.getTime();
+  const m = Math.floor(diffMs / 60000);
+  if (m < 1) return "just now";
+  if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h ago`;
+  const days = Math.floor(h / 24);
+  return `${days}d ago`;
+}
+
 export function formatDate(iso: string) {
   return new Intl.DateTimeFormat("en-US", {
     month: "short",

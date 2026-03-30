@@ -4,3 +4,7 @@ export { mockRcaByJobId } from "./rca";
 export { getJobDetailBundle } from "./explanations";
 export { mockInsightMetrics } from "./insights";
 export { mockReports, getReportByAnomalyId } from "./reports";
+export {
+  mockAnomalyActivity,
+  mockTopRootCauseFiles,
+} from "./dashboard";

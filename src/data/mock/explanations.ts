@@ -159,21 +159,24 @@ const similarByJob: Record<string, SimilarIncident[]> = {
   dbg_2026_001: [
     {
       id: "sim-2026-014",
-      title: "checkout-service — confirm path latency (Jan 2026)",
+      service: "checkout-service",
+      title: "Confirm path latency spike (Jan 2026)",
       occurredAt: "2026-01-14T16:22:00Z",
       overlap: "Same handler hot frame; inventory hold added after pricing change",
     },
     {
       id: "sim-2025-112",
-      title: "checkout-service — Redis timeout burst (Nov 2025)",
+      service: "checkout-service",
+      title: "Redis timeout burst under promotion (Nov 2025)",
       occurredAt: "2025-11-22T09:10:00Z",
-      overlap: "checkout-service; session/cart pressure under promotion traffic",
+      overlap: "Session/cart pressure under promotion traffic",
     },
   ],
   dbg_2026_002: [
     {
       id: "sim-2025-09-aa",
-      title: "auth-service — refresh 401 after key rotation",
+      service: "auth-service",
+      title: "Refresh 401 after key rotation",
       occurredAt: "2025-09-14T11:02:00Z",
       overlap: "session_validator path; client cache stale JWK",
     },
@@ -181,7 +184,8 @@ const similarByJob: Record<string, SimilarIncident[]> = {
   dbg_2026_003: [
     {
       id: "sim-2026-02-pg",
-      title: "payment-gateway — PSP maintenance retry storm",
+      service: "payment-gateway",
+      title: "PSP maintenance retry storm",
       occurredAt: "2026-02-03T04:18:00Z",
       overlap: "retry_manager backoff; partner incident",
     },
@@ -191,7 +195,8 @@ const similarByJob: Record<string, SimilarIncident[]> = {
   dbg_2026_006: [
     {
       id: "sim-2025-10-dr",
-      title: "payment-gateway — idempotency during drill",
+      service: "payment-gateway",
+      title: "Idempotency boundary during failover drill",
       occurredAt: "2025-10-22T16:40:00Z",
       overlap: "Failover replay boundary; ledger audit",
     },
@@ -199,7 +204,8 @@ const similarByJob: Record<string, SimilarIncident[]> = {
   dbg_2026_007: [
     {
       id: "sim-2026-01-mfa",
-      title: "auth-service — MFA latency during campaign",
+      service: "auth-service",
+      title: "MFA latency during password campaign",
       occurredAt: "2026-01-08T19:15:00Z",
       overlap: "Redis session cluster CPU; rotation event",
     },
@@ -207,7 +213,8 @@ const similarByJob: Record<string, SimilarIncident[]> = {
   dbg_2026_008: [
     {
       id: "sim-2025-12-cart",
-      title: "checkout-service — merge conflict after catalog job",
+      service: "checkout-service",
+      title: "Merge conflict after catalog sync job",
       occurredAt: "2025-12-01T07:45:00Z",
       overlap: "checkout_handler merge; catalog invalidation",
     },

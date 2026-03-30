@@ -9,6 +9,7 @@ import {
   Settings2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ui } from "@/lib/ui";
 
 const nav = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard, end: true },
@@ -21,8 +22,8 @@ const nav = [
 
 export function Sidebar() {
   return (
-    <aside className="fixed left-0 top-0 z-40 hidden h-screen w-[260px] flex-col border-r border-blue-500/[0.08] bg-surface-975/90 shadow-[inset_-1px_0_0_rgba(59,130,246,0.06)] backdrop-blur-2xl md:flex">
-      <div className="flex h-16 items-center gap-3 border-b border-blue-500/[0.08] px-5">
+    <aside className="fixed left-0 top-0 z-40 hidden h-screen w-[260px] flex-col border-r border-white/[0.08] bg-surface-975/[0.92] shadow-[inset_-1px_0_0_rgba(59,130,246,0.05)] backdrop-blur-2xl md:flex">
+      <div className="flex h-16 items-center gap-3 border-b border-white/[0.08] px-5">
         <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500/40 to-violet-600/35 ring-1 ring-white/15 shadow-glow-blue">
           <Activity className="h-5 w-5 text-sky-300" strokeWidth={2} />
         </div>
@@ -35,7 +36,7 @@ export function Sidebar() {
           </p>
         </div>
       </div>
-      <nav className="flex-1 space-y-1 overflow-y-auto p-3">
+      <nav className="flex-1 space-y-1.5 overflow-y-auto px-2 py-4">
         {nav.map((item) => (
           <NavLink
             key={item.to}
@@ -43,10 +44,12 @@ export function Sidebar() {
             end={item.end}
             className={({ isActive }) =>
               cn(
-                "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200",
+                "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium outline-none transition-all duration-200",
+                ui.focusRing,
+                "ring-offset-2 ring-offset-surface-975",
                 isActive
-                  ? "bg-nav-active text-white shadow-insetNav backdrop-blur-md"
-                  : "text-slate-400 hover:bg-white/[0.04] hover:text-slate-100"
+                  ? "bg-nav-active text-white shadow-insetNav ring-1 ring-white/[0.08] backdrop-blur-md"
+                  : "text-slate-400 hover:bg-white/[0.04] hover:text-slate-100 active:scale-[0.99]"
               )
             }
           >
@@ -54,7 +57,7 @@ export function Sidebar() {
               <>
                 <item.icon
                   className={cn(
-                    "h-4 w-4 shrink-0 transition-colors",
+                    "h-4 w-4 shrink-0 transition-colors duration-200",
                     isActive ? "text-sky-300" : "text-slate-500"
                   )}
                   strokeWidth={2}
@@ -67,8 +70,8 @@ export function Sidebar() {
           </NavLink>
         ))}
       </nav>
-      <div className="border-t border-blue-500/[0.08] p-4">
-        <div className="rounded-xl border border-blue-500/10 bg-surface-900/60 p-3 shadow-card backdrop-blur-sm">
+      <div className="border-t border-white/[0.08] p-4">
+        <div className="rounded-xl border border-white/[0.06] bg-surface-900/55 p-3 shadow-inner backdrop-blur-sm">
           <p className="text-xs font-medium text-slate-400">Environment</p>
           <p className="mt-1 font-mono text-[11px] text-slate-500">
             mock · no backend

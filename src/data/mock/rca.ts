@@ -3,6 +3,8 @@ import type { RcaResult } from "@/types";
 export const mockRcaByJobId: Record<string, RcaResult> = {
   dbg_2026_001: {
     jobId: "dbg_2026_001",
+    fileId: "fid_src_handlers_checkout_handler_py",
+    runId: "run_us1-8a2f3c1e · inv_7qk2",
     rootCausePath: "src/handlers/checkout_handler.py#L142-L168",
     confidence: 0.83,
     rank: 1,
@@ -17,6 +19,8 @@ export const mockRcaByJobId: Record<string, RcaResult> = {
   },
   dbg_2026_002: {
     jobId: "dbg_2026_002",
+    fileId: "fid_api_auth_session_validator_py",
+    runId: "run_us1-9b3d4f2a · inv_8lm4",
     rootCausePath: "api/auth/session_validator.py#L88-L104",
     confidence: 0.92,
     rank: 1,
@@ -31,6 +35,8 @@ export const mockRcaByJobId: Record<string, RcaResult> = {
   },
   dbg_2026_003: {
     jobId: "dbg_2026_003",
+    fileId: "fid_services_payment_retry_manager_ts",
+    runId: "run_pay-eu1-4c1a · inv_3nx9",
     rootCausePath: "services/payment/retry_manager.ts#L214-L238",
     confidence: 0.71,
     rank: 1,
@@ -45,6 +51,8 @@ export const mockRcaByJobId: Record<string, RcaResult> = {
   },
   dbg_2026_004: {
     jobId: "dbg_2026_004",
+    fileId: "fid_user_profile_repositories_profile_store_py",
+    runId: "run_usw2-2d8e · inv_5pq1",
     rootCausePath:
       "user-profile-api/src/repositories/profile_store.py#L56-L78",
     confidence: 0.54,
@@ -60,6 +68,8 @@ export const mockRcaByJobId: Record<string, RcaResult> = {
   },
   dbg_2026_005: {
     jobId: "dbg_2026_005",
+    fileId: "—",
+    runId: "queued · run_pending",
     rootCausePath: "pending analysis",
     confidence: 0,
     rank: 0,
@@ -74,6 +84,8 @@ export const mockRcaByJobId: Record<string, RcaResult> = {
   },
   dbg_2026_006: {
     jobId: "dbg_2026_006",
+    fileId: "fid_services_payment_idempotency_store_go",
+    runId: "run_ledger-us1-1a9c · inv_2hj7",
     rootCausePath: "services/payment/idempotency_store.go#L112-L135",
     confidence: 0.88,
     rank: 1,
@@ -88,6 +100,8 @@ export const mockRcaByJobId: Record<string, RcaResult> = {
   },
   dbg_2026_007: {
     jobId: "dbg_2026_007",
+    fileId: "fid_api_auth_redis_session_cache_py",
+    runId: "run_auth-use1-6f2b · inv_9wz0",
     rootCausePath: "api/auth/redis_session_cache.py#L34-L51",
     confidence: 0.79,
     rank: 1,
@@ -102,6 +116,8 @@ export const mockRcaByJobId: Record<string, RcaResult> = {
   },
   dbg_2026_008: {
     jobId: "dbg_2026_008",
+    fileId: "fid_src_handlers_checkout_handler_py",
+    runId: "run_chk-us1-7d4e · inv_4rt8",
     rootCausePath: "src/handlers/checkout_handler.py#L201-L220",
     confidence: 0.86,
     rank: 1,

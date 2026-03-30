@@ -31,17 +31,38 @@
 }
 
 @layer components {
+  .ui-page-header-block {
+    @apply space-y-2;
+  }
+  .ui-section-eyebrow {
+    @apply text-[11px] font-bold uppercase tracking-[0.18em] text-sky-500/90;
+  }
   .ui-page-title {
     @apply text-2xl font-bold tracking-tight text-white sm:text-3xl;
   }
   .ui-page-desc {
-    @apply mt-1.5 max-w-2xl text-sm leading-relaxed text-slate-500;
+    @apply mt-2 max-w-2xl text-sm leading-relaxed text-slate-500;
+  }
+  .ui-section-title {
+    @apply text-xl font-bold tracking-tight text-white sm:text-2xl;
+  }
+  .ui-section-desc {
+    @apply mt-2 max-w-2xl text-sm leading-relaxed text-slate-500;
   }
   .ui-card {
-    @apply rounded-card border border-blue-500/[0.12] bg-gradient-to-br from-surface-850/90 via-surface-925/95 to-surface-960 shadow-card;
+    @apply rounded-card border border-white/[0.08] bg-gradient-to-br from-surface-850/90 via-surface-925/95 to-surface-960 shadow-card;
   }
   .ui-card-elevated {
     @apply rounded-card border border-indigo-500/20 bg-gradient-to-br from-surface-825/80 via-surface-950 to-surface-975 shadow-card-premium;
+  }
+  .ui-empty-shell {
+    @apply rounded-2xl border border-dashed border-white/[0.12] bg-surface-975/50 shadow-inner backdrop-blur-sm;
+  }
+  .ui-icon-btn {
+    @apply inline-flex items-center justify-center rounded-lg p-2.5 text-slate-500 transition-colors duration-200 hover:bg-white/[0.06] hover:text-slate-100;
+  }
+  .ui-table-shell {
+    @apply overflow-hidden rounded-2xl border border-white/[0.1] bg-gradient-to-b from-surface-850/75 via-surface-960 to-surface-975 shadow-card;
   }
 }
 
