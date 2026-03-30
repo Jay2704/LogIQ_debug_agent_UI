@@ -20,11 +20,9 @@ export function ExplanationPanel({ content, className }: ExplanationPanelProps) 
           <Sparkles className="h-4 w-4" strokeWidth={2} />
         </div>
         <div className="min-w-0 flex-1">
-          <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">
-            AI Explanation
-          </p>
-          <h3 className="mt-0.5 text-sm font-semibold text-slate-400">
-            Assistive Layer
+          <h3 className="text-sm font-semibold text-slate-400">
+            AI Explanation{" "}
+            <span className="font-normal text-slate-600">(Assistive Layer)</span>
           </h3>
           <p className="mt-2 text-[11px] leading-relaxed text-slate-600">
             Narrative synthesis for faster comprehension — does not override

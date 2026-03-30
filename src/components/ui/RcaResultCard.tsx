@@ -68,11 +68,9 @@ export function RcaResultCard({ rca, className }: RcaResultCardProps) {
               <ShieldCheck className="h-5 w-5 text-violet-300" strokeWidth={2} />
             </div>
             <div>
-              <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-violet-300/90">
-                Deterministic Root Cause
-              </p>
-              <h3 className="mt-0.5 text-lg font-bold tracking-tight text-white">
-                Source of Truth
+              <h3 className="text-lg font-bold tracking-tight text-white">
+                Deterministic Root Cause{" "}
+                <span className="text-slate-400">(Source of Truth)</span>
               </h3>
               <p className="mt-1 max-w-xl text-xs leading-relaxed text-slate-500">
                 Ranked from traces, metrics, and code correlation — auditable and
