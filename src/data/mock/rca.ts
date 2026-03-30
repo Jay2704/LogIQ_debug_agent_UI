@@ -1,13 +1,12 @@
 import type { RcaResult } from "@/types";
 
 export const mockRcaByJobId: Record<string, RcaResult> = {
-  "job-8f2a": {
-    jobId: "job-8f2a",
-    rootCausePath:
-      "services/checkout-api/src/handlers/orderCreate.ts#L214-L238",
-    confidence: 0.87,
+  dbg_2026_001: {
+    jobId: "dbg_2026_001",
+    rootCausePath: "src/handlers/checkout_handler.py#L142-L168",
+    confidence: 0.83,
     rank: 1,
-    evidenceRef: "trace:chk-9f2a · span checkout.redis.cart",
+    evidenceRef: "trace:chk-us1-8a2f · span checkout_handler.confirm_order",
     steps: {
       triage: "done",
       rca: "active",
@@ -16,12 +15,12 @@ export const mockRcaByJobId: Record<string, RcaResult> = {
       reporting: "pending",
     },
   },
-  "job-7d41": {
-    jobId: "job-7d41",
-    rootCausePath: "services/auth-service/pkg/oauth/refresh.go#L88-L104",
-    confidence: 0.94,
+  dbg_2026_002: {
+    jobId: "dbg_2026_002",
+    rootCausePath: "api/auth/session_validator.py#L88-L104",
+    confidence: 0.92,
     rank: 1,
-    evidenceRef: "deploy:auth-service@v2.14.2 · diff auth/refresh",
+    evidenceRef: "deploy:auth-service@2026.03.29-2 · diff api/auth/session_validator.py",
     steps: {
       triage: "done",
       rca: "done",
@@ -30,12 +29,12 @@ export const mockRcaByJobId: Record<string, RcaResult> = {
       reporting: "done",
     },
   },
-  "job-6c90": {
-    jobId: "job-6c90",
-    rootCausePath: "workers/payments/kafka_consumer.go#L312-L340",
-    confidence: 0.81,
+  dbg_2026_003: {
+    jobId: "dbg_2026_003",
+    rootCausePath: "services/payment/retry_manager.ts#L214-L238",
+    confidence: 0.71,
     rank: 1,
-    evidenceRef: "metric:kafka.lag · topic payments.events",
+    evidenceRef: "trace:pay-retry · span retry_manager.execute_with_backoff",
     steps: {
       triage: "done",
       rca: "done",
@@ -44,12 +43,13 @@ export const mockRcaByJobId: Record<string, RcaResult> = {
       reporting: "done",
     },
   },
-  "job-5b33": {
-    jobId: "job-5b33",
-    rootCausePath: "unknown — shard repair incomplete",
-    confidence: 0.42,
-    rank: 3,
-    evidenceRef: "db:inventory.inv_shard_03 · checksum drift",
+  dbg_2026_004: {
+    jobId: "dbg_2026_004",
+    rootCausePath:
+      "user-profile-api/src/repositories/profile_store.py#L56-L78",
+    confidence: 0.54,
+    rank: 2,
+    evidenceRef: "metric:dynamodb.consistent_read · table user_profile",
     steps: {
       triage: "done",
       rca: "done",
@@ -58,22 +58,8 @@ export const mockRcaByJobId: Record<string, RcaResult> = {
       reporting: "done",
     },
   },
-  "job-4a12": {
-    jobId: "job-4a12",
-    rootCausePath: "services/search/indexer/pipeline.py#L120-L145",
-    confidence: 0.76,
-    rank: 1,
-    evidenceRef: "queue:indexer.backlog · autoscaler events",
-    steps: {
-      triage: "done",
-      rca: "done",
-      evidence: "done",
-      explanation: "done",
-      reporting: "done",
-    },
-  },
-  "job-391f": {
-    jobId: "job-391f",
+  dbg_2026_005: {
+    jobId: "dbg_2026_005",
     rootCausePath: "pending analysis",
     confidence: 0,
     rank: 0,
@@ -86,12 +72,12 @@ export const mockRcaByJobId: Record<string, RcaResult> = {
       reporting: "pending",
     },
   },
-  "job-280e": {
-    jobId: "job-280e",
-    rootCausePath: "services/billing/ledger/idempotency.go#L56-L71",
-    confidence: 0.91,
+  dbg_2026_006: {
+    jobId: "dbg_2026_006",
+    rootCausePath: "services/payment/idempotency_store.go#L112-L135",
+    confidence: 0.88,
     rank: 1,
-    evidenceRef: "audit:idempotency_keys · collision window",
+    evidenceRef: "audit:idempotency_keys · window failover-drill-2026-03-28",
     steps: {
       triage: "done",
       rca: "done",
@@ -100,12 +86,26 @@ export const mockRcaByJobId: Record<string, RcaResult> = {
       reporting: "done",
     },
   },
-  "job-170d": {
-    jobId: "job-170d",
-    rootCausePath: "infra/dns/edge-records.tf#L18-L34",
-    confidence: 0.88,
+  dbg_2026_007: {
+    jobId: "dbg_2026_007",
+    rootCausePath: "api/auth/redis_session_cache.py#L34-L51",
+    confidence: 0.79,
     rank: 1,
-    evidenceRef: "probe:edge.health · region us-east-1",
+    evidenceRef: "metric:redis.cpu · cluster auth-session-use1",
+    steps: {
+      triage: "done",
+      rca: "done",
+      evidence: "done",
+      explanation: "done",
+      reporting: "done",
+    },
+  },
+  dbg_2026_008: {
+    jobId: "dbg_2026_008",
+    rootCausePath: "src/handlers/checkout_handler.py#L201-L220",
+    confidence: 0.86,
+    rank: 1,
+    evidenceRef: "log:cart.merge · correlation_id catalog-sync-26c",
     steps: {
       triage: "done",
       rca: "done",

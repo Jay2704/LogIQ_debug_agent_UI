@@ -63,7 +63,7 @@ export function Jobs() {
           <SearchInput
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="job-… or anom-…"
+            placeholder="dbg_… or anomaly_…"
             aria-label="Search jobs"
           />
         </div>

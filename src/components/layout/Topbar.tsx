@@ -12,11 +12,11 @@ export function Topbar() {
     e.preventDefault();
     const trimmed = q.trim();
     if (!trimmed) return;
-    if (trimmed.startsWith("job-")) {
+    if (trimmed.startsWith("dbg_")) {
       navigate(`/jobs/${trimmed}`);
       return;
     }
-    if (trimmed.startsWith("anom-")) {
+    if (trimmed.startsWith("anomaly_")) {
       navigate(`/anomalies`);
       return;
     }

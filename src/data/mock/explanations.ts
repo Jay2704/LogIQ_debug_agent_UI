@@ -4,228 +4,250 @@ import { mockJobs } from "./jobs";
 import { mockRcaByJobId } from "./rca";
 
 const explanations: Record<string, string> = {
-  "job-8f2a": `The spike aligns with Redis command timeouts on the cart cluster during a hot-key burst on SKU bundles. Traces show checkout threads blocking on \`GET cart:*\` while connection pool saturation increased round-trip time. No deploy occurred in the window; cache pressure is the primary driver versus code regression.`,
-  "job-7d41": `Refresh failures concentrated on clients still holding rotated signing keys from the prior release. The new middleware tightened JWK validation; clients without the updated key bundle received 401s until caches expired. Rollback restored prior behavior while key distribution catches up.`,
-  "job-6c90": `Consumer group lag grew when downstream batch writes to Postgres slowed due to a vacuum-heavy window on the ledger table. Partition assignment remained healthy; throughput recovered after read replicas took analytics queries off the primary.`,
-  "job-5b33": `Import job partially wrote to shard inv-03 while a repair job was mid-flight, leaving quantity deltas inconsistent with the canonical warehouse feed. Automated reconciliation has not completed; manual shard repair is required.`,
-  "job-4a12": `Nightly reindex increased CPU on indexer nodes beyond the steady-state autoscaler policy. Backlog cleared once additional nodes joined; no data loss detected in index snapshots.`,
-  "job-391f": `Investigation queued behind higher-severity regional incidents. Initial signals point to upstream SMS provider 5xx responses during a carrier maintenance window.`,
-  "job-280e": `Idempotency collisions occurred when failover replayed partially committed ledger entries. Keys matched within the dedupe window but referenced different charge intents. Safeguards now reject ambiguous replays until ledger state converges.`,
-  "job-170d": `Health check failures traced to stale A records at the edge after DNS TTL mismatch between primary and failover targets. Traffic shifted to healthy pools once TTLs aligned and caches flushed.`,
+  dbg_2026_001: `Hot path analysis shows request time concentrated in \`confirm_order\` after the cart totalizer returned. CPU on checkout pods is nominal; wall time aligns with downstream inventory holds and synchronous fraud scoring. The deterministic file anchor matches the top stack frame from sampled traces. Redis and session layers are secondary contributors in this window.`,
+
+  dbg_2026_002: `Session refresh failures cluster on clients that cached the previous JWK set. The canary introduced stricter validation in \`session_validator\`; clients without the rotated keys failed until caches expired. Rollback restored prior validation order while identity distributes updated bundles.`,
+
+  dbg_2026_003: `Retry manager doubled attempts while PSP p99 latency stayed above the backoff ceiling, causing a feedback loop of overlapping retries on the same capture id. Circuit breaker thresholds were unchanged from last week; the spike is tied to partner maintenance, not a code path regression in isolation.`,
+
+  dbg_2026_004: `Profile reads occasionally hit replicas before the write quorum was visible to the routing layer. Clients using short read timeouts observe stale display names; strongly consistent reads or client-side retry-on-mismatch would mask the symptom. Root ranking favors repository merge logic over Dynamo itself.`,
+
+  dbg_2026_005: `Job is queued behind two regional Sev-2 investigations. Initial triage points to webhook consumer saturation during a marketing send, but RCA has not started.`,
+
+  dbg_2026_006: `During failover drill, replay reused idempotency keys that referenced in-flight captures from the primary region. Ledger rejected duplicates correctly; no money movement after reconciliation. Hardening replay ordering removes ambiguity for the next exercise.`,
+
+  dbg_2026_007: `MFA path latency tracks Redis CPU on the auth session cluster during bulk password rotation. Session cache evictions increased round-trips to the identity store; scaling read replicas for the cache tier reduced p95 under the same load test.`,
+
+  dbg_2026_008: `Cart merge endpoint saw contention when catalog sync invalidated keys mid-request. Handler-level merge logic retried once and succeeded; impact was limited to a narrow time window and did not affect paid orders.`,
+
 };
 
 const evidenceByJob: Record<string, EvidenceItem[]> = {
-  "job-8f2a": [
+  dbg_2026_001: [
     {
       id: "e1",
-      label: "Trace hot path",
+      label: "Top stack frame",
       detail:
-        "p95 on orderCreate spans increased 3.1× vs prior hour; Redis spans dominate.",
+        "Hottest samples in flame graphs point to checkout_handler.confirm_order — matches deterministic RCA file anchor.",
       source: "APM",
     },
     {
       id: "e2",
-      label: "Redis metrics",
-      detail: "instantaneous_ops_per_sec maxed; timeout count +420 in 10m window.",
-      source: "Infra",
+      label: "Deploy correlation",
+      detail:
+        "Release 2026.03.28-14 touched services/payment/retry_manager.ts; deploy window overlaps latency onset by 6 minutes.",
+      source: "CI/CD",
     },
     {
       id: "e3",
-      label: "Deploy correlation",
-      detail: "No production deploy in ±45m; rules out new binary regression.",
-      source: "CI/CD",
+      label: "Historical pattern",
+      detail:
+        "Repeated anomaly pattern in checkout-service over last 7 days: 4 incidents with same golden-signal fingerprint (latency + 5xx on /checkout/confirm).",
+      source: "Incident DB",
+    },
+    {
+      id: "e4",
+      label: "Trace exemplar",
+      detail:
+        "Exemplar trace chk-us1-8a2f shows 1.8s in handler before downstream PSP call; child spans for inventory hold add 340ms.",
+      source: "Tracing",
     },
   ],
-  "job-7d41": [
+  dbg_2026_002: [
     {
       id: "e1",
       label: "Auth logs",
       detail:
-        "401 spike on /oauth/token correlates with middleware commit hash ab91c2.",
+        "401 rate on /v1/session/refresh correlates with deploy auth-service@2026.03.29-2; commit touches session_validator.",
       source: "Logs",
     },
     {
       id: "e2",
-      label: "Key rotation",
-      detail: "JWK set rotation timestamp matches error onset for legacy clients.",
+      label: "JWK rotation",
+      detail: "Key rotation timestamp matches first error minute for legacy mobile build 4.8.x.",
       source: "Secrets",
     },
   ],
-  "job-6c90": [
+  dbg_2026_003: [
     {
       id: "e1",
-      label: "Kafka lag",
-      detail: "Max lag 1.8M messages on partition 4; others nominal.",
-      source: "Streaming",
+      label: "Retry loop",
+      detail:
+        "retry_manager issued overlapping retries while PSP p99 > 4s; backoff cap exceeded 12× in 10 minutes.",
+      source: "Traces",
     },
     {
       id: "e2",
-      label: "DB load",
-      detail: "Primary CPU 94% with long-running vacuum on ledger_txn.",
-      source: "Postgres",
+      label: "PSP status",
+      detail: "Partner status page shows maintenance on capture API during incident window.",
+      source: "External",
     },
   ],
-  "job-5b33": [
+  dbg_2026_004: [
     {
       id: "e1",
-      label: "Shard checksum",
-      detail: "inv-03 counts diverge 2.4% from warehouse feed snapshot.",
-      source: "DB",
+      label: "Read-after-write",
+      detail:
+        "Consistent read off primary resolves stale profile in repro; default route uses replica set ap-south-1b.",
+      source: "DynamoDB",
     },
   ],
-  "job-4a12": [
+  dbg_2026_005: [],
+  dbg_2026_006: [
     {
       id: "e1",
-      label: "Queue depth",
-      detail: "Indexer backlog peaked at 2.1M docs; autoscaler added 4 nodes.",
-      source: "Orchestration",
-    },
-  ],
-  "job-391f": [],
-  "job-280e": [
-    {
-      id: "e1",
-      label: "Audit trail",
-      detail: "Duplicate idempotency key observed across failover boundary.",
+      label: "Idempotency audit",
+      detail:
+        "Collision window shows two capture intents sharing key cap_9f2a within failover boundary; ledger holds are consistent post-audit.",
       source: "Ledger",
     },
   ],
-  "job-170d": [
+  dbg_2026_007: [
     {
       id: "e1",
-      label: "DNS probe",
-      detail: "Edge resolver returned mixed A records vs control plane intent.",
-      source: "DNS",
+      label: "Redis saturation",
+      detail: "auth-session-use1 maxed CPU at 94% during rotation campaign; hot key on session:* prefix.",
+      source: "Redis",
+    },
+  ],
+  dbg_2026_008: [
+    {
+      id: "e1",
+      label: "Catalog sync",
+      detail:
+        "catalog-sync-26c job invalidated cart keys during merge; merge handler retry cleared conflicts.",
+      source: "Logs",
     },
   ],
 };
 
 const remediationByJob: Record<string, string[]> = {
-  "job-8f2a": [
-    "Increase cart Redis connection pool ceiling for checkout-api in us-east-1.",
-    "Enable request coalescing for hot SKU bundle reads (feature flag cart-coalesce).",
-    "Add circuit breaker metrics dashboard for Redis sub-50ms SLO.",
+  dbg_2026_001: [
+    "Add budgeted timeout around inventory hold in checkout_handler.confirm_order; fail fast to user-visible retry.",
+    "Coordinate with payments to gate retry_manager backoff when PSP latency > 2× baseline (feature flag pay-retry-tighten).",
+    "Schedule load test on /checkout/confirm with 2026.03.28-14 build to validate fix before broad rollout.",
   ],
-  "job-7d41": [
-    "Keep rollback until JWK distribution reaches 99% of active clients.",
-    "Shorten key cache TTL for mobile clients on the next release train.",
+  dbg_2026_002: [
+    "Hold canary until JWK bundle reaches 99% of active app versions; expand phased rollout.",
+    "Add client-side key refresh probe on 401 from /v1/session/refresh for legacy SDKs.",
   ],
-  "job-6c90": [
-    "Move analytics queries to replica during nightly batch windows.",
-    "Tune consumer fetch size to reduce write batch pressure on primary.",
+  dbg_2026_003: [
+    "Lower max retry count when PSP error class is TIMEOUT vs DECLINE; ship config change in retry_manager.",
+    "Page payments on-call when overlapping retries exceed 3 per capture id in a 5-minute window.",
   ],
-  "job-5b33": [
-    "Pause imports on shard inv-03 until repair completes.",
-    "Run manual reconciliation script with warehouse feed checksum.",
+  dbg_2026_004: [
+    "Route profile GET by user id through strongly consistent read for 60s after profile PUT.",
+    "Document client contract: minimum 150ms backoff before second read after update.",
   ],
-  "job-4a12": [
-    "Raise indexer autoscaler max nodes during nightly reindex.",
+  dbg_2026_005: [
+    "Drain DLQ after consumer scale-out; verify webhook signing secret rotation is complete.",
   ],
-  "job-391f": [
-    "Fail over SMS traffic to secondary provider if error rate persists >5m.",
+  dbg_2026_006: [
+    "Require monotonic region sequence on idempotency replay before second capture attempt.",
+    "Add integration test for failover drill covering idempotency key reuse.",
   ],
-  "job-280e": [
-    "Harden idempotency replay to require monotonic ledger sequence match.",
+  dbg_2026_007: [
+    "Scale Redis read replicas for auth-session cluster during rotation windows.",
+    "Shard hot session prefix to reduce single-node CPU skew.",
   ],
-  "job-170d": [
-    "Align DNS TTLs between edge and failover targets; add pre-deploy validation.",
+  dbg_2026_008: [
+    "Defer catalog invalidation until after open cart merge completes (async invalidation queue).",
   ],
 };
 
 const similarByJob: Record<string, SimilarIncident[]> = {
-  "job-8f2a": [
+  dbg_2026_001: [
     {
-      id: "sim-1",
-      title: "Cart Redis saturation — Black Friday prep",
-      occurredAt: "2025-11-20T18:10:00Z",
-      overlap: "Same service, Redis timeouts under burst traffic",
+      id: "sim-2026-014",
+      title: "checkout-service — confirm path latency (Jan 2026)",
+      occurredAt: "2026-01-14T16:22:00Z",
+      overlap: "Same handler hot frame; inventory hold added after pricing change",
     },
     {
-      id: "sim-2",
-      title: "Checkout latency — bundle promotion",
-      occurredAt: "2026-01-08T09:44:00Z",
-      overlap: "Hot-key pattern on promotional SKUs",
+      id: "sim-2025-112",
+      title: "checkout-service — Redis timeout burst (Nov 2025)",
+      occurredAt: "2025-11-22T09:10:00Z",
+      overlap: "checkout-service; session/cart pressure under promotion traffic",
     },
   ],
-  "job-7d41": [
+  dbg_2026_002: [
     {
-      id: "sim-1",
-      title: "OAuth refresh 401 after cert rotation",
+      id: "sim-2025-09-aa",
+      title: "auth-service — refresh 401 after key rotation",
       occurredAt: "2025-09-14T11:02:00Z",
-      overlap: "Key rotation window vs client cache",
+      overlap: "session_validator path; client cache stale JWK",
     },
   ],
-  "job-6c90": [
+  dbg_2026_003: [
     {
-      id: "sim-1",
-      title: "Ledger vacuum contention",
-      occurredAt: "2025-12-03T04:18:00Z",
-      overlap: "Primary CPU during batch + consumer lag",
+      id: "sim-2026-02-pg",
+      title: "payment-gateway — PSP maintenance retry storm",
+      occurredAt: "2026-02-03T04:18:00Z",
+      overlap: "retry_manager backoff; partner incident",
     },
   ],
-  "job-5b33": [],
-  "job-4a12": [
+  dbg_2026_004: [],
+  dbg_2026_005: [],
+  dbg_2026_006: [
     {
-      id: "sim-1",
-      title: "Indexer backlog during catalog import",
-      occurredAt: "2026-02-11T03:55:00Z",
-      overlap: "Nightly job CPU saturation",
-    },
-  ],
-  "job-391f": [],
-  "job-280e": [
-    {
-      id: "sim-1",
-      title: "Idempotency collision — regional failover test",
+      id: "sim-2025-10-dr",
+      title: "payment-gateway — idempotency during drill",
       occurredAt: "2025-10-22T16:40:00Z",
-      overlap: "Replay boundary on ledger",
+      overlap: "Failover replay boundary; ledger audit",
     },
   ],
-  "job-170d": [
+  dbg_2026_007: [
     {
-      id: "sim-1",
-      title: "Edge 503 during DNS cutover",
-      occurredAt: "2025-07-19T07:12:00Z",
-      overlap: "TTL mismatch at edge",
+      id: "sim-2026-01-mfa",
+      title: "auth-service — MFA latency during campaign",
+      occurredAt: "2026-01-08T19:15:00Z",
+      overlap: "Redis session cluster CPU; rotation event",
+    },
+  ],
+  dbg_2026_008: [
+    {
+      id: "sim-2025-12-cart",
+      title: "checkout-service — merge conflict after catalog job",
+      occurredAt: "2025-12-01T07:45:00Z",
+      overlap: "checkout_handler merge; catalog invalidation",
     },
   ],
 };
 
 const confidenceNotes: Record<string, string> = {
-  "job-8f2a":
-    "Confidence is high for Redis pressure as root contributor; lower certainty on long-term fix sizing without load test.",
-  "job-7d41":
-    "High confidence: deploy diff and log correlation are direct; client telemetry confirms recovery post-rollback.",
-  "job-6c90":
-    "Strong signal from lag and DB metrics; partial uncertainty on whether vacuum schedule alone prevents recurrence.",
-  "job-5b33":
-    "Low confidence: shard state inconsistent; needs manual validation before accepting automated RCA output.",
-  "job-4a12":
-    "Moderate confidence: autoscaler resolved symptoms; root cause is capacity policy rather than code defect.",
-  "job-391f":
-    "Investigation not complete; confidence not yet computed.",
-  "job-280e":
-    "High confidence from audit replay and idempotency key analysis.",
-  "job-170d":
-    "High confidence from probe data and DNS record comparison.",
+  dbg_2026_001:
+    "0.83 confidence: strong trace alignment to checkout_handler; residual uncertainty from overlapping deploy to payment retry module.",
+  dbg_2026_002:
+    "0.92 confidence: deploy diff, log correlation, and rollback outcome all align on session_validator.",
+  dbg_2026_003:
+    "0.71 confidence: retry_manager is primary ranked cause; PSP incident explains variance but partner root is external.",
+  dbg_2026_004:
+    "Moderate confidence: consistency model matches symptoms; client behavior may mask full blast radius.",
+  dbg_2026_005: "Investigation not started; confidence not computed.",
+  dbg_2026_006:
+    "High confidence from ledger replay and idempotency key timeline; drill-specific edge case.",
+  dbg_2026_007:
+    "0.79 confidence: Redis metrics and campaign timing correlate; less certainty on long-term shard strategy without capacity model.",
+  dbg_2026_008:
+    "0.86 confidence: narrow window and clear log correlation to catalog sync job.",
 };
 
 const limitationsNotes: Record<string, string> = {
-  "job-8f2a":
-    "Does not include mobile client-side latency; assumes server-side tracing is representative.",
-  "job-7d41":
-    "Third-party SDK behavior outside our org is inferred from sampled clients only.",
-  "job-6c90":
-    "Cross-region replication not modeled; single-region RCA scope.",
-  "job-5b33":
-    "Automated analysis cannot verify physical inventory; warehouse feed taken as ground truth.",
-  "job-4a12":
-    "Search ranking quality impact not quantified in this RCA.",
-  "job-391f": "Limited to provider status pages and outbound webhook samples.",
-  "job-280e":
-    "Financial impact estimate excluded pending finance review.",
-  "job-170d":
-    "Client DNS caching variability may extend recovery beyond infra fix time.",
+  dbg_2026_001:
+    "Mobile WebView clients not fully sampled; assumes server-side traces represent majority of user journeys.",
+  dbg_2026_002:
+    "Third-party mobile SDK versions estimated from crash reports; not exhaustive.",
+  dbg_2026_003:
+    "PSP internal queue depth not visible; external status page used as ground truth.",
+  dbg_2026_004:
+    "Does not model client-side caches outside API gateway.",
+  dbg_2026_005: "No traces attached until job leaves queue.",
+  dbg_2026_006:
+    "Financial impact excluded pending finance sign-off on replay classification.",
+  dbg_2026_007:
+    "Cross-region auth traffic not in scope for this single-region RCA.",
+  dbg_2026_008:
+    "Search ranking and recommendation side effects not evaluated.",
 };
 
 export function getJobDetailBundle(jobId: string) {

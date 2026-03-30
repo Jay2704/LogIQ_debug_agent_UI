@@ -219,8 +219,9 @@ export function Dashboard() {
               AI insight
             </p>
             <p className="mt-1 text-sm text-slate-300">
-              Latency spikes on checkout correlate with Redis timeouts more
-              often than deploys in the last 7 days.
+              checkout-service shows the highest fingerprint match rate vs
+              payment-gateway in the last 7 days — worth watching confirm path
+              deploys.
             </p>
           </div>
           <div className="ui-card p-4 shadow-card">
@@ -248,7 +249,7 @@ export function Dashboard() {
               Coverage
             </p>
             <p className="mt-1 text-sm text-slate-300">
-              128 services monitored · 14 regions (mock configuration).
+              128 services monitored · 14 regions (workspace configuration).
             </p>
           </div>
         </div>
