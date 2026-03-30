@@ -30,12 +30,19 @@ export async function submitLoginPlaceholder(
 
 /**
  * Placeholder sign-up — replace with `api.auth.signup()` when backend exists.
+ * Demo: work email containing `fail@` simulates an error response.
  */
 export async function submitSignupPlaceholder(
-  _values: SignupFormValues
+  values: SignupFormValues
 ): Promise<AuthSubmitResult> {
-  void _values;
   await delay(1200);
+  if (values.workEmail.toLowerCase().includes("fail@")) {
+    return {
+      status: "error",
+      message:
+        "Could not create account (simulated). Try a different email or remove “fail@” from the local part.",
+    };
+  }
   return {
     status: "success",
     message:

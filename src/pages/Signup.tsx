@@ -61,8 +61,20 @@ export function Signup() {
       cardDescription="Join your team’s LogIQ workspace."
     >
       <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+        {submitStatus === "error" && banner ? (
+          <div
+            className="rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-2.5 text-sm text-red-200"
+            role="alert"
+            aria-live="polite"
+          >
+            {banner}
+          </div>
+        ) : null}
         {success && banner ? (
-          <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2.5 text-sm text-emerald-200">
+          <div
+            className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2.5 text-sm text-emerald-200"
+            aria-live="polite"
+          >
             {banner}
           </div>
         ) : null}
@@ -89,6 +101,7 @@ export function Signup() {
           id="signup-email"
           label="Work email"
           error={errors.workEmail}
+          hint='Demo: include “fail@” in the email to simulate a failed signup.'
         >
           <AuthInput
             id="signup-email"

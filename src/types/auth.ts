@@ -1,4 +1,8 @@
-/** Form models for auth UI — wire to API contracts when backend exists */
+/**
+ * Auth form models and submit shapes for the LogIQ Debug Agent UI.
+ * Replace placeholder handlers in `@/lib/authHandlers` with real API calls
+ * (e.g. `POST /auth/login`, session cookies or bearer tokens) when backend exists.
+ */
 
 export type AuthTeamRole =
   | "sre"

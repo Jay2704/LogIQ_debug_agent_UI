@@ -32,7 +32,7 @@ export function AuthField({
       </label>
       {children}
       {error ? (
-        <p className="text-xs font-medium text-red-400" role="alert">
+        <p id={`${id}-error`} className="text-xs font-medium text-red-400" role="alert">
           {error}
         </p>
       ) : null}
@@ -58,10 +58,13 @@ export function AuthInput({
   className,
   ...props
 }: AuthInputProps) {
+  const errId = error ? `${id}-error` : undefined;
   return (
     <input
       id={id}
       disabled={disabled}
+      aria-invalid={error ? true : undefined}
+      aria-describedby={errId}
       className={cn(
         "w-full rounded-xl border bg-surface-975/80 px-3.5 py-2.5 text-sm text-slate-100 placeholder:text-slate-500",
         "shadow-inner outline-none transition-all duration-200",
@@ -99,6 +102,8 @@ export function AuthSelect({
     <select
       id={id}
       disabled={disabled}
+      aria-invalid={error ? true : undefined}
+      aria-describedby={error ? `${id}-error` : undefined}
       className={cn(
         "w-full cursor-pointer appearance-none rounded-xl border bg-surface-975/80 px-3.5 py-2.5 text-sm text-slate-100",
         "shadow-inner outline-none transition-all duration-200",

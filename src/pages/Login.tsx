@@ -62,12 +62,16 @@ export function Login() {
           <div
             className="rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-2.5 text-sm text-red-200"
             role="alert"
+            aria-live="polite"
           >
             {banner}
           </div>
         ) : null}
         {success && banner ? (
-          <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2.5 text-sm text-emerald-200">
+          <div
+            className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2.5 text-sm text-emerald-200"
+            aria-live="polite"
+          >
             {banner}
           </div>
         ) : null}
@@ -93,7 +97,7 @@ export function Login() {
           id="login-password"
           label="Password"
           error={errors.password}
-          hint='Tip: password "faildemo" simulates an error.'
+          hint='Demo: password “faildemo” simulates a failed sign-in.'
         >
           <AuthInput
             id="login-password"
@@ -125,6 +129,7 @@ export function Login() {
           <button
             type="button"
             className="text-sm font-medium text-sky-400 transition hover:text-sky-300"
+            title="Password reset is not wired yet — will connect when auth backend exists."
           >
             Forgot password?
           </button>
