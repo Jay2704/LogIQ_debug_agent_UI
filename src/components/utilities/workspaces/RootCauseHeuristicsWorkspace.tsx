@@ -1,0 +1,92 @@
+import { useState } from "react";
+import { Activity, Radio } from "lucide-react";
+import { UtilityPanel } from "@/components/utilities/UtilityToolLayout";
+import { UtilityRunButton } from "@/components/utilities/UtilityRunButton";
+import { MOCK_HEURISTIC_CLUSTERS } from "@/data/mock/utilityWorkspaceMocks";
+import { useSimulatedUtilityRun } from "@/hooks/useSimulatedUtilityRun";
+import { cn } from "@/lib/utils";
+
+const SAMPLE_FINDINGS = [
+  { id: "f1", label: "PSP timeout correlates with partner incident window" },
+  { id: "f2", label: "Retry storm on payment-gateway after 842ms inventory hold" },
+  { id: "f3", label: "Dynamo stale read on user-profile — secondary symptom" },
+];
+
+export function RootCauseHeuristicsWorkspace() {
+  const [ran, setRan] = useState(false);
+  const { running, run } = useSimulatedUtilityRun(500);
+
+  const handleRun = () => {
+    run(() => setRan(true));
+  };
+
+  return (
+    <>
+      <UtilityPanel title="Sample findings (input context)">
+        <ul className="space-y-2">
+          {SAMPLE_FINDINGS.map((f) => (
+            <li
+              key={f.id}
+              className="flex items-start gap-2 rounded-lg border border-white/[0.06] bg-surface-960/60 px-3 py-2 text-sm text-slate-300"
+            >
+              <Activity className="mt-0.5 h-4 w-4 shrink-0 text-sky-400/80" />
+              {f.label}
+            </li>
+          ))}
+        </ul>
+        <div className="mt-5">
+          <UtilityRunButton onClick={handleRun} loading={running}>
+            Rank clusters
+          </UtilityRunButton>
+        </div>
+      </UtilityPanel>
+
+      <UtilityPanel title="Ranked issue clusters" className={cn(!ran && "opacity-80")}>
+        {!ran ? (
+          <p className="text-sm text-slate-500">
+            Deterministic scoring over log signals — preview only (mock).
+          </p>
+        ) : (
+          <ol className="space-y-4">
+            {MOCK_HEURISTIC_CLUSTERS.map((c) => (
+              <li
+                key={c.rank}
+                className="rounded-xl border border-white/[0.08] bg-surface-960/80 p-4"
+              >
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-violet-500/20 font-mono text-xs font-bold text-violet-200">
+                      {c.rank}
+                    </span>
+                    <span className="font-semibold text-slate-100">{c.title}</span>
+                  </div>
+                  <span className="font-mono text-xs text-emerald-400/90">
+                    {(c.confidence * 100).toFixed(0)}% conf.
+                  </span>
+                </div>
+                <div className="mt-3 flex flex-wrap gap-1.5">
+                  {c.signals.map((s) => (
+                    <span
+                      key={s}
+                      className="inline-flex items-center gap-1 rounded-md border border-white/[0.08] bg-black/25 px-2 py-1 font-mono text-[10px] text-slate-400"
+                    >
+                      <Radio className="h-3 w-3 text-sky-500/70" />
+                      {s}
+                    </span>
+                  ))}
+                </div>
+              </li>
+            ))}
+          </ol>
+        )}
+      </UtilityPanel>
+
+      <UtilityPanel title="Supporting signals">
+        <p className="text-xs leading-relaxed text-slate-500">
+          In production, this panel would cross-link metrics, traces, and deploy events. Here
+          signals are embedded per cluster above.
+        </p>
+      </UtilityPanel>
+    </>
+  );
+}

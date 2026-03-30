@@ -78,10 +78,45 @@ export const utilityRecentRuns: UtilityRunRecord[] = [
     status: "completed",
   },
   {
+    id: "run_2026_03_29_kw2",
+    toolId: "keyword-search",
+    toolName: "Keyword Search",
+    startedAt: "2026-03-28T09:12:00Z",
+    status: "completed",
+  },
+  {
+    id: "run_2026_03_29_ts",
+    toolId: "time-slice-filter",
+    toolName: "Time Slice Filter",
+    startedAt: "2026-03-29T12:30:00Z",
+    status: "completed",
+  },
+  {
+    id: "run_2026_03_29_es",
+    toolId: "error-splitter",
+    toolName: "Error Splitter",
+    startedAt: "2026-03-29T11:05:00Z",
+    status: "completed",
+  },
+  {
+    id: "run_2026_03_29_ls",
+    toolId: "log-summary",
+    toolName: "Log Summary",
+    startedAt: "2026-03-29T10:22:00Z",
+    status: "completed",
+  },
+  {
     id: "run_2026_03_29_b",
     toolId: "stack-trace-parser",
     toolName: "Stack Trace Parser",
     startedAt: "2026-03-29T14:08:00Z",
+    status: "completed",
+  },
+  {
+    id: "run_2026_03_29_el",
+    toolId: "error-lines-extractor",
+    toolName: "Error Lines Extractor",
+    startedAt: "2026-03-29T08:44:00Z",
     status: "completed",
   },
   {
@@ -90,5 +125,12 @@ export const utilityRecentRuns: UtilityRunRecord[] = [
     toolName: "Root Cause Heuristics",
     startedAt: "2026-03-28T21:15:00Z",
     status: "failed",
+  },
+  {
+    id: "run_2026_03_27_rh",
+    toolId: "root-cause-heuristics",
+    toolName: "Root Cause Heuristics",
+    startedAt: "2026-03-27T16:40:00Z",
+    status: "completed",
   },
 ];
