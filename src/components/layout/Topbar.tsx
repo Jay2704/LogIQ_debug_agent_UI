@@ -1,6 +1,6 @@
 import type { FormEvent } from "react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Bell, Moon, UserRound } from "lucide-react";
 import { SearchInput } from "@/components/ui/SearchInput";
 import { cn } from "@/lib/utils";
@@ -35,7 +35,19 @@ export function Topbar() {
           aria-label="Global search"
         />
       </form>
-      <div className="ml-auto flex items-center gap-0.5">
+      <div className="ml-auto flex shrink-0 items-center gap-1 sm:gap-2">
+        <Link
+          to="/login"
+          className="rounded-lg px-2 py-1.5 text-xs font-semibold text-sky-400 transition hover:bg-white/[0.04] hover:text-sky-300 sm:px-2.5"
+        >
+          Sign in
+        </Link>
+        <Link
+          to="/signup"
+          className="rounded-lg px-2 py-1.5 text-xs font-semibold text-slate-500 transition hover:bg-white/[0.04] hover:text-slate-300 sm:px-2.5"
+        >
+          Sign up
+        </Link>
         <button
           type="button"
           className={cn(ui.iconBtn, ui.focusRing, "ring-offset-2 ring-offset-surface-975")}

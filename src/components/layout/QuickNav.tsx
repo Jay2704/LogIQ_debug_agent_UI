@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { ui } from "@/lib/ui";
 
@@ -34,6 +34,16 @@ export function QuickNav() {
           {l.label}
         </NavLink>
       ))}
+      <Link
+        to="/login"
+        className={cn(
+          "ml-auto whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-semibold text-sky-400 outline-none transition hover:bg-white/[0.04] hover:text-sky-300",
+          ui.focusRing,
+          "ring-offset-2 ring-offset-surface-975"
+        )}
+      >
+        Sign in
+      </Link>
     </div>
   );
 }
