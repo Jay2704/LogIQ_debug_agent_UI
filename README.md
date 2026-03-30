@@ -17,41 +17,41 @@ Open [http://localhost:5173](http://localhost:5173).
 
 ## UI screenshots
 
-Add PNG (or JPG/WebP) files under [`assets/`](./assets/) using the filenames below so the images render on GitHub. Paths are relative to the repo root.
+Add PNG (or JPG/WebP) files under [`assets/`](assets/) using the filenames below so the images render on GitHub. Paths are relative to the repo root.
 
 ### Dashboard
 
-![Dashboard — command center](./assets/dashboard.png)
+![Dashboard — command center](assets/dashboard.png)
 
 ### Jobs
 
-![Jobs — workspace](./assets/jobs.png)
+![Jobs — workspace](assets/jobs.png)
 
 ### Job detail
 
-![Job detail — RCA & investigation](./assets/job-detail.png)
+![Job detail — RCA & investigation](assets/job-detail.png)
 
 ### Anomalies
 
-![Anomalies](./assets/anomalies.png)
+![Anomalies](assets/anomalies.png)
 
 ### Insights
 
-![Insights — analytics](./assets/insights.png)
+![Insights — analytics](assets/insights.png)
 
 ### Utilities
 
-![Utilities — log tools](./assets/utilities.png)
+![Utilities — log tools](assets/utilities.png)
 
 ### Reports
 
-![Reports](./assets/reports.png)
+![Reports](assets/reports.png)
 
 ### Authentication
 
-![Login](./assets/login.png)
+![Login](assets/login.png)
 
-![Sign up](./assets/signup.png)
+![Sign up](assets/signup.png)
 
 ---
 
