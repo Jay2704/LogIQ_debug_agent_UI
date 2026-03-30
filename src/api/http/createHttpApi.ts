@@ -47,5 +47,14 @@ export function createHttpApi(baseUrl: string): LogIQApi {
       getTopRootCauseFiles: async () =>
         notImplemented(`GET ${root}/dashboard/top-root-cause-files`),
     },
+    utilities: {
+      listTools: async () => notImplemented(`GET ${root}/utilities/tools`),
+      getTool: async (id: string) =>
+        notImplemented(`GET ${root}/utilities/tools/${id}`),
+      getMostUsedToolIds: async () =>
+        notImplemented(`GET ${root}/utilities/tools/most-used`),
+      getRecentRuns: async () =>
+        notImplemented(`GET ${root}/utilities/runs/recent`),
+    },
   };
 }

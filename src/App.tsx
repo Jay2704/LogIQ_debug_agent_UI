@@ -10,6 +10,8 @@ import { NotFound } from "@/pages/NotFound";
 import { Reports } from "@/pages/Reports";
 import { Settings } from "@/pages/Settings";
 import { Signup } from "@/pages/Signup";
+import { Utilities } from "@/pages/Utilities";
+import { UtilityDetail } from "@/pages/UtilityDetail";
 
 export default function App() {
   return (
@@ -23,6 +25,8 @@ export default function App() {
         <Route path="anomalies" element={<Anomalies />} />
         <Route path="insights" element={<Insights />} />
         <Route path="reports" element={<Reports />} />
+        <Route path="utilities" element={<Utilities />} />
+        <Route path="utilities/:toolId" element={<UtilityDetail />} />
         <Route path="settings" element={<Settings />} />
         <Route path="*" element={<NotFound />} />
       </Route>

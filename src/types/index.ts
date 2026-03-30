@@ -22,6 +22,12 @@ export type {
   AnomalyActivityPoint,
   TopRootCauseFileRow,
 } from "./domain/dashboard";
+export type {
+  UtilityCategory,
+  UtilityIconKey,
+  UtilityToolDefinition,
+  UtilityRunRecord,
+} from "./domain/utilities";
 
 export type {
   AuthTeamRole,

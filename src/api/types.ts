@@ -20,6 +20,10 @@ export type {
   InsightMetrics,
   AnomalyActivityPoint,
   TopRootCauseFileRow,
+  UtilityCategory,
+  UtilityIconKey,
+  UtilityToolDefinition,
+  UtilityRunRecord,
 } from "@/types";
 
 /** Future: pagination envelope from the backend */

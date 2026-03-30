@@ -7,3 +7,5 @@ export { useAnomaliesData } from "./useAnomaliesData";
 export { useInsightMetrics } from "./useInsightMetrics";
 export { useReportsList } from "./useReportsList";
 export { useDashboardWidgets } from "./useDashboardWidgets";
+export { useUtilitiesData } from "./useUtilitiesData";
+export type { UtilitiesPageData } from "./useUtilitiesData";

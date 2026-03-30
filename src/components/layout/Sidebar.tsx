@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   ListTodo,
   Settings2,
+  Wrench,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ui } from "@/lib/ui";
@@ -17,6 +18,7 @@ const nav = [
   { to: "/anomalies", label: "Anomalies", icon: AlertTriangle, end: false },
   { to: "/insights", label: "Insights", icon: BarChart3, end: false },
   { to: "/reports", label: "Reports", icon: FileStack, end: false },
+  { to: "/utilities", label: "Utilities", icon: Wrench, end: false },
   { to: "/settings", label: "Settings", icon: Settings2, end: false },
 ];
 

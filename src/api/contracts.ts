@@ -7,6 +7,8 @@ import type {
   RcaResult,
   ReportArtifact,
   TopRootCauseFileRow,
+  UtilityRunRecord,
+  UtilityToolDefinition,
 } from "@/types";
 
 /**
@@ -42,6 +44,14 @@ export interface DashboardService {
   getTopRootCauseFiles(): Promise<TopRootCauseFileRow[]>;
 }
 
+/** Standalone log utilities — independent from RCA job pipeline */
+export interface UtilitiesService {
+  listTools(): Promise<UtilityToolDefinition[]>;
+  getTool(id: string): Promise<UtilityToolDefinition | undefined>;
+  getMostUsedToolIds(): Promise<string[]>;
+  getRecentRuns(): Promise<UtilityRunRecord[]>;
+}
+
 /** Root API surface — one place to mock or replace with fetch-based client. */
 export interface LogIQApi {
   jobs: JobsService;
@@ -50,4 +60,5 @@ export interface LogIQApi {
   reports: ReportsService;
   insights: InsightsService;
   dashboard: DashboardService;
+  utilities: UtilitiesService;
 }

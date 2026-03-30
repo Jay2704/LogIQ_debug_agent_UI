@@ -9,6 +9,7 @@ import { mockInsightsService } from "./insights";
 import { mockJobsService } from "./jobs";
 import { mockRcaService } from "./rca";
 import { mockReportsService } from "./reports";
+import { mockUtilitiesService } from "./utilitiesTools";
 
 export function createMockApi(): LogIQApi {
   return {
@@ -18,5 +19,6 @@ export function createMockApi(): LogIQApi {
     reports: mockReportsService,
     insights: mockInsightsService,
     dashboard: mockDashboardService,
+    utilities: mockUtilitiesService,
   };
 }
