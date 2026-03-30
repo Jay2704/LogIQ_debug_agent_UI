@@ -10,18 +10,34 @@ export function ExplanationPanel({ content, className }: ExplanationPanelProps) 
   return (
     <div
       className={cn(
-        "rounded-card border border-white/[0.06] bg-surface-900/60 p-5 shadow-card",
+        "rounded-card border border-dashed border-slate-600/50 bg-surface-975/50 p-5 shadow-inner",
+        "ring-1 ring-inset ring-white/[0.03]",
         className
       )}
     >
-      <div className="flex items-center gap-2 text-violet-300">
-        <Sparkles className="h-4 w-4" strokeWidth={2} />
-        <h3 className="text-sm font-semibold">AI Explanation</h3>
+      <div className="flex items-start gap-3">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-800/80 text-slate-500">
+          <Sparkles className="h-4 w-4" strokeWidth={2} />
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">
+            AI Explanation
+          </p>
+          <h3 className="mt-0.5 text-sm font-semibold text-slate-400">
+            Assistive Layer
+          </h3>
+          <p className="mt-2 text-[11px] leading-relaxed text-slate-600">
+            Narrative synthesis for faster comprehension — does not override
+            deterministic evidence or Confidence Score above.
+          </p>
+        </div>
       </div>
-      <div className="mt-4 space-y-3 text-sm leading-relaxed text-slate-300">
-        {content.split("\n\n").map((para, i) => (
-          <p key={i}>{para}</p>
-        ))}
+      <div className="mt-4 border-t border-white/[0.05] pt-4">
+        <div className="space-y-3 text-sm leading-relaxed text-slate-500">
+          {content.split("\n\n").map((para, i) => (
+            <p key={i}>{para}</p>
+          ))}
+        </div>
       </div>
     </div>
   );

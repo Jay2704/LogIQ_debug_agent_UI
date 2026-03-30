@@ -20,3 +20,24 @@ export function formatDate(iso: string) {
 export function cn(...classes: (string | false | undefined)[]) {
   return classes.filter(Boolean).join(" ");
 }
+
+/** Split repo-style path and optional #L214-L238 anchor for technical display. */
+export function splitRootCausePath(path: string): {
+  segments: string[];
+  lineRange: string | null;
+  isStructured: boolean;
+} {
+  const trimmed = path.trim();
+  if (!trimmed) {
+    return { segments: [], lineRange: null, isStructured: false };
+  }
+  /** Non-repo strings (e.g. RCA pending) render as plain monospace block */
+  if (!trimmed.includes("/") || /^unknown|^pending/i.test(trimmed)) {
+    return { segments: [], lineRange: null, isStructured: false };
+  }
+  const m = trimmed.match(/^(.*)(#L\d+(?:-\d+)?)$/i);
+  const base = m ? m[1]! : trimmed;
+  const lineRange = m ? m[2]! : null;
+  const segments = base.split("/").filter(Boolean);
+  return { segments, lineRange, isStructured: segments.length > 0 };
+}

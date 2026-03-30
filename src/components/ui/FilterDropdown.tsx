@@ -42,13 +42,13 @@ export function FilterDropdown({
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="flex w-full min-w-[160px] items-center justify-between gap-3 rounded-xl border border-white/[0.08] bg-surface-900/90 px-3 py-2.5 text-left text-sm transition hover:border-white/[0.12]"
+        className="flex w-full min-w-[160px] items-center justify-between gap-3 rounded-xl border border-blue-500/[0.12] bg-surface-900/85 px-3 py-2.5 text-left text-sm shadow-inner transition hover:border-blue-500/25"
       >
-        <span className="text-xs font-medium uppercase tracking-wide text-slate-500">
+        <span className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
           {label}
         </span>
         <span className="flex min-w-0 flex-1 items-center justify-end gap-2">
-          <span className="truncate font-medium text-slate-200">{selected}</span>
+          <span className="truncate font-medium text-slate-100">{selected}</span>
           <ChevronDown
             className={cn(
               "h-4 w-4 shrink-0 text-slate-500 transition",
@@ -58,15 +58,15 @@ export function FilterDropdown({
         </span>
       </button>
       {open ? (
-        <ul className="absolute right-0 z-50 mt-1 max-h-60 min-w-full overflow-auto rounded-xl border border-white/[0.08] bg-surface-850 py-1 shadow-card">
+        <ul className="absolute right-0 z-50 mt-1 max-h-60 min-w-full overflow-auto rounded-xl border border-indigo-500/20 bg-surface-900/95 py-1 shadow-card-premium backdrop-blur-xl">
           {options.map((opt) => (
             <li key={opt.value}>
               <button
                 type="button"
                 className={cn(
-                  "w-full px-3 py-2 text-left text-sm transition hover:bg-white/[0.06]",
+                  "w-full px-3 py-2 text-left text-sm transition hover:bg-blue-500/10",
                   opt.value === value
-                    ? "text-blue-400"
+                    ? "font-semibold text-sky-300"
                     : "text-slate-300"
                 )}
                 onClick={() => {

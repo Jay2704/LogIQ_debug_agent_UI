@@ -9,21 +9,33 @@ const steps: {
   { key: "triage", label: "Triage" },
   { key: "rca", label: "RCA" },
   { key: "evidence", label: "Evidence" },
-  { key: "explanation", label: "Explanation" },
-  { key: "reporting", label: "Reporting" },
+  { key: "explanation", label: "Explain" },
+  { key: "reporting", label: "Report" },
 ];
 
 interface StepProgressBarProps {
   stepState: RcaResult["steps"];
   className?: string;
+  title?: string;
+  subtitle?: string;
 }
 
-export function StepProgressBar({ stepState, className }: StepProgressBarProps) {
+export function StepProgressBar({
+  stepState,
+  className,
+  title = "Investigation progress",
+  subtitle = "Deterministic pipeline from triage through investigation report.",
+}: StepProgressBarProps) {
   return (
     <div className={cn("w-full", className)}>
-      <p className="mb-4 text-[10px] font-medium uppercase tracking-wider text-slate-500">
-        Investigation pipeline
-      </p>
+      <div className="mb-5">
+        <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-400">
+          {title}
+        </p>
+        {subtitle ? (
+          <p className="mt-1 text-xs leading-relaxed text-slate-500">{subtitle}</p>
+        ) : null}
+      </div>
       <div className="flex items-start">
         {steps.map((s, i) => {
           const state = stepState[s.key];
@@ -41,15 +53,15 @@ export function StepProgressBar({ stepState, className }: StepProgressBarProps) 
               <div className="flex w-full flex-col items-center">
                 <div
                   className={cn(
-                    "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold transition",
+                    "flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-bold transition",
                     done &&
-                      "bg-emerald-500/20 text-emerald-400 ring-1 ring-emerald-500/40",
+                      "bg-emerald-500/25 text-emerald-300 ring-1 ring-emerald-400/50 shadow-[0_0_20px_-6px_rgba(16,185,129,0.45)]",
                     active &&
                       !done &&
-                      "bg-amber-500/20 text-amber-400 shadow-[0_0_20px_-4px_rgba(245,158,11,0.5)] ring-1 ring-amber-500/40",
+                      "bg-amber-500/25 text-amber-300 shadow-[0_0_24px_-4px_rgba(245,158,11,0.55)] ring-1 ring-amber-400/55",
                     !done &&
                       !active &&
-                      "bg-surface-800 text-slate-600 ring-1 ring-white/[0.06]"
+                      "bg-surface-900 text-slate-600 ring-1 ring-white/[0.08]"
                   )}
                 >
                   {done ? (
@@ -60,9 +72,9 @@ export function StepProgressBar({ stepState, className }: StepProgressBarProps) 
                 </div>
                 <span
                   className={cn(
-                    "mt-2 max-w-[76px] text-center text-[10px] font-medium uppercase leading-tight tracking-wide",
+                    "mt-2 max-w-[76px] text-center text-[10px] font-semibold uppercase leading-tight tracking-wide",
                     active && "text-amber-400",
-                    done && "text-emerald-400/90",
+                    done && "text-emerald-400/95",
                     !active && !done && "text-slate-600"
                   )}
                 >
@@ -71,11 +83,11 @@ export function StepProgressBar({ stepState, className }: StepProgressBarProps) 
               </div>
               {i < steps.length - 1 ? (
                 <div
-                  className="mx-1 mt-4 h-px min-w-[4px] flex-1"
+                  className="mx-1 mt-[18px] h-px min-w-[4px] flex-1"
                   style={{
                     background: lineActive
-                      ? "linear-gradient(90deg, rgba(16,185,129,0.5), rgba(59,130,246,0.25))"
-                      : "rgba(51, 65, 85, 0.6)",
+                      ? "linear-gradient(90deg, rgba(16,185,129,0.55), rgba(59,130,246,0.35))"
+                      : "rgba(51, 65, 85, 0.55)",
                   }}
                 />
               ) : null}

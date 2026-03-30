@@ -14,24 +14,26 @@ const variantStyles: Record<
   string
 > = {
   default:
-    "from-surface-800/80 to-surface-900/90 border-white/[0.06] shadow-card",
-  blue: "from-blue-500/10 via-surface-850 to-surface-900 border-blue-500/20 shadow-glow-blue",
+    "border-blue-500/[0.1] from-surface-825/90 via-surface-925 to-surface-960 shadow-card",
+  blue:
+    "border-blue-500/25 from-blue-500/[0.12] via-surface-900/95 to-surface-960 shadow-glow-blue",
   violet:
-    "from-violet-500/10 via-surface-850 to-surface-900 border-violet-500/20 shadow-glow-violet",
+    "border-violet-500/25 from-violet-500/[0.12] via-surface-900/95 to-surface-960 shadow-glow-violet",
   green:
-    "from-emerald-500/10 via-surface-850 to-surface-900 border-emerald-500/20",
+    "border-emerald-500/20 from-emerald-500/[0.1] via-surface-900/95 to-surface-960 shadow-[0_0_40px_-16px_rgba(16,185,129,0.2)]",
   amber:
-    "from-amber-500/10 via-surface-850 to-surface-900 border-amber-500/20",
-  red: "from-red-500/10 via-surface-850 to-surface-900 border-red-500/20",
+    "border-amber-500/25 from-amber-500/[0.1] via-surface-900/95 to-surface-960 shadow-[0_0_40px_-16px_rgba(245,158,11,0.2)]",
+  red:
+    "border-red-500/20 from-red-500/[0.08] via-surface-900/95 to-surface-960 shadow-[0_0_40px_-16px_rgba(239,68,68,0.15)]",
 };
 
 const iconWrap: Record<NonNullable<KpiCardProps["variant"]>, string> = {
-  default: "bg-surface-700/80 text-slate-300",
-  blue: "bg-blue-500/15 text-blue-400",
-  violet: "bg-violet-500/15 text-violet-400",
-  green: "bg-emerald-500/15 text-emerald-400",
-  amber: "bg-amber-500/15 text-amber-400",
-  red: "bg-red-500/15 text-red-400",
+  default: "bg-surface-800/90 text-slate-300 ring-1 ring-white/[0.06]",
+  blue: "bg-blue-500/20 text-sky-300 ring-1 ring-blue-400/25",
+  violet: "bg-violet-500/20 text-violet-300 ring-1 ring-violet-400/25",
+  green: "bg-emerald-500/20 text-emerald-300 ring-1 ring-emerald-400/25",
+  amber: "bg-amber-500/20 text-amber-300 ring-1 ring-amber-400/25",
+  red: "bg-red-500/20 text-red-300 ring-1 ring-red-400/25",
 };
 
 export function KpiCard({
@@ -50,10 +52,10 @@ export function KpiCard({
     >
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
             {title}
           </p>
-          <p className="mt-2 text-3xl font-semibold tracking-tight text-white tabular-nums">
+          <p className="mt-2 text-3xl font-bold tracking-tight text-white tabular-nums">
             {value}
           </p>
           {subtitle ? (

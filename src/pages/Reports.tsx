@@ -10,10 +10,8 @@ export function Reports() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-white">
-          Reports
-        </h1>
-        <p className="mt-1 text-sm text-slate-500">
+        <h1 className="ui-page-title">Reports</h1>
+        <p className="ui-page-desc">
           Investigation Report artifacts with downloadable exports (mock). Each
           ties to an anomaly_id and generated_at timestamp.
         </p>

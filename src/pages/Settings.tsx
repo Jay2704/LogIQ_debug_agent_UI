@@ -31,10 +31,8 @@ export function Settings() {
   return (
     <div className="mx-auto max-w-3xl space-y-8">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-white">
-          Settings
-        </h1>
-        <p className="mt-1 text-sm text-slate-500">
+        <h1 className="ui-page-title">Settings</h1>
+        <p className="ui-page-desc">
           Configuration surface reserved for backend integration. No controls are
           wired in this mock UI.
         </p>
@@ -44,7 +42,7 @@ export function Settings() {
         {sections.map((s) => (
           <div
             key={s.title}
-            className="rounded-card border border-white/[0.06] bg-surface-900/50 p-5 shadow-card"
+            className="ui-card p-5 shadow-card"
           >
             <div className="flex gap-4">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-surface-800 text-slate-400">

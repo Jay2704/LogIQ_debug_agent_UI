@@ -8,21 +8,22 @@ const jobStatusConfig: Record<
   queued: {
     label: "Queued",
     className:
-      "bg-slate-500/15 text-slate-300 ring-1 ring-inset ring-slate-500/25",
+      "bg-slate-600/25 text-slate-200 ring-1 ring-inset ring-slate-400/35",
   },
   running: {
     label: "Running",
     className:
-      "bg-amber-500/15 text-amber-400 ring-1 ring-inset ring-amber-500/30",
+      "bg-amber-500/20 text-amber-300 ring-1 ring-inset ring-amber-400/45 shadow-[0_0_12px_-4px_rgba(245,158,11,0.35)]",
   },
   completed: {
     label: "Completed",
     className:
-      "bg-emerald-500/15 text-emerald-400 ring-1 ring-inset ring-emerald-500/30",
+      "bg-emerald-500/20 text-emerald-300 ring-1 ring-inset ring-emerald-400/40 shadow-[0_0_12px_-4px_rgba(16,185,129,0.25)]",
   },
   failed: {
     label: "Failed",
-    className: "bg-red-500/15 text-red-400 ring-1 ring-inset ring-red-500/30",
+    className:
+      "bg-red-500/20 text-red-300 ring-1 ring-inset ring-red-400/45 shadow-[0_0_12px_-4px_rgba(239,68,68,0.3)]",
   },
 };
 
@@ -36,7 +37,7 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
+        "inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold tracking-wide",
         cfg.className,
         className
       )}
@@ -54,19 +55,23 @@ const severityConfig: Record<
 > = {
   critical: {
     label: "Critical",
-    className: "bg-red-500/15 text-red-400 ring-red-500/35",
+    className:
+      "bg-red-500/20 text-red-300 ring-1 ring-inset ring-red-400/45",
   },
   high: {
     label: "High",
-    className: "bg-orange-500/15 text-orange-400 ring-orange-500/35",
+    className:
+      "bg-orange-500/20 text-orange-300 ring-1 ring-inset ring-orange-400/40",
   },
   medium: {
     label: "Medium",
-    className: "bg-amber-500/15 text-amber-400 ring-amber-500/35",
+    className:
+      "bg-amber-500/20 text-amber-300 ring-1 ring-inset ring-amber-400/40",
   },
   low: {
     label: "Low",
-    className: "bg-slate-500/15 text-slate-400 ring-slate-500/30",
+    className:
+      "bg-slate-600/25 text-slate-300 ring-1 ring-inset ring-slate-400/35",
   },
 };
 
@@ -81,7 +86,7 @@ export function SeverityBadge({
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ring-inset",
+        "inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold tracking-wide ring-1 ring-inset",
         cfg.className,
         className
       )}
@@ -99,19 +104,23 @@ const anomalyStatusConfig: Record<
 > = {
   open: {
     label: "Open",
-    className: "bg-red-500/10 text-red-400 ring-red-500/25",
+    className:
+      "bg-red-500/18 text-red-300 ring-red-400/40",
   },
   investigating: {
     label: "Investigating",
-    className: "bg-amber-500/10 text-amber-400 ring-amber-500/25",
+    className:
+      "bg-amber-500/18 text-amber-300 ring-amber-400/40",
   },
   mitigated: {
     label: "Mitigated",
-    className: "bg-blue-500/10 text-blue-400 ring-blue-500/25",
+    className:
+      "bg-blue-500/18 text-sky-300 ring-blue-400/40",
   },
   resolved: {
     label: "Resolved",
-    className: "bg-emerald-500/10 text-emerald-400 ring-emerald-500/25",
+    className:
+      "bg-emerald-500/18 text-emerald-300 ring-emerald-400/40",
   },
 };
 
@@ -126,7 +135,7 @@ export function AnomalyStatusBadge({
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ring-inset",
+        "inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold tracking-wide ring-1 ring-inset",
         cfg.className,
         className
       )}
@@ -144,15 +153,18 @@ const reportStatusConfig: Record<
 > = {
   ready: {
     label: "Ready",
-    className: "bg-emerald-500/15 text-emerald-400 ring-emerald-500/30",
+    className:
+      "bg-emerald-500/20 text-emerald-300 ring-emerald-400/40",
   },
   generating: {
     label: "Generating",
-    className: "bg-amber-500/15 text-amber-400 ring-amber-500/30",
+    className:
+      "bg-amber-500/20 text-amber-300 ring-amber-400/45",
   },
   failed: {
     label: "Failed",
-    className: "bg-red-500/15 text-red-400 ring-red-500/30",
+    className:
+      "bg-red-500/20 text-red-300 ring-red-400/45",
   },
 };
 
@@ -167,7 +179,7 @@ export function ReportStatusBadge({
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ring-inset",
+        "inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold tracking-wide ring-1 ring-inset",
         cfg.className,
         className
       )}

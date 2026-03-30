@@ -6,4 +6,4 @@ export {
   getInsightSummary,
 } from "./explanations";
 export { mockInsightMetrics } from "./insights";
-export { mockReports } from "./reports";
+export { mockReports, getReportByAnomalyId } from "./reports";

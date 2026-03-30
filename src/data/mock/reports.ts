@@ -52,3 +52,9 @@ export const mockReports: ReportArtifact[] = [
     formats: ["json"],
   },
 ];
+
+export function getReportByAnomalyId(
+  anomalyId: string
+): ReportArtifact | undefined {
+  return mockReports.find((r) => r.anomalyId === anomalyId);
+}

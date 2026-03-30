@@ -11,35 +11,52 @@ export function EvidenceList({ items, className }: EvidenceListProps) {
   return (
     <div
       className={cn(
-        "rounded-card border border-white/[0.06] bg-surface-900/60 p-5 shadow-card",
+        "rounded-card border border-sky-500/20 bg-gradient-to-b from-surface-900/90 to-surface-975 p-5 shadow-card",
         className
       )}
     >
-      <div className="flex items-center gap-2 text-slate-200">
-        <FileSearch className="h-4 w-4 text-blue-400" strokeWidth={2} />
-        <h3 className="text-sm font-semibold">Evidence Highlights</h3>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="flex items-start gap-3">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-sky-500/15 ring-1 ring-sky-500/30">
+            <FileSearch className="h-4 w-4 text-sky-400" strokeWidth={2} />
+          </div>
+          <div>
+            <h3 className="text-sm font-bold text-white">Evidence Highlights</h3>
+            <p className="mt-1 text-xs leading-relaxed text-slate-500">
+              Grounded artifacts supporting the Deterministic Root Cause — traces,
+              metrics, deploys, and datastore signals.
+            </p>
+          </div>
+        </div>
       </div>
       {items.length === 0 ? (
-        <p className="mt-3 text-sm text-slate-500">
+        <p className="mt-4 rounded-lg border border-dashed border-slate-700/60 bg-surface-975/50 px-4 py-6 text-center text-sm text-slate-500">
           No evidence items attached yet. Complete the evidence step to populate
           this list.
         </p>
       ) : (
-        <ul className="mt-4 space-y-3">
-          {items.map((item) => (
+        <ul className="mt-5 space-y-2">
+          {items.map((item, index) => (
             <li
               key={item.id}
-              className="rounded-xl border border-white/[0.05] bg-surface-850/40 p-3"
+              className="rounded-xl border border-blue-500/[0.12] bg-[#060a12]/80 shadow-inner"
             >
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-sm font-medium text-slate-200">
-                  {item.label}
+              <div className="flex flex-wrap items-center gap-2 border-b border-white/[0.05] px-3 py-2 font-mono text-[10px] text-slate-500">
+                <span className="rounded bg-surface-900 px-1.5 py-0.5 text-sky-500/90">
+                  EVIDENCE_{String(index + 1).padStart(2, "0")}
                 </span>
-                <span className="rounded-md bg-surface-700/80 px-2 py-0.5 font-mono text-[10px] text-slate-400">
-                  {item.source}
+                <span className="text-slate-600">·</span>
+                <span className="uppercase tracking-wide text-slate-500">
+                  source
                 </span>
+                <span className="text-slate-400">{item.source}</span>
               </div>
-              <p className="mt-1.5 text-sm text-slate-400">{item.detail}</p>
+              <div className="px-3 py-3">
+                <p className="text-sm font-semibold text-slate-100">{item.label}</p>
+                <p className="mt-1.5 text-sm leading-relaxed text-slate-400">
+                  {item.detail}
+                </p>
+              </div>
             </li>
           ))}
         </ul>

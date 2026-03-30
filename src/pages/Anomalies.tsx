@@ -21,10 +21,8 @@ export function Anomalies() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-white">
-          Anomalies
-        </h1>
-        <p className="mt-1 text-sm text-slate-500">
+        <h1 className="ui-page-title">Anomalies</h1>
+        <p className="ui-page-desc">
           Severity-ranked signals with investigation status. Open RCA details
           from the linked debug job.
         </p>
@@ -34,7 +32,7 @@ export function Anomalies() {
         {sorted.map((a) => (
           <div
             key={a.id}
-            className="group rounded-card border border-white/[0.06] bg-gradient-to-br from-surface-850/80 to-surface-950 p-5 shadow-card transition hover:border-white/[0.1]"
+            className="group rounded-card border border-blue-500/[0.12] bg-gradient-to-br from-surface-850/85 via-surface-960 to-surface-975 p-5 shadow-card-premium transition hover:border-blue-500/25"
           >
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div className="flex flex-wrap items-center gap-2">
@@ -56,7 +54,7 @@ export function Anomalies() {
               <span className="text-xs text-slate-500">{a.signalType}</span>
               <Link
                 to={anomalyJobLink(a.id)}
-                className="inline-flex items-center gap-1 text-xs font-medium text-blue-400 transition hover:text-blue-300"
+                className="inline-flex items-center gap-1 text-xs font-semibold text-sky-400 transition hover:text-sky-300"
               >
                 Open RCA details
                 <ArrowUpRight className="h-3.5 w-3.5" />

@@ -15,12 +15,30 @@ export function RunDebugButton({
     <Link
       to={to}
       className={cn(
-        "inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 px-5 py-2.5 text-sm font-semibold text-white shadow-glow-blue transition hover:from-blue-500 hover:to-blue-400",
+        "group relative inline-flex items-center justify-center gap-2.5 overflow-hidden rounded-xl px-7 py-3.5",
+        "text-sm font-semibold tracking-wide text-white",
+        "bg-cta-primary shadow-glow-cta transition duration-300",
+        "ring-1 ring-sky-400/30 ring-offset-2 ring-offset-surface-960",
+        "hover:bg-cta-primary-hover hover:shadow-[0_0_0_1px_rgba(56,189,248,0.45),0_12px_48px_-6px_rgba(37,99,235,0.55),0_0_72px_-8px_rgba(139,92,246,0.3)]",
+        "hover:-translate-y-0.5 active:translate-y-0",
+        "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400/80",
         className
       )}
     >
-      <Play className="h-4 w-4 fill-current" />
-      Run Debug Agent
+      <span
+        className="pointer-events-none absolute inset-0 opacity-0 transition group-hover:opacity-100"
+        aria-hidden
+        style={{
+          background:
+            "linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)",
+        }}
+      />
+      <Play
+        className="relative h-4 w-4 fill-white text-white drop-shadow-sm"
+        strokeWidth={0}
+        aria-hidden
+      />
+      <span className="relative">Run Debug Agent</span>
     </Link>
   );
 }

@@ -23,17 +23,17 @@ export function ReportArtifactCard({
   return (
     <div
       className={cn(
-        "group rounded-card border border-white/[0.06] bg-gradient-to-br from-surface-850/80 to-surface-950 p-5 shadow-card transition hover:border-white/[0.1]",
+        "group rounded-card border border-indigo-500/20 bg-gradient-to-br from-surface-850/90 via-surface-960 to-surface-975 p-5 shadow-card-premium transition hover:border-indigo-500/35",
         className
       )}
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <ReportStatusBadge status={report.status} />
-          <h3 className="mt-2 text-sm font-semibold text-slate-100 group-hover:text-white">
+          <h3 className="mt-2 text-sm font-bold text-white group-hover:text-white">
             {report.title}
           </h3>
-          <p className="mt-1 font-mono text-xs text-violet-400/90">
+          <p className="mt-1 font-mono text-xs text-violet-300/95">
             anomaly_id · {report.anomalyId}
           </p>
         </div>
@@ -44,7 +44,7 @@ export function ReportArtifactCard({
       <p className="mt-3 text-sm leading-relaxed text-slate-400">
         {report.summary}
       </p>
-      <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-white/[0.06] pt-4">
+      <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-blue-500/10 pt-4">
         <span className="text-xs text-slate-500">Investigation Report ·</span>
         <div className="flex flex-wrap gap-2">
           {report.formats.map((fmt) => {
@@ -53,7 +53,7 @@ export function ReportArtifactCard({
               <button
                 key={fmt}
                 type="button"
-                className="inline-flex items-center gap-1.5 rounded-lg border border-white/[0.08] bg-surface-800/80 px-2.5 py-1 text-xs text-slate-300 transition hover:border-blue-500/30 hover:text-blue-300"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-blue-500/15 bg-surface-900/80 px-2.5 py-1 text-xs font-medium text-slate-200 transition hover:border-sky-500/40 hover:text-sky-300"
               >
                 <Icon className="h-3.5 w-3.5" />
                 {fmt.toUpperCase()}
@@ -64,7 +64,7 @@ export function ReportArtifactCard({
         </div>
         <Link
           to={`/jobs`}
-          className="ml-auto text-xs font-medium text-slate-500 hover:text-blue-400"
+          className="ml-auto text-xs font-semibold text-slate-500 hover:text-sky-400"
         >
           Open related job
         </Link>

@@ -43,10 +43,8 @@ export function Dashboard() {
     <div className="space-y-8">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-white">
-            Operations overview
-          </h1>
-          <p className="mt-1 text-sm text-slate-500">
+          <h1 className="ui-page-title">Operations overview</h1>
+          <p className="ui-page-desc">
             Debug jobs, anomaly signals, and RCA confidence across monitored
             services.
           </p>
@@ -88,44 +86,45 @@ export function Dashboard() {
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-slate-200">
-              Recent jobs
-            </h2>
+            <h2 className="text-sm font-bold text-white">Recent jobs</h2>
             <Link
               to="/jobs"
-              className="text-xs font-medium text-blue-400 hover:text-blue-300"
+              className="text-xs font-semibold text-sky-400 hover:text-sky-300"
             >
               View all
             </Link>
           </div>
-          <div className="overflow-hidden rounded-card border border-white/[0.06] bg-surface-900/50 shadow-card">
+          <div className="overflow-hidden rounded-card border border-blue-500/[0.12] bg-gradient-to-b from-surface-850/70 via-surface-960 to-surface-975 shadow-card-premium">
             <table className="w-full text-left text-sm">
               <thead>
-                <tr className="border-b border-white/[0.06] text-xs uppercase text-slate-500">
-                  <th className="px-4 py-3 font-medium">Job</th>
-                  <th className="px-4 py-3 font-medium">Anomaly</th>
-                  <th className="px-4 py-3 font-medium">Status</th>
-                  <th className="px-4 py-3 font-medium text-right">Created</th>
+                <tr className="border-b border-blue-500/10 bg-surface-975/95 text-[11px] font-semibold uppercase tracking-[0.1em] text-slate-500">
+                  <th className="px-4 py-3.5 font-semibold">Job</th>
+                  <th className="px-4 py-3.5 font-semibold">Anomaly</th>
+                  <th className="px-4 py-3.5 font-semibold">Status</th>
+                  <th className="px-4 py-3.5 text-right font-semibold">Created</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/[0.04]">
+              <tbody className="divide-y divide-blue-500/[0.06]">
                 {recent.map((j) => (
-                  <tr key={j.id} className="hover:bg-white/[0.02]">
-                    <td className="px-4 py-3 font-mono text-xs">
+                  <tr
+                    key={j.id}
+                    className="group transition-colors duration-150 hover:bg-blue-500/[0.07]"
+                  >
+                    <td className="px-4 py-3.5 font-mono text-xs">
                       <Link
                         to={`/jobs/${j.id}`}
-                        className="text-blue-400 hover:underline"
+                        className="text-sky-400 transition group-hover:text-sky-300 hover:underline"
                       >
                         {j.id}
                       </Link>
                     </td>
-                    <td className="px-4 py-3 font-mono text-xs text-violet-300/90">
+                    <td className="px-4 py-3.5 font-mono text-xs text-violet-300/95">
                       {j.anomalyId}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3.5">
                       <StatusBadge status={j.status} />
                     </td>
-                    <td className="px-4 py-3 text-right text-xs text-slate-500 tabular-nums">
+                    <td className="px-4 py-3.5 text-right text-xs text-slate-500 tabular-nums">
                       {formatDateTime(j.createdAt)}
                     </td>
                   </tr>
@@ -136,13 +135,11 @@ export function Dashboard() {
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-sm font-semibold text-slate-200">
-            System status
-          </h2>
-          <div className="rounded-card border border-emerald-500/20 bg-gradient-to-br from-emerald-500/10 via-surface-900 to-surface-950 p-5 shadow-card">
-            <div className="flex items-center gap-2 text-emerald-400">
+          <h2 className="text-sm font-bold text-white">System status</h2>
+          <div className="rounded-card border border-emerald-500/25 bg-gradient-to-br from-emerald-500/12 via-surface-925 to-surface-960 p-5 shadow-card-premium">
+            <div className="flex items-center gap-2 text-emerald-300">
               <Cpu className="h-4 w-4" />
-              <span className="text-sm font-medium">Ingest healthy</span>
+              <span className="text-sm font-semibold">Ingest healthy</span>
             </div>
             <ul className="mt-4 space-y-2 text-sm text-slate-400">
               <li className="flex justify-between">
@@ -162,12 +159,12 @@ export function Dashboard() {
             </ul>
           </div>
 
-          <div className="rounded-card border border-white/[0.06] bg-surface-900/60 p-5 shadow-card">
-            <div className="flex items-center gap-2 text-slate-200">
-              <TrendingUp className="h-4 w-4 text-blue-400" />
-              <span className="text-sm font-medium">RCA confidence</span>
+          <div className="ui-card p-5 shadow-card-premium">
+            <div className="flex items-center gap-2 text-slate-100">
+              <TrendingUp className="h-4 w-4 text-sky-400" />
+              <span className="text-sm font-bold">RCA confidence</span>
             </div>
-            <p className="mt-3 text-3xl font-semibold tabular-nums text-white">
+            <p className="mt-3 text-3xl font-bold tabular-nums text-white">
               {(avgConf * 100).toFixed(0)}%
             </p>
             <p className="mt-1 text-xs text-slate-500">
@@ -179,10 +176,10 @@ export function Dashboard() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <div className="rounded-card border border-amber-500/15 bg-surface-900/50 p-5 shadow-card">
+        <div className="rounded-card border border-amber-500/20 bg-gradient-to-br from-amber-500/[0.1] via-surface-925/95 to-surface-975 p-5 shadow-card-premium">
           <div className="flex items-center gap-2">
             <ShieldAlert className="h-4 w-4 text-amber-400" />
-            <h2 className="text-sm font-semibold text-slate-200">
+            <h2 className="text-sm font-bold text-white">
               Recent anomaly summary
             </h2>
           </div>
@@ -190,7 +187,7 @@ export function Dashboard() {
             {recentAnomalies.map((a) => (
               <li
                 key={a.id}
-                className="rounded-xl border border-white/[0.05] bg-surface-850/40 p-3"
+                className="rounded-xl border border-blue-500/[0.08] bg-surface-900/50 p-3"
               >
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="font-mono text-xs text-violet-300">
@@ -204,7 +201,7 @@ export function Dashboard() {
           </ul>
           <Link
             to="/anomalies"
-            className="mt-4 inline-block text-xs font-medium text-blue-400 hover:text-blue-300"
+            className="mt-4 inline-block text-xs font-semibold text-sky-400 hover:text-sky-300"
           >
             Browse anomalies →
           </Link>
@@ -213,8 +210,8 @@ export function Dashboard() {
         <div className="grid gap-4 sm:grid-cols-2">
           <div
             className={cn(
-              "rounded-card border border-violet-500/20 p-4",
-              "bg-gradient-to-br from-violet-500/10 to-surface-950"
+              "rounded-card border border-violet-500/25 p-4 shadow-glow-violet",
+              "bg-gradient-to-br from-violet-500/15 via-surface-925 to-surface-975"
             )}
           >
             <Sparkles className="h-4 w-4 text-violet-400" />
@@ -226,8 +223,8 @@ export function Dashboard() {
               often than deploys in the last 7 days.
             </p>
           </div>
-          <div className="rounded-card border border-white/[0.06] bg-surface-900/60 p-4 shadow-card">
-            <Zap className="h-4 w-4 text-blue-400" />
+          <div className="ui-card p-4 shadow-card">
+            <Zap className="h-4 w-4 text-sky-400" />
             <p className="mt-2 text-xs font-medium uppercase tracking-wide text-slate-500">
               Determinism
             </p>
@@ -236,7 +233,7 @@ export function Dashboard() {
               validation.
             </p>
           </div>
-          <div className="rounded-card border border-white/[0.06] bg-surface-900/60 p-4 shadow-card">
+          <div className="ui-card p-4 shadow-card">
             <Timer className="h-4 w-4 text-amber-400" />
             <p className="mt-2 text-xs font-medium uppercase tracking-wide text-slate-500">
               Queue time
@@ -245,7 +242,7 @@ export function Dashboard() {
               P50 time to first triage: 2m 14s · P95: 6m 02s (mock).
             </p>
           </div>
-          <div className="rounded-card border border-white/[0.06] bg-surface-900/60 p-4 shadow-card">
+          <div className="ui-card p-4 shadow-card">
             <Activity className="h-4 w-4 text-emerald-400" />
             <p className="mt-2 text-xs font-medium uppercase tracking-wide text-slate-500">
               Coverage

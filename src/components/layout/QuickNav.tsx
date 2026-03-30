@@ -12,7 +12,7 @@ const links = [
 
 export function QuickNav() {
   return (
-    <div className="flex gap-1 overflow-x-auto border-b border-white/[0.06] bg-surface-950/90 px-4 py-2 md:hidden">
+    <div className="flex gap-1 overflow-x-auto border-b border-blue-500/[0.1] bg-surface-975/95 px-4 py-2 shadow-inner backdrop-blur-md md:hidden">
       {links.map((l) => (
         <NavLink
           key={l.to}
@@ -20,10 +20,10 @@ export function QuickNav() {
           end={l.end}
           className={({ isActive }) =>
             cn(
-              "whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-medium",
+              "whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-semibold transition",
               isActive
-                ? "bg-blue-500/20 text-blue-300"
-                : "text-slate-500 hover:text-slate-300"
+                ? "bg-nav-active text-white shadow-insetNav backdrop-blur-sm"
+                : "text-slate-500 hover:text-slate-200"
             )
           }
         >

@@ -17,8 +17,17 @@ import { ChartCard } from "@/components/ui/ChartCard";
 import { mockInsightMetrics } from "@/data/mock";
 import { Clock, Layers, Radar } from "lucide-react";
 
-const axis = { stroke: "#475569", fontSize: 11 };
-const tick = { fill: "#64748b" };
+const axisLine = { stroke: "#475569", strokeOpacity: 0.9 };
+const tickProps = { fill: "#94a3b8", fontSize: 11 };
+const gridStroke = "rgba(51, 65, 85, 0.55)";
+
+const tooltipStyle = {
+  backgroundColor: "#0f1a2e",
+  border: "1px solid rgba(99, 102, 241, 0.2)",
+  borderRadius: "12px",
+  fontSize: "12px",
+  boxShadow: "0 8px 32px -8px rgba(0,0,0,0.5)",
+};
 
 export function Insights() {
   const m = mockInsightMetrics;
@@ -26,10 +35,8 @@ export function Insights() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-white">
-          Insights
-        </h1>
-        <p className="mt-1 text-sm text-slate-500">
+        <h1 className="ui-page-title">Insights</h1>
+        <p className="ui-page-desc">
           Anomaly trends, severity mix, RCA confidence distribution, and service
           hotspots (mock metrics).
         </p>
@@ -69,26 +76,27 @@ export function Insights() {
               <AreaChart data={m.anomalyTrend} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
                 <defs>
                   <linearGradient id="fillAnom" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.35} />
+                    <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.4} />
                     <stop offset="100%" stopColor="#3b82f6" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                <XAxis dataKey="date" tick={tick} tickLine={false} axisLine={axis} />
-                <YAxis tick={tick} tickLine={false} axisLine={axis} width={32} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={gridStroke} />
+                <XAxis
+                  dataKey="date"
+                  tick={tickProps}
+                  tickLine={false}
+                  axisLine={axisLine}
+                />
+                <YAxis tick={tickProps} tickLine={false} axisLine={axisLine} width={36} />
                 <Tooltip
-                  contentStyle={{
-                    backgroundColor: "#0f172a",
-                    border: "1px solid rgba(148,163,184,0.15)",
-                    borderRadius: "12px",
-                    fontSize: "12px",
-                  }}
+                  contentStyle={tooltipStyle}
                   labelStyle={{ color: "#94a3b8" }}
+                  itemStyle={{ color: "#e2e8f0" }}
                 />
                 <Area
                   type="monotone"
                   dataKey="count"
-                  stroke="#3b82f6"
+                  stroke="#38bdf8"
                   strokeWidth={2}
                   fill="url(#fillAnom)"
                 />
@@ -113,23 +121,21 @@ export function Insights() {
                   innerRadius={56}
                   outerRadius={88}
                   paddingAngle={3}
+                  stroke="rgba(15,23,42,0.6)"
+                  strokeWidth={1}
                 >
                   {m.anomaliesBySeverity.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.fill} stroke="transparent" />
+                    <Cell key={`cell-${index}`} fill={entry.fill} />
                   ))}
                 </Pie>
                 <Tooltip
-                  contentStyle={{
-                    backgroundColor: "#0f172a",
-                    border: "1px solid rgba(148,163,184,0.15)",
-                    borderRadius: "12px",
-                    fontSize: "12px",
-                  }}
+                  contentStyle={tooltipStyle}
+                  itemStyle={{ color: "#e2e8f0" }}
                 />
               </PieChart>
             </ResponsiveContainer>
           </div>
-          <div className="mt-2 flex flex-wrap justify-center gap-3 text-xs text-slate-500">
+          <div className="mt-3 flex flex-wrap justify-center gap-3 text-xs text-slate-400">
             {m.anomaliesBySeverity.map((s) => (
               <span key={s.name} className="inline-flex items-center gap-1.5">
                 <span
@@ -151,18 +157,21 @@ export function Insights() {
           <div className="h-[260px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={m.confidenceDistribution} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                <XAxis dataKey="range" tick={tick} tickLine={false} axisLine={axis} />
-                <YAxis tick={tick} tickLine={false} axisLine={axis} width={28} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "#0f172a",
-                    border: "1px solid rgba(148,163,184,0.15)",
-                    borderRadius: "12px",
-                    fontSize: "12px",
-                  }}
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={gridStroke} />
+                <XAxis
+                  dataKey="range"
+                  tick={tickProps}
+                  tickLine={false}
+                  axisLine={axisLine}
                 />
-                <Bar dataKey="count" fill="#8b5cf6" radius={[6, 6, 0, 0]} maxBarSize={48} />
+                <YAxis tick={tickProps} tickLine={false} axisLine={axisLine} width={32} />
+                <Tooltip contentStyle={tooltipStyle} itemStyle={{ color: "#e2e8f0" }} />
+                <Bar
+                  dataKey="count"
+                  fill="#a78bfa"
+                  radius={[6, 6, 0, 0]}
+                  maxBarSize={48}
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -179,25 +188,23 @@ export function Insights() {
                 data={m.topServices}
                 margin={{ top: 8, right: 16, left: 8, bottom: 0 }}
               >
-                <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-                <XAxis type="number" tick={tick} tickLine={false} axisLine={axis} />
+                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke={gridStroke} />
+                <XAxis type="number" tick={tickProps} tickLine={false} axisLine={axisLine} />
                 <YAxis
                   type="category"
                   dataKey="service"
                   width={120}
-                  tick={tick}
+                  tick={tickProps}
                   tickLine={false}
-                  axisLine={axis}
+                  axisLine={axisLine}
                 />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "#0f172a",
-                    border: "1px solid rgba(148,163,184,0.15)",
-                    borderRadius: "12px",
-                    fontSize: "12px",
-                  }}
+                <Tooltip contentStyle={tooltipStyle} itemStyle={{ color: "#e2e8f0" }} />
+                <Bar
+                  dataKey="count"
+                  fill="#34d399"
+                  radius={[0, 6, 6, 0]}
+                  maxBarSize={22}
                 />
-                <Bar dataKey="count" fill="#22c55e" radius={[0, 6, 6, 0]} maxBarSize={22} />
               </BarChart>
             </ResponsiveContainer>
           </div>

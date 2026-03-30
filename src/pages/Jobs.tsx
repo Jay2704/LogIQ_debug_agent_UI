@@ -47,10 +47,8 @@ export function Jobs() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-white">
-            Debug jobs
-          </h1>
-          <p className="mt-1 text-sm text-slate-500">
+          <h1 className="ui-page-title">Debug jobs</h1>
+          <p className="ui-page-desc">
             Search by job ID or anomaly ID, filter by status and trigger.
           </p>
         </div>
