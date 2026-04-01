@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { useCurrentUser } from "@/auth";
 import { AuthLayout } from "@/components/auth/AuthLayout";
-import { AuthField, AuthInput } from "@/components/auth/AuthField";
+import { AuthField, AuthInput, AuthPasswordInput } from "@/components/auth/AuthField";
 import { submitLogin } from "@/lib/authHandlers";
 import { hasFieldErrors, validateLogin } from "@/lib/authValidation";
 import { ctaButtonGradient, ctaGlowBlueOnly } from "@/lib/ctaTheme";
@@ -107,9 +107,8 @@ export function Login() {
         </AuthField>
 
         <AuthField id="login-password" label="Password" error={errors.password}>
-          <AuthInput
+          <AuthPasswordInput
             id="login-password"
-            type="password"
             name="password"
             autoComplete="current-password"
             placeholder="••••••••"

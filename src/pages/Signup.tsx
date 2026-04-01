@@ -3,7 +3,12 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { AuthLayout } from "@/components/auth/AuthLayout";
-import { AuthField, AuthInput, AuthSelect } from "@/components/auth/AuthField";
+import {
+  AuthField,
+  AuthInput,
+  AuthPasswordInput,
+  AuthSelect,
+} from "@/components/auth/AuthField";
 import { submitSignup } from "@/lib/authHandlers";
 import {
   hasFieldErrors,
@@ -123,9 +128,8 @@ export function Signup() {
           error={errors.password}
           hint={`At least ${MIN_PASSWORD_LENGTH} characters. Never stored in the browser — only sent when you create your account.`}
         >
-          <AuthInput
+          <AuthPasswordInput
             id="signup-password"
-            type="password"
             name="password"
             autoComplete="new-password"
             placeholder="••••••••"
