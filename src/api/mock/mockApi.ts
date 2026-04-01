@@ -15,6 +15,7 @@ import { mockRcaService } from "./rca";
 import { mockReportsService } from "./reports";
 import { mockUtilitiesService } from "./utilitiesTools";
 import { mockDebugAgentService } from "./debugAgent";
+import { mockUsersService } from "./users";
 
 export function createMockApi(): LogIQApi {
   return {
@@ -26,5 +27,6 @@ export function createMockApi(): LogIQApi {
     insights: mockInsightsService,
     dashboard: mockDashboardService,
     utilities: mockUtilitiesService,
+    users: mockUsersService,
   };
 }

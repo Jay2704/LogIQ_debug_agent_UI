@@ -6,12 +6,57 @@ import { cn } from "@/lib/utils";
 interface RunDebugButtonProps {
   className?: string;
   to?: string;
+  /** UI-only: hides navigation; use when role does not allow this shortcut. */
+  disabled?: boolean;
+  /** Shown when `disabled` (e.g. viewer role). */
+  disabledTitle?: string;
 }
 
 export function RunDebugButton({
   className,
   to = "/jobs",
+  disabled = false,
+  disabledTitle = "Not available for your role (UI only — not a security guarantee).",
 }: RunDebugButtonProps) {
+  const content = (
+    <>
+      <span
+        className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+        aria-hidden
+        style={{
+          background:
+            "linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)",
+        }}
+      />
+      <Play
+        className="relative h-4 w-4 fill-white text-white drop-shadow-sm"
+        strokeWidth={0}
+        aria-hidden
+      />
+      <span className="relative">Run Debug Agent</span>
+    </>
+  );
+
+  if (disabled) {
+    return (
+      <span
+        role="presentation"
+        aria-disabled="true"
+        title={disabledTitle}
+        className={cn(
+          "group relative inline-flex cursor-not-allowed items-center justify-center gap-2.5 overflow-hidden rounded-xl px-7 py-3.5 opacity-50",
+          "text-sm font-semibold tracking-wide text-white",
+          ctaButtonGradient,
+          ctaGlowBlueOnly,
+          "ring-1 ring-blue-400/35",
+          className
+        )}
+      >
+        {content}
+      </span>
+    );
+  }
+
   return (
     <Link
       to={to}
@@ -28,20 +73,7 @@ export function RunDebugButton({
         className
       )}
     >
-      <span
-        className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-        aria-hidden
-        style={{
-          background:
-            "linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)",
-        }}
-      />
-      <Play
-        className="relative h-4 w-4 fill-white text-white drop-shadow-sm"
-        strokeWidth={0}
-        aria-hidden
-      />
-      <span className="relative">Run Debug Agent</span>
+      {content}
     </Link>
   );
 }

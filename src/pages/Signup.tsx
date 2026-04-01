@@ -4,19 +4,18 @@ import { Link } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { AuthField, AuthInput, AuthSelect } from "@/components/auth/AuthField";
-import { submitSignupPlaceholder } from "@/lib/authHandlers";
+import { submitSignup } from "@/lib/authHandlers";
 import { hasFieldErrors, validateSignup } from "@/lib/authValidation";
 import { ctaButtonGradient, ctaGlowBlueOnly } from "@/lib/ctaTheme";
 import { cn } from "@/lib/utils";
 import type { AuthSubmitStatus, SignupFormValues } from "@/types";
-import { TEAM_ROLE_OPTIONS } from "@/types";
+import { SIGNUP_ROLE_OPTIONS } from "@/types";
 
 const initial: SignupFormValues = {
   fullName: "",
-  workEmail: "",
-  password: "",
-  confirmPassword: "",
-  teamRole: "",
+  email: "",
+  role: "",
+  team: "",
 };
 
 export function Signup() {
@@ -51,7 +50,7 @@ export function Signup() {
 
     setSubmitStatus("loading");
     setBanner("");
-    const result = await submitSignupPlaceholder(values);
+    const result = await submitSignup(values);
     setSubmitStatus(result.status);
     setBanner(result.message ?? "");
   }
@@ -59,7 +58,7 @@ export function Signup() {
   return (
     <AuthLayout
       cardTitle="Create account"
-      cardDescription="Join your team’s LogIQ workspace."
+      cardDescription="Join your team’s LogIQ workspace — profile only; password sign-in comes next."
     >
       <form onSubmit={handleSubmit} className="space-y-4" noValidate>
         {submitStatus === "error" && banner ? (
@@ -98,92 +97,59 @@ export function Signup() {
           />
         </AuthField>
 
-        <AuthField
-          id="signup-email"
-          label="Work email"
-          error={errors.workEmail}
-          hint='Demo: include “fail@” in the email to simulate a failed signup.'
-        >
+        <AuthField id="signup-email" label="Email" error={errors.email}>
           <AuthInput
             id="signup-email"
             type="email"
             name="email"
             autoComplete="email"
             placeholder="you@company.com"
-            value={values.workEmail}
-            onChange={(e) => update("workEmail", e.target.value)}
+            value={values.email}
+            onChange={(e) => update("email", e.target.value)}
             disabled={disabled}
-            error={errors.workEmail}
-            success={Boolean(values.workEmail && !errors.workEmail)}
+            error={errors.email}
+            success={Boolean(values.email && !errors.email)}
           />
         </AuthField>
 
-        <AuthField
-          id="signup-password"
-          label="Password"
-          error={errors.password}
-          hint="Minimum 8 characters."
-        >
-          <AuthInput
-            id="signup-password"
-            type="password"
-            name="new-password"
-            autoComplete="new-password"
-            placeholder="••••••••"
-            value={values.password}
-            onChange={(e) => update("password", e.target.value)}
-            disabled={disabled}
-            error={errors.password}
-            success={Boolean(values.password && !errors.password)}
-          />
-        </AuthField>
-
-        <AuthField
-          id="signup-confirm"
-          label="Confirm password"
-          error={errors.confirmPassword}
-        >
-          <AuthInput
-            id="signup-confirm"
-            type="password"
-            name="confirm-password"
-            autoComplete="new-password"
-            placeholder="••••••••"
-            value={values.confirmPassword}
-            onChange={(e) => update("confirmPassword", e.target.value)}
-            disabled={disabled}
-            error={errors.confirmPassword}
-            success={
-              Boolean(values.confirmPassword) &&
-              values.password === values.confirmPassword &&
-              !errors.confirmPassword
-            }
-          />
-        </AuthField>
-
-        <AuthField
-          id="signup-role"
-          label="Team / role"
-          error={errors.teamRole}
-        >
+        <AuthField id="signup-role" label="Role" error={errors.role}>
           <AuthSelect
             id="signup-role"
-            name="teamRole"
-            value={values.teamRole}
+            name="role"
+            value={values.role}
             onChange={(e) =>
-              update("teamRole", e.target.value as SignupFormValues["teamRole"])
+              update("role", e.target.value as SignupFormValues["role"])
             }
             disabled={disabled}
-            error={errors.teamRole}
-            success={Boolean(values.teamRole && !errors.teamRole)}
+            error={errors.role}
+            success={Boolean(values.role && !errors.role)}
           >
-            <option value="">Select…</option>
-            {TEAM_ROLE_OPTIONS.map((o) => (
+            <option value="">Select a role…</option>
+            {SIGNUP_ROLE_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>
                 {o.label}
               </option>
             ))}
           </AuthSelect>
+        </AuthField>
+
+        <AuthField
+          id="signup-team"
+          label="Team"
+          error={errors.team}
+          hint="Squad or group name (e.g. Platform, Checkout)."
+        >
+          <AuthInput
+            id="signup-team"
+            name="team"
+            autoComplete="organization"
+            placeholder="Platform"
+            value={values.team}
+            onChange={(e) => update("team", e.target.value)}
+            disabled={disabled}
+            error={errors.team}
+            success={Boolean(values.team.trim() && !errors.team)}
+          />
         </AuthField>
 
         <button
@@ -202,7 +168,7 @@ export function Signup() {
           {loading ? (
             <>
               <Loader2 className="h-4 w-4 animate-spin" />
-              Creating account…
+              Creating profile…
             </>
           ) : (
             "Create account"
@@ -223,9 +189,15 @@ export function Signup() {
           <div className="border-t border-white/[0.06] pt-4 text-center">
             <Link
               to="/login"
-              className="text-sm font-semibold text-sky-400 hover:text-sky-300"
+              className={cn(
+                "inline-flex w-full items-center justify-center rounded-xl py-3 text-sm font-semibold text-white",
+                ctaButtonGradient,
+                ctaGlowBlueOnly,
+                "ring-1 ring-blue-400/35 transition hover:shadow-[0_0_0_1px_rgba(56,189,248,0.35)]",
+                "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400/70"
+              )}
             >
-              Go to sign in →
+              Continue to Login
             </Link>
           </div>
         ) : null}

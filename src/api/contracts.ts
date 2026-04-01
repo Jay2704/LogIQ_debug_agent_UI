@@ -2,6 +2,7 @@ import type {
   Anomaly,
   AnomalyActivityPoint,
   CreateJobInput,
+  CreateUserInput,
   InsightMetrics,
   Job,
   JobDetailBundle,
@@ -9,6 +10,7 @@ import type {
   RcaResult,
   ReportArtifact,
   TopRootCauseFileRow,
+  User,
   UtilityRunRecord,
   UtilityToolDefinition,
 } from "@/types";
@@ -70,6 +72,14 @@ export interface UtilitiesService {
   getRecentRuns(): Promise<UtilityRunRecord[]>;
 }
 
+/** User CRUD-style helpers for signup / lookup (no token auth in this layer yet). */
+export interface UsersService {
+  create(input: CreateUserInput): Promise<User>;
+  getUserById(userId: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
+  listUsers(): Promise<User[]>;
+}
+
 /** Root API surface — one place to mock or replace with fetch-based client. */
 export interface LogIQApi {
   jobs: JobsService;
@@ -80,4 +90,5 @@ export interface LogIQApi {
   insights: InsightsService;
   dashboard: DashboardService;
   utilities: UtilitiesService;
+  users: UsersService;
 }

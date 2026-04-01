@@ -1,6 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Activity, ListTodo, Plus, RefreshCw } from "lucide-react";
+import { useCurrentUser } from "@/auth";
+import {
+  getRunDebugShortcutDisabledTitle,
+  useRoleUiCapabilities,
+} from "@/lib/roleUiCapabilities";
 import { JobsTable } from "@/components/ui/JobsTable";
 import { JobsListFooter } from "@/components/ui/JobsListFooter";
 import { JobsEmptyState } from "@/components/ui/JobsEmptyState";
@@ -39,7 +44,13 @@ const triggerOptions: FilterOption[] = [
 export function Jobs() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useCurrentUser();
+  const roleCaps = useRoleUiCapabilities();
   const { data: jobs, loading, error, refetch } = useJobs();
+  const canCreateJob =
+    Boolean(user?.userId?.trim()) && roleCaps.canCreateJob;
+  const createBlockedNoUser = !user?.userId?.trim();
+  const createBlockedRole = Boolean(user?.userId?.trim()) && !roleCaps.canCreateJob;
   const [createOpen, setCreateOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("all");
@@ -115,11 +126,22 @@ export function Jobs() {
                 ctaGlowBlueOnly,
                 "ring-1 ring-blue-400/35"
               )}
+              title={
+                canCreateJob
+                  ? undefined
+                  : createBlockedNoUser
+                    ? "Sign in to create a job (triggered_by_user_id)"
+                    : "Viewer role cannot create jobs (UI only)"
+              }
             >
               <Plus className="h-4 w-4" />
               New job
             </button>
-            <RunDebugButton to="/" />
+            <RunDebugButton
+              to="/"
+              disabled={!roleCaps.canUseRunDebugShortcut}
+              disabledTitle={getRunDebugShortcutDisabledTitle(user)}
+            />
           </div>
         </div>
         <JobsTableSkeleton rows={8} />
@@ -215,20 +237,55 @@ export function Jobs() {
           ) : null}
         </div>
         <div className="flex shrink-0 flex-wrap items-center gap-3 lg:pt-1">
-          <button
-            type="button"
-            onClick={() => setCreateOpen(true)}
-            className={cn(
-              "inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-white",
-              ctaButtonGradient,
-              ctaGlowBlueOnly,
-              "ring-1 ring-blue-400/35 transition hover:-translate-y-0.5 active:translate-y-0"
-            )}
-          >
-            <Plus className="h-4 w-4" />
-            New job
-          </button>
-          <RunDebugButton to="/" />
+          <div className="flex flex-col items-stretch gap-1 sm:items-end">
+            <button
+              type="button"
+              onClick={() => setCreateOpen(true)}
+              disabled={!canCreateJob}
+              title={
+                canCreateJob
+                  ? undefined
+                  : createBlockedNoUser
+                    ? "Sign in to create a job — triggered_by_user_id comes from your user record."
+                    : "Viewer role cannot create jobs (UI only)"
+              }
+              className={cn(
+                "inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-white",
+                ctaButtonGradient,
+                ctaGlowBlueOnly,
+                "ring-1 ring-blue-400/35 transition hover:-translate-y-0.5 active:translate-y-0",
+                !canCreateJob && "cursor-not-allowed opacity-50 hover:translate-y-0"
+              )}
+            >
+              <Plus className="h-4 w-4" />
+              New job
+            </button>
+            {!canCreateJob ? (
+              <p className="max-w-[16rem] text-right text-xs leading-snug text-slate-500">
+                {createBlockedNoUser ? (
+                  <>
+                    <Link
+                      to="/login"
+                      className="font-semibold text-sky-400 transition hover:text-sky-300"
+                    >
+                      Sign in
+                    </Link>{" "}
+                    to select a user before creating a job.
+                  </>
+                ) : createBlockedRole ? (
+                  <>
+                    Viewer role is read-only here. Use a tester, support, developer, or SRE
+                    account to create jobs.
+                  </>
+                ) : null}
+              </p>
+            ) : null}
+          </div>
+          <RunDebugButton
+            to="/"
+            disabled={!roleCaps.canUseRunDebugShortcut}
+            disabledTitle={getRunDebugShortcutDisabledTitle(user)}
+          />
         </div>
       </div>
 

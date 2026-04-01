@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { USE_HTTP_API } from "@/api/config";
+import { useCurrentUser } from "@/auth";
 import { AnomalyActivityMiniChart } from "@/components/dashboard/AnomalyActivityMiniChart";
 import { DashboardKpiCard } from "@/components/dashboard/DashboardKpiCard";
 import { InvestigationCard } from "@/components/dashboard/InvestigationCard";
@@ -25,6 +26,10 @@ import {
 } from "@/api/hooks";
 import { computeJobStatusSummary } from "@/lib/insights";
 import { getJobRouteId } from "@/lib/jobRoute";
+import {
+  getRunDebugShortcutDisabledTitle,
+  useRoleUiCapabilities,
+} from "@/lib/roleUiCapabilities";
 import { ctaButtonGradient, ctaGlowBlueOnly } from "@/lib/ctaTheme";
 import { cn, formatDateTime } from "@/lib/utils";
 
@@ -106,6 +111,10 @@ function KpiErrorPlaceholder({
 }
 
 export function Dashboard() {
+  const { user } = useCurrentUser();
+  const roleCaps = useRoleUiCapabilities();
+  const canCreateJobFromRole =
+    Boolean(user?.userId?.trim()) && roleCaps.canCreateJob;
   const jobsQuery = useDashboardJobs();
   const enrich = useDashboardEnrichment();
   const widgets = useDashboardWidgets();
@@ -201,12 +210,18 @@ export function Dashboard() {
               <div className="rounded-2xl bg-surface-975/95 p-1.5">
                 <RunDebugButton
                   to="/jobs"
+                  disabled={!roleCaps.canUseRunDebugShortcut}
+                  disabledTitle={getRunDebugShortcutDisabledTitle(user)}
                   className="w-full justify-center px-8 py-4 text-base sm:w-auto"
                 />
               </div>
             </div>
             <p className="text-center text-[11px] text-slate-500 sm:text-right">
-              Spawns a new investigation pipeline with trace + log correlation.
+              {roleCaps.canUseRunDebugShortcut
+                ? "Spawns a new investigation pipeline with trace + log correlation."
+                : user?.userId
+                  ? "Shortcut hidden for viewer role — browse jobs read-only (UI only)."
+                  : "Sign in with a non-viewer role to use this shortcut (UI only)."}
             </p>
           </div>
         </div>
@@ -297,10 +312,32 @@ export function Dashboard() {
           ) : investigations.length === 0 ? (
             <div className="rounded-card border border-dashed border-slate-700/60 bg-surface-975/40 px-5 py-10 text-center text-sm text-slate-500">
               No jobs yet.{" "}
-              <Link to="/jobs" className="font-semibold text-sky-400 hover:text-sky-300">
-                Create a job
-              </Link>{" "}
-              to see investigations here.
+              {canCreateJobFromRole ? (
+                <>
+                  <Link
+                    to="/jobs"
+                    className="font-semibold text-sky-400 hover:text-sky-300"
+                  >
+                    Create a job
+                  </Link>{" "}
+                  to see investigations here.
+                </>
+              ) : user?.userId ? (
+                <>
+                  Open{" "}
+                  <Link to="/jobs" className="font-semibold text-sky-400 hover:text-sky-300">
+                    Jobs
+                  </Link>{" "}
+                  to browse — your role cannot create jobs here (frontend hint only).
+                </>
+              ) : (
+                <>
+                  <Link to="/login" className="font-semibold text-sky-400 hover:text-sky-300">
+                    Sign in
+                  </Link>{" "}
+                  with a tester, support, developer, or SRE account to create jobs.
+                </>
+              )}
             </div>
           ) : (
             <div className="grid gap-4 sm:grid-cols-2">

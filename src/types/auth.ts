@@ -1,37 +1,29 @@
 /**
  * Auth form models and submit shapes for the LogIQ Debug Agent UI.
- * Replace placeholder handlers in `@/lib/authHandlers` with real API calls
- * (e.g. `POST /auth/login`, session cookies or bearer tokens) when backend exists.
+ * Sign up uses `POST /api/v1/users`. Login uses prototype email lookup only — see `@/auth`.
  */
 
-export type AuthTeamRole =
-  | "sre"
-  | "platform"
-  | "developer"
-  | "security"
-  | "other";
+import type { User, UserRole } from "./domain/user";
 
+/** Email-only form for prototype login (`GET /api/v1/users/by-email/...`). */
 export interface LoginFormValues {
   email: string;
-  password: string;
-  rememberMe: boolean;
 }
 
+/** Result of `submitLoginLookup` — not a credential-based auth response. */
+export interface LoginLookupResult {
+  status: "success" | "error";
+  message?: string;
+  user?: User;
+}
+
+/** Onboarding profile — no passwords; persisted via `POST /api/v1/users`. */
 export interface SignupFormValues {
   fullName: string;
-  workEmail: string;
-  password: string;
-  confirmPassword: string;
-  teamRole: AuthTeamRole | "";
+  email: string;
+  role: UserRole | "";
+  team: string;
 }
-
-export const TEAM_ROLE_OPTIONS: { value: AuthTeamRole; label: string }[] = [
-  { value: "sre", label: "SRE / Reliability" },
-  { value: "platform", label: "Platform Engineering" },
-  { value: "developer", label: "Application Developer" },
-  { value: "security", label: "Security" },
-  { value: "other", label: "Other" },
-];
 
 /** Placeholder result shape for future `login()` / `signup()` API calls */
 export type AuthSubmitStatus = "idle" | "loading" | "success" | "error";

@@ -1,6 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
+import { CurrentUserProvider } from "./auth";
 import { API_BASE_URL, HTTP_MODE_FLAG } from "./api/config";
 import App from "./App";
 import "./index.css";
@@ -14,7 +15,9 @@ if (import.meta.env.DEV && HTTP_MODE_FLAG && !API_BASE_URL) {
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
-      <App />
+      <CurrentUserProvider>
+        <App />
+      </CurrentUserProvider>
     </BrowserRouter>
   </StrictMode>
 );

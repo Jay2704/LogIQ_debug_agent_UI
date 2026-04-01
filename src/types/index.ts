@@ -33,12 +33,13 @@ export type {
   UtilityToolDefinition,
   UtilityRunRecord,
 } from "./domain/utilities";
+export type { UserRole, User, CreateUserInput } from "./domain/user";
+export { SIGNUP_ROLE_OPTIONS } from "./domain/user";
 
 export type {
-  AuthTeamRole,
   LoginFormValues,
+  LoginLookupResult,
   SignupFormValues,
   AuthSubmitStatus,
   AuthSubmitResult,
 } from "./auth";
-export { TEAM_ROLE_OPTIONS } from "./auth";

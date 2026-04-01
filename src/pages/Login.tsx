@@ -1,22 +1,24 @@
 import type { FormEvent } from "react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
+import { useCurrentUser } from "@/auth";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { AuthField, AuthInput } from "@/components/auth/AuthField";
-import { submitLoginPlaceholder } from "@/lib/authHandlers";
+import { submitLoginLookup } from "@/lib/authHandlers";
 import { hasFieldErrors, validateLogin } from "@/lib/authValidation";
 import { ctaButtonGradient, ctaGlowBlueOnly } from "@/lib/ctaTheme";
+import { formatUserContextLine } from "@/lib/userDisplay";
 import { cn } from "@/lib/utils";
 import type { AuthSubmitStatus, LoginFormValues } from "@/types";
 
 const initial: LoginFormValues = {
   email: "",
-  password: "",
-  rememberMe: false,
 };
 
 export function Login() {
+  const navigate = useNavigate();
+  const { setCurrentUser, user } = useCurrentUser();
   const [values, setValues] = useState<LoginFormValues>(initial);
   const [errors, setErrors] = useState<
     Partial<Record<keyof LoginFormValues, string>>
@@ -26,7 +28,7 @@ export function Login() {
 
   const loading = submitStatus === "loading";
   const success = submitStatus === "success";
-  const disabled = loading || success;
+  const disabled = loading;
 
   function update<K extends keyof LoginFormValues>(
     key: K,
@@ -48,15 +50,23 @@ export function Login() {
 
     setSubmitStatus("loading");
     setBanner("");
-    const result = await submitLoginPlaceholder(values);
-    setSubmitStatus(result.status);
-    setBanner(result.message ?? "");
+    const result = await submitLoginLookup(values.email);
+    if (result.status === "success" && result.user) {
+      setCurrentUser(result.user);
+      setSubmitStatus("success");
+      setBanner(result.message ?? "");
+    } else {
+      setSubmitStatus("error");
+      setBanner(result.message ?? "Sign-in failed.");
+    }
   }
+
+  const previewUser = success && user ? user : null;
 
   return (
     <AuthLayout
       cardTitle="Sign in"
-      cardDescription="Use your work email to access the workspace."
+      cardDescription="Prototype: enter the email of an existing user record. No password — not production auth."
     >
       <form onSubmit={handleSubmit} className="space-y-5" noValidate>
         {submitStatus === "error" && banner ? (
@@ -94,47 +104,19 @@ export function Login() {
           />
         </AuthField>
 
-        <AuthField
-          id="login-password"
-          label="Password"
-          error={errors.password}
-          hint='Demo: password “faildemo” simulates a failed sign-in.'
-        >
-          <AuthInput
-            id="login-password"
-            type="password"
-            name="password"
-            autoComplete="current-password"
-            placeholder="••••••••"
-            value={values.password}
-            onChange={(e) => update("password", e.target.value)}
-            disabled={disabled}
-            error={errors.password}
-            success={Boolean(
-              values.password && !errors.password && submitStatus !== "error"
-            )}
-          />
-        </AuthField>
-
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-400">
-            <input
-              type="checkbox"
-              checked={values.rememberMe}
-              onChange={(e) => update("rememberMe", e.target.checked)}
-              disabled={disabled}
-              className="h-4 w-4 rounded border-white/20 bg-surface-950 text-sky-500 focus:ring-sky-500/40 focus:ring-offset-0 disabled:opacity-50"
-            />
-            Remember me
-          </label>
-          <button
-            type="button"
-            className="text-sm font-medium text-sky-400 transition hover:text-sky-300"
-            title="Password reset is not wired yet — will connect when auth backend exists."
-          >
-            Forgot password?
-          </button>
-        </div>
+        {previewUser ? (
+          <div className="rounded-xl border border-white/[0.08] bg-surface-900/50 px-4 py-3 text-sm">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+              Matched user
+            </p>
+            <p className="mt-1 font-semibold text-slate-100">
+              {previewUser.name || previewUser.email}
+            </p>
+            <p className="mt-0.5 text-slate-400">
+              {formatUserContextLine(previewUser)}
+            </p>
+          </div>
+        ) : null}
 
         <button
           type="submit"
@@ -152,10 +134,12 @@ export function Login() {
           {loading ? (
             <>
               <Loader2 className="h-4 w-4 animate-spin" />
-              Signing in…
+              Looking up user…
             </>
+          ) : success ? (
+            "Look up again"
           ) : (
-            "Sign in"
+            "Continue"
           )}
         </button>
 
@@ -171,12 +155,19 @@ export function Login() {
 
         {success ? (
           <div className="border-t border-white/[0.06] pt-4 text-center">
-            <Link
-              to="/"
-              className="text-sm font-semibold text-sky-400 hover:text-sky-300"
+            <button
+              type="button"
+              onClick={() => navigate("/")}
+              className={cn(
+                "inline-flex w-full items-center justify-center rounded-xl py-3 text-sm font-semibold text-white",
+                ctaButtonGradient,
+                ctaGlowBlueOnly,
+                "ring-1 ring-blue-400/35 transition hover:shadow-[0_0_0_1px_rgba(56,189,248,0.35)]",
+                "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400/70"
+              )}
             >
-              Continue to dashboard →
-            </Link>
+              Continue to dashboard
+            </button>
           </div>
         ) : null}
       </form>

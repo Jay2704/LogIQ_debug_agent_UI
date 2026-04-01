@@ -1,12 +1,13 @@
 import { useRef, useState, type FormEvent } from "react";
+import { Link } from "react-router-dom";
 import { X } from "lucide-react";
+import { useCurrentUser } from "@/auth";
 import { api } from "@/api";
+import { useRoleUiCapabilities } from "@/lib/roleUiCapabilities";
+import { formatUserRoleLabel } from "@/lib/userDisplay";
 import { ctaButtonGradient, ctaGlowBlueOnly } from "@/lib/ctaTheme";
 import { cn } from "@/lib/utils";
 import type { CreateJobInput, Job } from "@/types";
-
-/** Default for local dev — backend may require a registered user UUID (not a plain string). */
-const DEMO_TRIGGERED_BY = "18c6e126-b6d4-517e-ab4c-6ffa1e2f8eeb";
 
 const TRIGGER_OPTIONS = [
   { value: "alert", label: "Alert" },
@@ -28,10 +29,13 @@ export function CreateJobModal({
   onClose,
   onCreated,
 }: CreateJobModalProps) {
+  const { user } = useCurrentUser();
+  const roleCaps = useRoleUiCapabilities();
+  const canSubmitJob =
+    Boolean(user?.userId?.trim()) && roleCaps.canCreateJob;
   const [jobType, setJobType] = useState("debug_investigation");
   const [anomalyId, setAnomalyId] = useState("");
   const [runId, setRunId] = useState("");
-  const [triggeredByUserId, setTriggeredByUserId] = useState(DEMO_TRIGGERED_BY);
   const [triggerSource, setTriggerSource] = useState("manual");
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -40,10 +44,15 @@ export function CreateJobModal({
   if (!isOpen) return null;
 
   const validate = (): string | null => {
+    if (!user?.userId?.trim()) {
+      return "Sign in and select a user before creating a job.";
+    }
+    if (!roleCaps.canCreateJob) {
+      return "Your role cannot create jobs in this workspace (UI rule only — not server enforcement).";
+    }
     if (!jobType.trim()) return "Job type is required.";
     if (!anomalyId.trim()) return "Anomaly ID is required.";
     if (!runId.trim()) return "Run ID is required.";
-    if (!triggeredByUserId.trim()) return "Triggered-by user id is required.";
     if (!triggerSource.trim()) return "Trigger source is required.";
     return null;
   };
@@ -56,6 +65,17 @@ export function CreateJobModal({
       setSubmitError(v);
       return;
     }
+    const triggeredBy = user?.userId?.trim();
+    if (!triggeredBy) {
+      setSubmitError("Sign in and select a user before creating a job.");
+      return;
+    }
+    if (!roleCaps.canCreateJob) {
+      setSubmitError(
+        "Your role cannot create jobs (UI only — use an account with tester, support, developer, or SRE role)."
+      );
+      return;
+    }
     submitLock.current = true;
     setSubmitError(null);
     setSubmitting(true);
@@ -63,7 +83,7 @@ export function CreateJobModal({
       jobType: jobType.trim(),
       anomalyId: anomalyId.trim(),
       runId: runId.trim(),
-      triggeredByUserId: triggeredByUserId.trim(),
+      triggeredByUserId: triggeredBy,
       triggerSource: triggerSource.trim(),
     };
     try {
@@ -115,8 +135,11 @@ export function CreateJobModal({
               Create job
             </h2>
             <p className="mt-1 text-sm text-slate-500">
-              POST to the backend with your anomaly and run identifiers. Demo user id is
-              prefilled for local use.
+              POST to the backend with your anomaly and run identifiers.{" "}
+              <span className="text-slate-400">
+                Triggered-by user comes from your current session (same id as the users
+                table).
+              </span>
             </p>
           </div>
           <button
@@ -169,15 +192,42 @@ export function CreateJobModal({
           </div>
           <div>
             <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-              Triggered by user ID
+              Triggered by (current user)
             </label>
-            <input
-              value={triggeredByUserId}
-              onChange={(e) => setTriggeredByUserId(e.target.value)}
-              className="mt-1.5 w-full rounded-xl border border-white/[0.08] bg-surface-975/80 px-3 py-2.5 font-mono text-sm text-slate-200 outline-none focus:border-sky-500/40"
-              placeholder={DEMO_TRIGGERED_BY}
-              autoComplete="off"
-            />
+            {user?.userId && roleCaps.canCreateJob ? (
+              <div className="mt-1.5 rounded-xl border border-white/[0.08] bg-surface-975/80 px-3 py-2.5 text-sm text-slate-200">
+                <p className="font-medium text-slate-100">
+                  {user.name?.trim() || user.email}
+                </p>
+                <p className="mt-1 font-mono text-xs text-slate-500">
+                  triggered_by_user_id · {user.userId}
+                </p>
+              </div>
+            ) : user?.userId && !roleCaps.canCreateJob ? (
+              <div className="mt-1.5 rounded-xl border border-amber-500/25 bg-amber-500/[0.06] px-3 py-2.5 text-sm text-amber-100/95">
+                <p className="font-medium text-amber-50/95">
+                  Role: {formatUserRoleLabel(user.role)}
+                </p>
+                <p className="mt-1 text-amber-100/80">
+                  Viewers can open jobs and dashboards but cannot create new jobs here. Ask a
+                  teammate with tester, support, developer, or SRE access.
+                </p>
+              </div>
+            ) : (
+              <div className="mt-1.5 rounded-xl border border-amber-500/25 bg-amber-500/[0.06] px-3 py-2.5 text-sm text-amber-100/95">
+                <p className="font-medium text-amber-50/95">No user in session</p>
+                <p className="mt-1 text-amber-100/80">
+                  Sign in with your email on the login page so your user id can be sent as{" "}
+                  <span className="font-mono text-xs">triggered_by_user_id</span>.
+                </p>
+                <Link
+                  to="/login"
+                  className="mt-2 inline-block text-sm font-semibold text-sky-400 hover:text-sky-300"
+                >
+                  Go to Sign in →
+                </Link>
+              </div>
+            )}
           </div>
           <div>
             <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
@@ -216,12 +266,12 @@ export function CreateJobModal({
             </button>
             <button
               type="submit"
-              disabled={submitting}
+              disabled={submitting || !canSubmitJob}
               className={cn(
                 "rounded-xl px-5 py-2.5 text-sm font-semibold text-white ring-1 ring-blue-400/35",
                 ctaButtonGradient,
                 ctaGlowBlueOnly,
-                submitting && "pointer-events-none opacity-70"
+                (submitting || !canSubmitJob) && "pointer-events-none opacity-60"
               )}
             >
               {submitting ? "Creating…" : "Create job"}

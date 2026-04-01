@@ -1,0 +1,50 @@
+import type { UsersService } from "@/api/contracts";
+import type { CreateUserInput, User } from "@/types";
+
+/** In-memory users for mock mode and dev without a backend. */
+const store = new Map<string, User>();
+const byEmail = new Map<string, string>();
+
+function makeId(): string {
+  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
+    return crypto.randomUUID();
+  }
+  return `user_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
+}
+
+export const mockUsersService: UsersService = {
+  async create(input: CreateUserInput): Promise<User> {
+    const emailKey = input.email.trim().toLowerCase();
+    const existingId = byEmail.get(emailKey);
+    if (existingId && store.has(existingId)) {
+      throw new Error(
+        "[LogIQ API] POST /api/v1/users 409 Conflict: Email already registered"
+      );
+    }
+    const user: User = {
+      userId: makeId(),
+      name: input.name.trim(),
+      email: input.email.trim(),
+      role: input.role,
+      team: input.team.trim(),
+      createdAt: new Date().toISOString(),
+    };
+    store.set(user.userId, user);
+    byEmail.set(emailKey, user.userId);
+    return user;
+  },
+
+  async getUserById(userId: string): Promise<User | undefined> {
+    return store.get(userId);
+  },
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const id = byEmail.get(email.trim().toLowerCase());
+    if (!id) return undefined;
+    return store.get(id);
+  },
+
+  async listUsers(): Promise<User[]> {
+    return [...store.values()];
+  },
+};

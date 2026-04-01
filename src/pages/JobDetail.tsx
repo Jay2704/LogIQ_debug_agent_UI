@@ -30,7 +30,12 @@ import {
   type InvestigationPhase,
 } from "@/api/hooks";
 import { ctaButtonGradient, ctaGlowBlueOnly } from "@/lib/ctaTheme";
+import { useCurrentUser } from "@/auth";
 import { getJobRouteId } from "@/lib/jobRoute";
+import {
+  getRunInvestigationDisabledTitle,
+  useRoleUiCapabilities,
+} from "@/lib/roleUiCapabilities";
 import { cn, formatDateTime } from "@/lib/utils";
 
 const triggerLabels = {
@@ -105,6 +110,9 @@ export function JobDetail() {
     clearWarning,
     getPipelineSteps,
   } = useRcaInvestigation(routeJobIdForInv, anomalyIdForInv);
+
+  const roleCaps = useRoleUiCapabilities();
+  const { user: sessionUser } = useCurrentUser();
 
   const prevInvestigationPhase = useRef<InvestigationPhase | null>(null);
 
@@ -284,7 +292,9 @@ export function JobDetail() {
   const runBusy =
     investigationPhase === "running" || investigationPhase === "fetching";
   const runDisabled =
-    runBusy || investigationIdsMissing;
+    runBusy ||
+    investigationIdsMissing ||
+    !roleCaps.canRunInvestigationPipeline;
 
   return (
     <div className="space-y-8 pb-16">
@@ -381,9 +391,11 @@ export function JobDetail() {
               title={
                 investigationIdsMissing
                   ? "Job or anomaly ID is missing — reload this job from the list."
-                  : runBusy
-                    ? progressLabel || "Investigation in progress…"
-                    : undefined
+                  : !roleCaps.canRunInvestigationPipeline
+                    ? getRunInvestigationDisabledTitle(sessionUser)
+                    : runBusy
+                      ? progressLabel || "Investigation in progress…"
+                      : undefined
               }
               className={cn(
                 "inline-flex max-w-[min(100%,20rem)] items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-white",
@@ -407,6 +419,30 @@ export function JobDetail() {
             </button>
           </div>
         </div>
+
+        {!runBusy &&
+        !investigationIdsMissing &&
+        !roleCaps.canRunInvestigationPipeline ? (
+          <p className="mt-3 text-xs leading-relaxed text-slate-500">
+            {!sessionUser?.userId?.trim() ? (
+              <>
+                <Link
+                  to="/login"
+                  className="font-semibold text-sky-400 hover:text-sky-300"
+                >
+                  Sign in
+                </Link>{" "}
+                with a tester, support, developer, or SRE account to run investigations from
+                this UI (guests cannot — prototype rule only).
+              </>
+            ) : (
+              <>
+                Read-only for viewer: pipeline runs require tester, support, developer, or SRE
+                (UI hint — not enforced by the API).
+              </>
+            )}
+          </p>
+        ) : null}
 
         {runBusy ? (
           <div className="mt-4">

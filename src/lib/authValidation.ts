@@ -11,11 +11,6 @@ export function validateLogin(values: LoginFormValues): Partial<
   } else if (!EMAIL_RE.test(values.email.trim())) {
     errors.email = "Enter a valid email address";
   }
-  if (!values.password) {
-    errors.password = "Password is required";
-  } else if (values.password.length < 8) {
-    errors.password = "At least 8 characters";
-  }
   return errors;
 }
 
@@ -26,21 +21,16 @@ export function validateSignup(values: SignupFormValues): Partial<
   if (!values.fullName.trim()) {
     errors.fullName = "Name is required";
   }
-  if (!values.workEmail.trim()) {
-    errors.workEmail = "Work email is required";
-  } else if (!EMAIL_RE.test(values.workEmail.trim())) {
-    errors.workEmail = "Enter a valid email address";
+  if (!values.email.trim()) {
+    errors.email = "Email is required";
+  } else if (!EMAIL_RE.test(values.email.trim())) {
+    errors.email = "Enter a valid email address";
   }
-  if (!values.password) {
-    errors.password = "Password is required";
-  } else if (values.password.length < 8) {
-    errors.password = "At least 8 characters";
+  if (!values.role) {
+    errors.role = "Select a role";
   }
-  if (values.password !== values.confirmPassword) {
-    errors.confirmPassword = "Passwords do not match";
-  }
-  if (!values.teamRole) {
-    errors.teamRole = "Select a team or role";
+  if (!values.team.trim()) {
+    errors.team = "Team is required";
   }
   return errors;
 }

@@ -1,6 +1,6 @@
 import type { LogIQApi } from "@/api/contracts";
 import { createMockApi } from "@/api/mock/mockApi";
-import type { CreateJobInput } from "@/types";
+import type { CreateJobInput, CreateUserInput } from "@/types";
 import { logApiDebug } from "./debugLog";
 import { joinApiUrl } from "./apiUrl";
 import { buildJobDetailBundleFromApiJob } from "./jobDetailMerge";
@@ -9,11 +9,17 @@ import {
   parseApiJobListJson,
 } from "./parseApiJob";
 import { parseRcaExplanationJson, parseRcaResultsJson } from "./parseRcaApi";
+import {
+  parseUserJson,
+  parseUserListJson,
+  serializeCreateUserBody,
+} from "./parseUserApi";
 
 /**
- * “Hybrid” HTTP client: real `fetch` calls for backend-supported routes, while anomalies,
- * reports, insights, dashboard, and utilities delegate to the in-memory mock implementation
- * until those APIs exist — keeps Insights/Reports/Utilities pages working in HTTP mode.
+ * “Hybrid” HTTP client: real `fetch` calls for backend-supported routes (jobs, RCA, debug-agent,
+ * users), while anomalies, reports, insights, dashboard, and utilities delegate to the in-memory
+ * mock implementation until those APIs exist — keeps Insights/Reports/Utilities pages working
+ * in HTTP mode.
  *
  * All request URLs use {@link joinApiUrl} with the configured origin (`VITE_API_BASE_URL`).
  */
@@ -150,5 +156,53 @@ export function createHttpApi(baseUrl: string): LogIQApi {
     insights: mocks.insights,
     dashboard: mocks.dashboard,
     utilities: mocks.utilities,
+    users: {
+      create: async (input: CreateUserInput) => {
+        const url = joinApiUrl(baseUrl, "/api/v1/users");
+        const res = await fetchNetwork(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(serializeCreateUserBody(input)),
+        });
+        if (!res.ok) await httpError(res, "POST /api/v1/users");
+        const json: unknown = await readJsonOrNull(res);
+        if (json === null || json === undefined) {
+          throw new Error("[LogIQ API] POST /api/v1/users: empty response body");
+        }
+        return parseUserJson(json);
+      },
+      getUserById: async (userId: string) => {
+        const url = joinApiUrl(
+          baseUrl,
+          `/api/v1/users/${encodeURIComponent(userId)}`
+        );
+        const res = await fetchNetwork(url);
+        if (res.status === 404) return undefined;
+        if (!res.ok) await httpError(res, "GET /api/v1/users/:id");
+        const json: unknown = await readJsonOrNull(res);
+        if (json === null || json === undefined) return undefined;
+        return parseUserJson(json);
+      },
+      getUserByEmail: async (email: string) => {
+        const url = joinApiUrl(
+          baseUrl,
+          `/api/v1/users/by-email/${encodeURIComponent(email.trim())}`
+        );
+        const res = await fetchNetwork(url);
+        if (res.status === 404) return undefined;
+        if (!res.ok) await httpError(res, "GET /api/v1/users/by-email/:email");
+        const json: unknown = await readJsonOrNull(res);
+        if (json === null || json === undefined) return undefined;
+        return parseUserJson(json);
+      },
+      listUsers: async () => {
+        const url = joinApiUrl(baseUrl, "/api/v1/users");
+        const res = await fetchNetwork(url);
+        if (!res.ok) await httpError(res, "GET /api/v1/users");
+        const json: unknown = await readJsonOrNull(res);
+        if (json === null || json === undefined) return [];
+        return parseUserListJson(json);
+      },
+    },
   };
 }
