@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 
 interface AuthLayoutProps {
   children: ReactNode;
-  /** Card heading (e.g. “Sign in”) */
+  /** Card heading (e.g. “Login”) */
   cardTitle: string;
   cardDescription?: string;
   className?: string;

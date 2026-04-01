@@ -221,7 +221,7 @@ export function Dashboard() {
                 ? "Spawns a new investigation pipeline with trace + log correlation."
                 : user?.userId
                   ? "Shortcut hidden for viewer role — browse jobs read-only (UI only)."
-                  : "Sign in with a non-viewer role to use this shortcut (UI only)."}
+                  : "Login with a non-viewer role to use this shortcut (UI only)."}
             </p>
           </div>
         </div>
@@ -333,7 +333,7 @@ export function Dashboard() {
               ) : (
                 <>
                   <Link to="/login" className="font-semibold text-sky-400 hover:text-sky-300">
-                    Sign in
+                    Login
                   </Link>{" "}
                   with a tester, support, developer, or SRE account to create jobs.
                 </>

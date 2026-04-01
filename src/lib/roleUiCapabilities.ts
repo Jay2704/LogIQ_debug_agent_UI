@@ -64,7 +64,7 @@ export function getRunDebugShortcutDisabledTitle(
   user: User | null | undefined
 ): string {
   if (!user?.userId?.trim()) {
-    return "Sign in to use this shortcut (UI only — not a security guarantee).";
+    return "Login to use this shortcut (UI only — not a security guarantee).";
   }
   return "Viewer role: shortcut disabled here (prototype UX only).";
 }
@@ -74,7 +74,7 @@ export function getRunInvestigationDisabledTitle(
   user: User | null | undefined
 ): string {
   if (!user?.userId?.trim()) {
-    return "Sign in with a non-viewer account to run the pipeline (UI only).";
+    return "Login with a non-viewer account to run the pipeline (UI only).";
   }
   return "Viewer role cannot run the pipeline (UI only — API may still allow requests).";
 }

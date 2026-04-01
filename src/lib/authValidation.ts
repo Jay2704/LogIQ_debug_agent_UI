@@ -2,6 +2,9 @@ import type { LoginFormValues, SignupFormValues } from "@/types";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+/** Minimum password length for signup and login forms. */
+export const MIN_PASSWORD_LENGTH = 8;
+
 export function validateLogin(values: LoginFormValues): Partial<
   Record<keyof LoginFormValues, string>
 > {
@@ -10,6 +13,9 @@ export function validateLogin(values: LoginFormValues): Partial<
     errors.email = "Email is required";
   } else if (!EMAIL_RE.test(values.email.trim())) {
     errors.email = "Enter a valid email address";
+  }
+  if (!values.password) {
+    errors.password = "Password is required";
   }
   return errors;
 }
@@ -25,6 +31,11 @@ export function validateSignup(values: SignupFormValues): Partial<
     errors.email = "Email is required";
   } else if (!EMAIL_RE.test(values.email.trim())) {
     errors.email = "Enter a valid email address";
+  }
+  if (!values.password) {
+    errors.password = "Password is required";
+  } else if (values.password.length < MIN_PASSWORD_LENGTH) {
+    errors.password = `Password must be at least ${MIN_PASSWORD_LENGTH} characters`;
   }
   if (!values.role) {
     errors.role = "Select a role";

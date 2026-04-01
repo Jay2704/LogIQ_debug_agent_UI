@@ -17,5 +17,6 @@ export type {
   DashboardService,
   UtilitiesService,
   UsersService,
+  AuthService,
 } from "./contracts";
 export type * from "./types";

@@ -130,7 +130,7 @@ export function Jobs() {
                 canCreateJob
                   ? undefined
                   : createBlockedNoUser
-                    ? "Sign in to create a job (triggered_by_user_id)"
+                    ? "Login to create a job (triggered_by_user_id)"
                     : "Viewer role cannot create jobs (UI only)"
               }
             >
@@ -246,7 +246,7 @@ export function Jobs() {
                 canCreateJob
                   ? undefined
                   : createBlockedNoUser
-                    ? "Sign in to create a job — triggered_by_user_id comes from your user record."
+                    ? "Login to create a job — triggered_by_user_id comes from your user record."
                     : "Viewer role cannot create jobs (UI only)"
               }
               className={cn(
@@ -268,7 +268,7 @@ export function Jobs() {
                       to="/login"
                       className="font-semibold text-sky-400 transition hover:text-sky-300"
                     >
-                      Sign in
+                      Login
                     </Link>{" "}
                     to select a user before creating a job.
                   </>

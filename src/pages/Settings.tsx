@@ -89,7 +89,7 @@ export function Settings() {
                     to="/login"
                     className="font-semibold text-sky-400 hover:text-sky-300"
                   >
-                    Sign in
+                    Login
                   </Link>{" "}
                   to bind this workspace to a user record and see role-based UI hints.
                 </p>

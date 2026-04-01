@@ -20,12 +20,14 @@ export interface User {
   createdAt: string;
 }
 
-/** POST /api/v1/users — camelCase in app code; serialized snake_case for HTTP where applicable. */
+/** POST /api/v1/users — camelCase in app code; serialized for HTTP in {@link import('@/api/http/parseUserApi').serializeCreateUserBody}. */
 export interface CreateUserInput {
   name: string;
   email: string;
   role: UserRole;
   team: string;
+  /** Plain password for signup — never persisted in localStorage; sent only in the create request body. */
+  password: string;
 }
 
 /** Sign Up form — labels aligned with backend `UserRole` values. */

@@ -119,5 +119,6 @@ export function serializeCreateUserBody(input: CreateUserInput): Record<string, 
     email: input.email,
     role: input.role,
     team: input.team,
+    password: input.password,
   };
 }

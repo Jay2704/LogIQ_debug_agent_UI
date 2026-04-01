@@ -1,6 +1,6 @@
 import type { LogIQApi } from "@/api/contracts";
 import { createMockApi } from "@/api/mock/mockApi";
-import type { CreateJobInput, CreateUserInput } from "@/types";
+import type { CreateJobInput, CreateUserInput, LoginInput, User } from "@/types";
 import { logApiDebug } from "./debugLog";
 import { joinApiUrl } from "./apiUrl";
 import { buildJobDetailBundleFromApiJob } from "./jobDetailMerge";
@@ -53,6 +53,30 @@ async function fetchNetwork(url: string, init?: RequestInit): Promise<Response> 
 
 export function createHttpApi(baseUrl: string): LogIQApi {
   const mocks = createMockApi();
+
+  async function postAuthLogin(input: LoginInput): Promise<User> {
+    const url = joinApiUrl(baseUrl, "/api/v1/auth/login");
+    const res = await fetchNetwork(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: input.email.trim(),
+        password: input.password,
+      }),
+    });
+    if (res.status === 401) {
+      throw new Error("[LogIQ API] LOGIN_STATUS 401");
+    }
+    if (res.status === 404) {
+      throw new Error("[LogIQ API] LOGIN_STATUS 404");
+    }
+    if (!res.ok) await httpError(res, "POST /api/v1/auth/login");
+    const json: unknown = await readJsonOrNull(res);
+    if (json === null || json === undefined) {
+      throw new Error("[LogIQ API] POST /api/v1/auth/login: empty response body");
+    }
+    return parseUserJson(json);
+  }
 
   return {
     jobs: {
@@ -156,6 +180,9 @@ export function createHttpApi(baseUrl: string): LogIQApi {
     insights: mocks.insights,
     dashboard: mocks.dashboard,
     utilities: mocks.utilities,
+    auth: {
+      login: postAuthLogin,
+    },
     users: {
       create: async (input: CreateUserInput) => {
         const url = joinApiUrl(baseUrl, "/api/v1/users");

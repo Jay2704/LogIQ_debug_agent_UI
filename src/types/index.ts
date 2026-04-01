@@ -37,7 +37,9 @@ export type { UserRole, User, CreateUserInput } from "./domain/user";
 export { SIGNUP_ROLE_OPTIONS } from "./domain/user";
 
 export type {
+  LoginInput,
   LoginFormValues,
+  LoginSubmitResult,
   LoginLookupResult,
   SignupFormValues,
   AuthSubmitStatus,

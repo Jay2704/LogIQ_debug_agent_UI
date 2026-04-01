@@ -6,6 +6,7 @@ import type {
   InsightMetrics,
   Job,
   JobDetailBundle,
+  LoginInput,
   RcaAssistiveExplanation,
   RcaResult,
   ReportArtifact,
@@ -80,6 +81,11 @@ export interface UsersService {
   listUsers(): Promise<User[]>;
 }
 
+/** POST /api/v1/auth/login — returns a safe user row; no JWT in this UI yet. */
+export interface AuthService {
+  login(input: LoginInput): Promise<User>;
+}
+
 /** Root API surface — one place to mock or replace with fetch-based client. */
 export interface LogIQApi {
   jobs: JobsService;
@@ -91,4 +97,5 @@ export interface LogIQApi {
   dashboard: DashboardService;
   utilities: UtilitiesService;
   users: UsersService;
+  auth: AuthService;
 }

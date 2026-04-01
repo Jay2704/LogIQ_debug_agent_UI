@@ -62,7 +62,7 @@ export function Topbar() {
               to="/login"
               className="rounded-lg px-2 py-1.5 text-xs font-semibold text-sky-400 transition hover:bg-white/[0.04] hover:text-sky-300 sm:px-2.5"
             >
-              Sign in
+              Login
             </Link>
             <Link
               to="/signup"
@@ -110,7 +110,7 @@ export function Topbar() {
             ) : (
               <>
                 <span className="block font-semibold text-slate-100">Guest</span>
-                <span className="text-slate-500">Not signed in</span>
+                <span className="text-slate-500">Not logged in</span>
               </>
             )}
           </span>

@@ -1,9 +1,11 @@
-import type { UsersService } from "@/api/contracts";
-import type { CreateUserInput, User } from "@/types";
+import type { AuthService, UsersService } from "@/api/contracts";
+import type { CreateUserInput, LoginInput, User } from "@/types";
 
 /** In-memory users for mock mode and dev without a backend. */
 const store = new Map<string, User>();
 const byEmail = new Map<string, string>();
+/** Demo-only password store for mock login — not a security model. */
+const passwordByEmail = new Map<string, string>();
 
 function makeId(): string {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
@@ -31,6 +33,7 @@ export const mockUsersService: UsersService = {
     };
     store.set(user.userId, user);
     byEmail.set(emailKey, user.userId);
+    passwordByEmail.set(emailKey, input.password);
     return user;
   },
 
@@ -46,5 +49,20 @@ export const mockUsersService: UsersService = {
 
   async listUsers(): Promise<User[]> {
     return [...store.values()];
+  },
+};
+
+export const mockAuthService: AuthService = {
+  async login(input: LoginInput): Promise<User> {
+    const emailKey = input.email.trim().toLowerCase();
+    const user = await mockUsersService.getUserByEmail(input.email);
+    if (!user) {
+      throw new Error("[LogIQ API] LOGIN_STATUS 404");
+    }
+    const stored = passwordByEmail.get(emailKey);
+    if (!stored || stored !== input.password) {
+      throw new Error("[LogIQ API] LOGIN_STATUS 401");
+    }
+    return user;
   },
 };

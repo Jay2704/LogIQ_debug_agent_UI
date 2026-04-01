@@ -1,26 +1,37 @@
 /**
  * Auth form models and submit shapes for the LogIQ Debug Agent UI.
- * Sign up uses `POST /api/v1/users`. Login uses prototype email lookup only — see `@/auth`.
+ * Sign up uses `POST /api/v1/users` (with password). Login uses `POST /api/v1/auth/login`.
  */
 
 import type { User, UserRole } from "./domain/user";
 
-/** Email-only form for prototype login (`GET /api/v1/users/by-email/...`). */
-export interface LoginFormValues {
+/** Credential payload for `POST /api/v1/auth/login` (app layer — not stored client-side). */
+export interface LoginInput {
   email: string;
+  password: string;
 }
 
-/** Result of `submitLoginLookup` — not a credential-based auth response. */
-export interface LoginLookupResult {
+/** Login form — password is never written to localStorage. */
+export interface LoginFormValues {
+  email: string;
+  password: string;
+}
+
+/** Result of `submitLogin`. */
+export interface LoginSubmitResult {
   status: "success" | "error";
   message?: string;
   user?: User;
 }
 
-/** Onboarding profile — no passwords; persisted via `POST /api/v1/users`. */
+/** @deprecated Use {@link LoginSubmitResult}. */
+export type LoginLookupResult = LoginSubmitResult;
+
+/** Onboarding profile — password sent only on create; not persisted in the browser store. */
 export interface SignupFormValues {
   fullName: string;
   email: string;
+  password: string;
   role: UserRole | "";
   team: string;
 }

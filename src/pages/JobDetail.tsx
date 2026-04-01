@@ -430,7 +430,7 @@ export function JobDetail() {
                   to="/login"
                   className="font-semibold text-sky-400 hover:text-sky-300"
                 >
-                  Sign in
+                  Login
                 </Link>{" "}
                 with a tester, support, developer, or SRE account to run investigations from
                 this UI (guests cannot — prototype rule only).

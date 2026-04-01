@@ -45,7 +45,7 @@ export function CreateJobModal({
 
   const validate = (): string | null => {
     if (!user?.userId?.trim()) {
-      return "Sign in and select a user before creating a job.";
+      return "Login and select a user before creating a job.";
     }
     if (!roleCaps.canCreateJob) {
       return "Your role cannot create jobs in this workspace (UI rule only — not server enforcement).";
@@ -67,7 +67,7 @@ export function CreateJobModal({
     }
     const triggeredBy = user?.userId?.trim();
     if (!triggeredBy) {
-      setSubmitError("Sign in and select a user before creating a job.");
+      setSubmitError("Login and select a user before creating a job.");
       return;
     }
     if (!roleCaps.canCreateJob) {
@@ -217,14 +217,14 @@ export function CreateJobModal({
               <div className="mt-1.5 rounded-xl border border-amber-500/25 bg-amber-500/[0.06] px-3 py-2.5 text-sm text-amber-100/95">
                 <p className="font-medium text-amber-50/95">No user in session</p>
                 <p className="mt-1 text-amber-100/80">
-                  Sign in with your email on the login page so your user id can be sent as{" "}
+                  Login with your email on the login page so your user id can be sent as{" "}
                   <span className="font-mono text-xs">triggered_by_user_id</span>.
                 </p>
                 <Link
                   to="/login"
                   className="mt-2 inline-block text-sm font-semibold text-sky-400 hover:text-sky-300"
                 >
-                  Go to Sign in →
+                  Go to Login →
                 </Link>
               </div>
             )}

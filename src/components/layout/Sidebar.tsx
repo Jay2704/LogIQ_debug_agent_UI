@@ -107,7 +107,7 @@ export function Sidebar() {
             to="/login"
             className="mt-3 block text-xs font-semibold text-sky-400/90 transition hover:text-sky-300"
           >
-            Sign in (demo)
+            Login (demo)
           </Link>
         </div>
       </div>

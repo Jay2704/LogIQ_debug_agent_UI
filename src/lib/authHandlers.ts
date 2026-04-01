@@ -1,52 +1,50 @@
 import { api } from "@/api";
 import type {
   AuthSubmitResult,
-  LoginLookupResult,
+  LoginInput,
+  LoginSubmitResult,
   SignupFormValues,
   UserRole,
 } from "@/types";
 
-function loginLookupErrorMessage(error: unknown): string {
+function loginErrorMessage(error: unknown): string {
   const raw = error instanceof Error ? error.message : String(error);
+  if (/\[LogIQ API\] LOGIN_STATUS 401\b/.test(raw)) {
+    return "Invalid email or password";
+  }
+  if (/\[LogIQ API\] LOGIN_STATUS 404\b/.test(raw)) {
+    return "User not found";
+  }
   const lower = raw.toLowerCase();
   if (lower.includes("network error") || lower.includes("failed to fetch")) {
     return "Could not reach the server. Check your connection and that the API is running (and CORS).";
-  }
-  if (/\b(404)\b/.test(raw) && !lower.includes("conflict")) {
-    return "No user found for this email. Create an account on Sign up first.";
   }
   const trimmed = raw.replace(/^\[LogIQ API\]\s*/i, "").trim();
   if (trimmed.length > 0 && trimmed.length < 400) {
     return trimmed;
   }
-  return "Could not look up this email. Try again.";
+  return "Something went wrong. Please try again.";
 }
 
 /**
- * Prototype login: `GET /api/v1/users/by-email/{email}` — no password or JWT.
- * Call `setCurrentUser` from `@/auth` when status is success to bind the UI.
+ * Password login: `POST /api/v1/auth/login` — persists only the returned user via `setCurrentUser` (no password stored).
  */
-export async function submitLoginLookup(email: string): Promise<LoginLookupResult> {
-  const trimmed = email.trim();
+export async function submitLogin(
+  email: string,
+  password: string
+): Promise<LoginSubmitResult> {
+  const input: LoginInput = { email: email.trim(), password };
   try {
-    const user = await api.users.getUserByEmail(trimmed);
-    if (!user) {
-      return {
-        status: "error",
-        message:
-          "No user found for this email. Create an account on Sign up first.",
-      };
-    }
+    const user = await api.auth.login(input);
     return {
       status: "success",
-      message:
-        "You’re signed in for this session (prototype only — not password or token authentication).",
+      message: "You’re logged in for this session (user saved locally — no JWT yet).",
       user,
     };
   } catch (e) {
     return {
       status: "error",
-      message: loginLookupErrorMessage(e),
+      message: loginErrorMessage(e),
     };
   }
 }
@@ -62,7 +60,7 @@ function signupErrorMessage(error: unknown): string {
       lower
     )
   ) {
-    return "An account with this email already exists. Sign in or use a different email.";
+    return "An account with this email already exists. Log in or use a different email.";
   }
 
   if (/\b(400|422)\b/.test(raw) || /validation|invalid\s+input|unprocessable/i.test(lower)) {
@@ -82,7 +80,7 @@ function signupErrorMessage(error: unknown): string {
 
 /**
  * Creates a user via `POST /api/v1/users` (mock or HTTP per `VITE_USE_HTTP` + `VITE_API_BASE_URL`).
- * Passwords are not sent or stored in this flow.
+ * Password is sent in the request body only — never stored in localStorage.
  */
 export async function submitSignup(
   values: SignupFormValues
@@ -94,11 +92,11 @@ export async function submitSignup(
       email: values.email.trim(),
       role,
       team: values.team.trim(),
+      password: values.password,
     });
     return {
       status: "success",
-      message:
-        "Your profile is saved. You can sign in once password authentication is enabled.",
+      message: "Account created. You can log in now.",
     };
   } catch (e) {
     return {

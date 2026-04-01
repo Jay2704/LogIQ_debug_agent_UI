@@ -5,7 +5,11 @@ import { Loader2 } from "lucide-react";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { AuthField, AuthInput, AuthSelect } from "@/components/auth/AuthField";
 import { submitSignup } from "@/lib/authHandlers";
-import { hasFieldErrors, validateSignup } from "@/lib/authValidation";
+import {
+  hasFieldErrors,
+  MIN_PASSWORD_LENGTH,
+  validateSignup,
+} from "@/lib/authValidation";
 import { ctaButtonGradient, ctaGlowBlueOnly } from "@/lib/ctaTheme";
 import { cn } from "@/lib/utils";
 import type { AuthSubmitStatus, SignupFormValues } from "@/types";
@@ -14,6 +18,7 @@ import { SIGNUP_ROLE_OPTIONS } from "@/types";
 const initial: SignupFormValues = {
   fullName: "",
   email: "",
+  password: "",
   role: "",
   team: "",
 };
@@ -58,7 +63,7 @@ export function Signup() {
   return (
     <AuthLayout
       cardTitle="Create account"
-      cardDescription="Join your team’s LogIQ workspace — profile only; password sign-in comes next."
+      cardDescription="Join your team’s LogIQ workspace — create your profile with a password, then log in."
     >
       <form onSubmit={handleSubmit} className="space-y-4" noValidate>
         {submitStatus === "error" && banner ? (
@@ -109,6 +114,28 @@ export function Signup() {
             disabled={disabled}
             error={errors.email}
             success={Boolean(values.email && !errors.email)}
+          />
+        </AuthField>
+
+        <AuthField
+          id="signup-password"
+          label="Password"
+          error={errors.password}
+          hint={`At least ${MIN_PASSWORD_LENGTH} characters. Never stored in the browser — only sent when you create your account.`}
+        >
+          <AuthInput
+            id="signup-password"
+            type="password"
+            name="password"
+            autoComplete="new-password"
+            placeholder="••••••••"
+            value={values.password}
+            onChange={(e) => update("password", e.target.value)}
+            disabled={disabled}
+            error={errors.password}
+            success={Boolean(
+              values.password && !errors.password && values.password.length >= MIN_PASSWORD_LENGTH
+            )}
           />
         </AuthField>
 
@@ -181,7 +208,7 @@ export function Signup() {
             to="/login"
             className="font-semibold text-sky-400 transition hover:text-sky-300"
           >
-            Sign in
+            Login
           </Link>
         </p>
 

@@ -5,7 +5,7 @@ import { Loader2 } from "lucide-react";
 import { useCurrentUser } from "@/auth";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { AuthField, AuthInput } from "@/components/auth/AuthField";
-import { submitLoginLookup } from "@/lib/authHandlers";
+import { submitLogin } from "@/lib/authHandlers";
 import { hasFieldErrors, validateLogin } from "@/lib/authValidation";
 import { ctaButtonGradient, ctaGlowBlueOnly } from "@/lib/ctaTheme";
 import { formatUserContextLine } from "@/lib/userDisplay";
@@ -14,6 +14,7 @@ import type { AuthSubmitStatus, LoginFormValues } from "@/types";
 
 const initial: LoginFormValues = {
   email: "",
+  password: "",
 };
 
 export function Login() {
@@ -50,14 +51,15 @@ export function Login() {
 
     setSubmitStatus("loading");
     setBanner("");
-    const result = await submitLoginLookup(values.email);
+    const result = await submitLogin(values.email, values.password);
     if (result.status === "success" && result.user) {
       setCurrentUser(result.user);
       setSubmitStatus("success");
       setBanner(result.message ?? "");
+      setValues((v) => ({ ...v, password: "" }));
     } else {
       setSubmitStatus("error");
-      setBanner(result.message ?? "Sign-in failed.");
+      setBanner(result.message ?? "Login failed.");
     }
   }
 
@@ -65,8 +67,8 @@ export function Login() {
 
   return (
     <AuthLayout
-      cardTitle="Sign in"
-      cardDescription="Prototype: enter the email of an existing user record. No password — not production auth."
+      cardTitle="Login"
+      cardDescription="Enter your email and password. Your password is not stored in the browser — only the returned user profile is saved for this session."
     >
       <form onSubmit={handleSubmit} className="space-y-5" noValidate>
         {submitStatus === "error" && banner ? (
@@ -104,10 +106,27 @@ export function Login() {
           />
         </AuthField>
 
+        <AuthField id="login-password" label="Password" error={errors.password}>
+          <AuthInput
+            id="login-password"
+            type="password"
+            name="password"
+            autoComplete="current-password"
+            placeholder="••••••••"
+            value={values.password}
+            onChange={(e) => update("password", e.target.value)}
+            disabled={disabled}
+            error={errors.password}
+            success={Boolean(
+              values.password && !errors.password && submitStatus !== "error"
+            )}
+          />
+        </AuthField>
+
         {previewUser ? (
           <div className="rounded-xl border border-white/[0.08] bg-surface-900/50 px-4 py-3 text-sm">
             <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
-              Matched user
+              Logged in as
             </p>
             <p className="mt-1 font-semibold text-slate-100">
               {previewUser.name || previewUser.email}
@@ -134,12 +153,12 @@ export function Login() {
           {loading ? (
             <>
               <Loader2 className="h-4 w-4 animate-spin" />
-              Looking up user…
+              Logging in…
             </>
           ) : success ? (
-            "Look up again"
+            "Login again"
           ) : (
-            "Continue"
+            "Login"
           )}
         </button>
 

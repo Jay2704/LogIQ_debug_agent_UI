@@ -46,7 +46,7 @@ export function QuickNav() {
           "ring-offset-2 ring-offset-surface-975"
         )}
       >
-        Sign in
+        Login
       </Link>
     </div>
   );
