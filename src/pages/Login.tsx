@@ -1,6 +1,6 @@
 import type { FormEvent } from "react";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { useCurrentUser } from "@/auth";
 import { AuthLayout } from "@/components/auth/AuthLayout";
@@ -8,7 +8,6 @@ import { AuthField, AuthInput, AuthPasswordInput } from "@/components/auth/AuthF
 import { submitLogin } from "@/lib/authHandlers";
 import { hasFieldErrors, validateLogin } from "@/lib/authValidation";
 import { ctaButtonGradient, ctaGlowBlueOnly } from "@/lib/ctaTheme";
-import { formatUserContextLine } from "@/lib/userDisplay";
 import { cn } from "@/lib/utils";
 import type { AuthSubmitStatus, LoginFormValues } from "@/types";
 
@@ -28,7 +27,6 @@ export function Login() {
   const [banner, setBanner] = useState("");
 
   const loading = submitStatus === "loading";
-  const success = submitStatus === "success";
   const disabled = loading;
 
   function update<K extends keyof LoginFormValues>(
@@ -54,16 +52,17 @@ export function Login() {
     const result = await submitLogin(values.email, values.password);
     if (result.status === "success" && result.user) {
       setCurrentUser(result.user);
-      setSubmitStatus("success");
-      setBanner(result.message ?? "");
       setValues((v) => ({ ...v, password: "" }));
-    } else {
-      setSubmitStatus("error");
-      setBanner(result.message ?? "Login failed.");
+      navigate("/", { replace: true });
+      return;
     }
+    setSubmitStatus("error");
+    setBanner(result.message ?? "Login failed.");
   }
 
-  const previewUser = success && user ? user : null;
+  if (user?.userId?.trim()) {
+    return <Navigate to="/" replace />;
+  }
 
   return (
     <AuthLayout
@@ -75,14 +74,6 @@ export function Login() {
           <div
             className="rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-2.5 text-sm text-red-200"
             role="alert"
-            aria-live="polite"
-          >
-            {banner}
-          </div>
-        ) : null}
-        {success && banner ? (
-          <div
-            className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2.5 text-sm text-emerald-200"
             aria-live="polite"
           >
             {banner}
@@ -122,20 +113,6 @@ export function Login() {
           />
         </AuthField>
 
-        {previewUser ? (
-          <div className="rounded-xl border border-white/[0.08] bg-surface-900/50 px-4 py-3 text-sm">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
-              Logged in as
-            </p>
-            <p className="mt-1 font-semibold text-slate-100">
-              {previewUser.name || previewUser.email}
-            </p>
-            <p className="mt-0.5 text-slate-400">
-              {formatUserContextLine(previewUser)}
-            </p>
-          </div>
-        ) : null}
-
         <button
           type="submit"
           disabled={disabled}
@@ -154,8 +131,6 @@ export function Login() {
               <Loader2 className="h-4 w-4 animate-spin" />
               Logging in…
             </>
-          ) : success ? (
-            "Login again"
           ) : (
             "Login"
           )}
@@ -170,24 +145,6 @@ export function Login() {
             Create one
           </Link>
         </p>
-
-        {success ? (
-          <div className="border-t border-white/[0.06] pt-4 text-center">
-            <button
-              type="button"
-              onClick={() => navigate("/")}
-              className={cn(
-                "inline-flex w-full items-center justify-center rounded-xl py-3 text-sm font-semibold text-white",
-                ctaButtonGradient,
-                ctaGlowBlueOnly,
-                "ring-1 ring-blue-400/35 transition hover:shadow-[0_0_0_1px_rgba(56,189,248,0.35)]",
-                "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400/70"
-              )}
-            >
-              Continue to dashboard
-            </button>
-          </div>
-        ) : null}
       </form>
     </AuthLayout>
   );
