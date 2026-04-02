@@ -1,6 +1,7 @@
 import type { FormEvent } from "react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
+import { useCurrentUser } from "@/auth";
 import { Loader2 } from "lucide-react";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import {
@@ -9,10 +10,12 @@ import {
   AuthPasswordInput,
   AuthSelect,
 } from "@/components/auth/AuthField";
+import { PasswordStrengthHint } from "@/components/auth/PasswordStrengthHint";
 import { submitSignup } from "@/lib/authHandlers";
 import {
   hasFieldErrors,
-  MIN_PASSWORD_LENGTH,
+  isPasswordPolicySatisfied,
+  isSignupFormValid,
   validateSignup,
 } from "@/lib/authValidation";
 import { ctaButtonGradient, ctaGlowBlueOnly } from "@/lib/ctaTheme";
@@ -28,24 +31,57 @@ const initial: SignupFormValues = {
   team: "",
 };
 
+function visibleSignupError(
+  field: keyof SignupFormValues,
+  errs: Partial<Record<keyof SignupFormValues, string>>,
+  values: SignupFormValues,
+  touched: Partial<Record<keyof SignupFormValues, boolean>>
+): string | undefined {
+  const e = errs[field];
+  if (!e) return undefined;
+  switch (field) {
+    case "email":
+      return touched.email || values.email.length > 0 ? e : undefined;
+    case "fullName":
+      return touched.fullName || values.fullName.length > 0 ? e : undefined;
+    case "password":
+      return values.password.length > 0 ? e : undefined;
+    case "role":
+      return touched.role ? e : undefined;
+    case "team":
+      return touched.team || values.team.length > 0 ? e : undefined;
+    default:
+      return undefined;
+  }
+}
+
 export function Signup() {
+  const { user } = useCurrentUser();
   const [values, setValues] = useState<SignupFormValues>(initial);
-  const [errors, setErrors] = useState<
-    Partial<Record<keyof SignupFormValues, string>>
+  const [touched, setTouched] = useState<
+    Partial<Record<keyof SignupFormValues, boolean>>
   >({});
   const [submitStatus, setSubmitStatus] = useState<AuthSubmitStatus>("idle");
   const [banner, setBanner] = useState("");
 
   const loading = submitStatus === "loading";
   const success = submitStatus === "success";
-  const disabled = loading || success;
+  const errs = validateSignup(values);
+  const formValid = isSignupFormValid(values);
+  /** Inputs only locked while submitting or after success — never because validation failed (user must be able to type). */
+  const inputsDisabled = loading || success;
+  /** Submit gated by validation + loading + success state. */
+  const submitDisabled = loading || success || !formValid;
+
+  function touch(field: keyof SignupFormValues) {
+    setTouched((t) => ({ ...t, [field]: true }));
+  }
 
   function update<K extends keyof SignupFormValues>(
     key: K,
     value: SignupFormValues[K]
   ) {
     setValues((v) => ({ ...v, [key]: value }));
-    setErrors((e) => ({ ...e, [key]: undefined }));
     if (submitStatus !== "idle") {
       setSubmitStatus("idle");
       setBanner("");
@@ -55,7 +91,6 @@ export function Signup() {
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     const next = validateSignup(values);
-    setErrors(next);
     if (hasFieldErrors(next)) return;
 
     setSubmitStatus("loading");
@@ -63,6 +98,10 @@ export function Signup() {
     const result = await submitSignup(values);
     setSubmitStatus(result.status);
     setBanner(result.message ?? "");
+  }
+
+  if (user?.userId?.trim()) {
+    return <Navigate to="/" replace />;
   }
 
   return (
@@ -92,7 +131,7 @@ export function Signup() {
         <AuthField
           id="signup-name"
           label="Full name"
-          error={errors.fullName}
+          error={visibleSignupError("fullName", errs, values, touched)}
         >
           <AuthInput
             id="signup-name"
@@ -101,13 +140,20 @@ export function Signup() {
             placeholder="Alex Rivera"
             value={values.fullName}
             onChange={(e) => update("fullName", e.target.value)}
-            disabled={disabled}
-            error={errors.fullName}
-            success={Boolean(values.fullName && !errors.fullName)}
+            onBlur={() => touch("fullName")}
+            disabled={inputsDisabled}
+            error={visibleSignupError("fullName", errs, values, touched)}
+            success={Boolean(
+              values.fullName.trim() && !errs.fullName
+            )}
           />
         </AuthField>
 
-        <AuthField id="signup-email" label="Email" error={errors.email}>
+        <AuthField
+          id="signup-email"
+          label="Email"
+          error={visibleSignupError("email", errs, values, touched)}
+        >
           <AuthInput
             id="signup-email"
             type="email"
@@ -116,17 +162,18 @@ export function Signup() {
             placeholder="you@company.com"
             value={values.email}
             onChange={(e) => update("email", e.target.value)}
-            disabled={disabled}
-            error={errors.email}
-            success={Boolean(values.email && !errors.email)}
+            onBlur={() => touch("email")}
+            disabled={inputsDisabled}
+            error={visibleSignupError("email", errs, values, touched)}
+            success={Boolean(values.email.trim() && !errs.email)}
           />
         </AuthField>
 
         <AuthField
           id="signup-password"
           label="Password"
-          error={errors.password}
-          hint={`At least ${MIN_PASSWORD_LENGTH} characters. Never stored in the browser — only sent when you create your account.`}
+          error={visibleSignupError("password", errs, values, touched)}
+          hint="Never stored in the browser — only sent when you create your account."
         >
           <AuthPasswordInput
             id="signup-password"
@@ -135,15 +182,24 @@ export function Signup() {
             placeholder="••••••••"
             value={values.password}
             onChange={(e) => update("password", e.target.value)}
-            disabled={disabled}
-            error={errors.password}
+            onBlur={() => touch("password")}
+            disabled={inputsDisabled}
+            error={visibleSignupError("password", errs, values, touched)}
             success={Boolean(
-              values.password && !errors.password && values.password.length >= MIN_PASSWORD_LENGTH
+              values.password &&
+                !errs.password &&
+                isPasswordPolicySatisfied(values.password)
             )}
           />
         </AuthField>
 
-        <AuthField id="signup-role" label="Role" error={errors.role}>
+        <PasswordStrengthHint password={values.password} disabled={inputsDisabled} />
+
+        <AuthField
+          id="signup-role"
+          label="Role"
+          error={visibleSignupError("role", errs, values, touched)}
+        >
           <AuthSelect
             id="signup-role"
             name="role"
@@ -151,9 +207,10 @@ export function Signup() {
             onChange={(e) =>
               update("role", e.target.value as SignupFormValues["role"])
             }
-            disabled={disabled}
-            error={errors.role}
-            success={Boolean(values.role && !errors.role)}
+            onBlur={() => touch("role")}
+            disabled={inputsDisabled}
+            error={visibleSignupError("role", errs, values, touched)}
+            success={Boolean(values.role && !errs.role)}
           >
             <option value="">Select a role…</option>
             {SIGNUP_ROLE_OPTIONS.map((o) => (
@@ -167,7 +224,7 @@ export function Signup() {
         <AuthField
           id="signup-team"
           label="Team"
-          error={errors.team}
+          error={visibleSignupError("team", errs, values, touched)}
           hint="Squad or group name (e.g. Platform, Checkout)."
         >
           <AuthInput
@@ -177,15 +234,16 @@ export function Signup() {
             placeholder="Platform"
             value={values.team}
             onChange={(e) => update("team", e.target.value)}
-            disabled={disabled}
-            error={errors.team}
-            success={Boolean(values.team.trim() && !errors.team)}
+            onBlur={() => touch("team")}
+            disabled={inputsDisabled}
+            error={visibleSignupError("team", errs, values, touched)}
+            success={Boolean(values.team.trim() && !errs.team)}
           />
         </AuthField>
 
         <button
           type="submit"
-          disabled={disabled}
+          disabled={submitDisabled}
           className={cn(
             "relative mt-2 flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold text-white",
             ctaButtonGradient,

@@ -6,7 +6,11 @@ import { useCurrentUser } from "@/auth";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { AuthField, AuthInput, AuthPasswordInput } from "@/components/auth/AuthField";
 import { submitLogin } from "@/lib/authHandlers";
-import { hasFieldErrors, validateLogin } from "@/lib/authValidation";
+import {
+  hasFieldErrors,
+  isLoginFormValid,
+  validateLogin,
+} from "@/lib/authValidation";
 import { ctaButtonGradient, ctaGlowBlueOnly } from "@/lib/ctaTheme";
 import { cn } from "@/lib/utils";
 import type { AuthSubmitStatus, LoginFormValues } from "@/types";
@@ -16,25 +20,48 @@ const initial: LoginFormValues = {
   password: "",
 };
 
+function visibleLoginError(
+  field: keyof LoginFormValues,
+  errs: Partial<Record<keyof LoginFormValues, string>>,
+  values: LoginFormValues,
+  touched: Partial<Record<keyof LoginFormValues, boolean>>
+): string | undefined {
+  const e = errs[field];
+  if (!e) return undefined;
+  if (field === "email") {
+    return touched.email || values.email.length > 0 ? e : undefined;
+  }
+  if (field === "password") {
+    return touched.password || values.password.length > 0 ? e : undefined;
+  }
+  return undefined;
+}
+
 export function Login() {
   const navigate = useNavigate();
   const { setCurrentUser, user } = useCurrentUser();
   const [values, setValues] = useState<LoginFormValues>(initial);
-  const [errors, setErrors] = useState<
-    Partial<Record<keyof LoginFormValues, string>>
+  const [touched, setTouched] = useState<
+    Partial<Record<keyof LoginFormValues, boolean>>
   >({});
   const [submitStatus, setSubmitStatus] = useState<AuthSubmitStatus>("idle");
   const [banner, setBanner] = useState("");
 
   const loading = submitStatus === "loading";
-  const disabled = loading;
+  const errs = validateLogin(values);
+  const formValid = isLoginFormValid(values);
+  /** Only the submit button respects invalid form; inputs stay editable unless submitting. */
+  const submitDisabled = loading || !formValid;
+
+  function touch(field: keyof LoginFormValues) {
+    setTouched((t) => ({ ...t, [field]: true }));
+  }
 
   function update<K extends keyof LoginFormValues>(
     key: K,
     value: LoginFormValues[K]
   ) {
     setValues((v) => ({ ...v, [key]: value }));
-    setErrors((e) => ({ ...e, [key]: undefined }));
     if (submitStatus !== "idle") {
       setSubmitStatus("idle");
       setBanner("");
@@ -44,7 +71,6 @@ export function Login() {
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     const next = validateLogin(values);
-    setErrors(next);
     if (hasFieldErrors(next)) return;
 
     setSubmitStatus("loading");
@@ -80,7 +106,11 @@ export function Login() {
           </div>
         ) : null}
 
-        <AuthField id="login-email" label="Email" error={errors.email}>
+        <AuthField
+          id="login-email"
+          label="Email"
+          error={visibleLoginError("email", errs, values, touched)}
+        >
           <AuthInput
             id="login-email"
             type="email"
@@ -89,15 +119,20 @@ export function Login() {
             placeholder="you@company.com"
             value={values.email}
             onChange={(e) => update("email", e.target.value)}
-            disabled={disabled}
-            error={errors.email}
+            onBlur={() => touch("email")}
+            disabled={loading}
+            error={visibleLoginError("email", errs, values, touched)}
             success={Boolean(
-              values.email && !errors.email && submitStatus !== "error"
+              values.email.trim() && !errs.email && submitStatus !== "error"
             )}
           />
         </AuthField>
 
-        <AuthField id="login-password" label="Password" error={errors.password}>
+        <AuthField
+          id="login-password"
+          label="Password"
+          error={visibleLoginError("password", errs, values, touched)}
+        >
           <AuthPasswordInput
             id="login-password"
             name="password"
@@ -105,23 +140,24 @@ export function Login() {
             placeholder="••••••••"
             value={values.password}
             onChange={(e) => update("password", e.target.value)}
-            disabled={disabled}
-            error={errors.password}
+            onBlur={() => touch("password")}
+            disabled={loading}
+            error={visibleLoginError("password", errs, values, touched)}
             success={Boolean(
-              values.password && !errors.password && submitStatus !== "error"
+              values.password && !errs.password && submitStatus !== "error"
             )}
           />
         </AuthField>
 
         <button
           type="submit"
-          disabled={disabled}
+          disabled={submitDisabled}
           className={cn(
             "relative flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold text-white",
             ctaButtonGradient,
             ctaGlowBlueOnly,
-            "ring-1 ring-blue-400/35 transition-all duration-200",
-            "hover:shadow-[0_0_0_1px_rgba(56,189,248,0.35)]",
+            "ring-1 ring-blue-400/35 transition-all duration-300 ease-out",
+            "hover:shadow-[0_0_0_1px_rgba(56,189,248,0.45),0_12px_40px_-12px_rgba(59,130,246,0.25)]",
             "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400/70",
             "disabled:cursor-not-allowed disabled:opacity-60"
           )}
