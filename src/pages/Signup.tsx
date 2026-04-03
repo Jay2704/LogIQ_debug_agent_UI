@@ -11,7 +11,7 @@ import {
   AuthSelect,
 } from "@/components/auth/AuthField";
 import { PasswordStrengthHint } from "@/components/auth/PasswordStrengthHint";
-import { submitSignup } from "@/lib/authHandlers";
+import { submitResendVerificationEmail, submitSignup } from "@/lib/authHandlers";
 import {
   hasFieldErrors,
   isPasswordPolicySatisfied,
@@ -63,6 +63,9 @@ export function Signup() {
   >({});
   const [submitStatus, setSubmitStatus] = useState<AuthSubmitStatus>("idle");
   const [banner, setBanner] = useState("");
+  const [registeredEmail, setRegisteredEmail] = useState<string | null>(null);
+  const [resendLoading, setResendLoading] = useState(false);
+  const [resendNote, setResendNote] = useState<string | null>(null);
 
   const loading = submitStatus === "loading";
   const success = submitStatus === "success";
@@ -98,6 +101,19 @@ export function Signup() {
     const result = await submitSignup(values);
     setSubmitStatus(result.status);
     setBanner(result.message ?? "");
+    if (result.status === "success") {
+      setRegisteredEmail(values.email.trim());
+      setResendNote(null);
+    }
+  }
+
+  async function handleResendVerification() {
+    if (!registeredEmail) return;
+    setResendLoading(true);
+    setResendNote(null);
+    const result = await submitResendVerificationEmail(registeredEmail);
+    setResendLoading(false);
+    setResendNote(result.message ?? "");
   }
 
   if (user?.userId?.trim()) {
@@ -275,7 +291,32 @@ export function Signup() {
         </p>
 
         {success ? (
-          <div className="border-t border-white/[0.06] pt-4 text-center">
+          <div className="space-y-3 border-t border-white/[0.06] pt-4 text-center">
+            <button
+              type="button"
+              onClick={() => void handleResendVerification()}
+              disabled={resendLoading || !registeredEmail}
+              className={cn(
+                "w-full rounded-xl border border-white/[0.1] bg-surface-975/80 py-2.5 text-sm font-semibold text-slate-200 transition",
+                "hover:border-sky-500/25 hover:bg-surface-975",
+                "disabled:cursor-not-allowed disabled:opacity-50",
+                "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400/70"
+              )}
+            >
+              {resendLoading ? (
+                <span className="inline-flex items-center justify-center gap-2">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Sending…
+                </span>
+              ) : (
+                "Resend verification email"
+              )}
+            </button>
+            {resendNote ? (
+              <p className="text-xs text-slate-400">
+                {resendNote}
+              </p>
+            ) : null}
             <Link
               to="/login"
               className={cn(

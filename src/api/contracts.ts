@@ -84,6 +84,14 @@ export interface UsersService {
 /** POST /api/v1/auth/login — returns a safe user row; no JWT in this UI yet. */
 export interface AuthService {
   login(input: LoginInput): Promise<User>;
+  /** POST /api/v1/auth/verify-email — body `{ token }`. */
+  verifyEmail(token: string): Promise<void>;
+  /** POST /api/v1/auth/forgot-password — body `{ email }`; do not leak existence of account. */
+  forgotPassword(email: string): Promise<void>;
+  /** POST /api/v1/auth/reset-password — body `{ token, password }`. */
+  resetPassword(token: string, password: string): Promise<void>;
+  /** POST /api/v1/auth/resend-verification — body `{ email }`. */
+  resendVerificationEmail(email: string): Promise<void>;
 }
 
 /** Root API surface — one place to mock or replace with fetch-based client. */

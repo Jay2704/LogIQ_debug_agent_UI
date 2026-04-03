@@ -6,8 +6,11 @@ import { Dashboard } from "@/pages/Dashboard";
 import { Insights } from "@/pages/Insights";
 import { JobDetail } from "@/pages/JobDetail";
 import { Jobs } from "@/pages/Jobs";
+import { ForgotPassword } from "@/pages/ForgotPassword";
 import { Login } from "@/pages/Login";
 import { NotFound } from "@/pages/NotFound";
+import { ResetPassword } from "@/pages/ResetPassword";
+import { VerifyEmail } from "@/pages/VerifyEmail";
 import { Reports } from "@/pages/Reports";
 import { Settings } from "@/pages/Settings";
 import { Signup } from "@/pages/Signup";
@@ -20,6 +23,9 @@ export default function App() {
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
+      <Route path="/verify-email" element={<VerifyEmail />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/" element={<AuthenticatedAppShell />}>
         <Route element={<AppLayout />}>
           <Route index element={<Dashboard />} />

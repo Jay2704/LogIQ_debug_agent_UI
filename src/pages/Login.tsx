@@ -149,6 +149,15 @@ export function Login() {
           />
         </AuthField>
 
+        <div className="text-right">
+          <Link
+            to="/forgot-password"
+            className="text-xs font-semibold text-sky-400/90 transition hover:text-sky-300"
+          >
+            Forgot password?
+          </Link>
+        </div>
+
         <button
           type="submit"
           disabled={submitDisabled}

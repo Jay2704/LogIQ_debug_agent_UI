@@ -78,6 +78,47 @@ export function createHttpApi(baseUrl: string): LogIQApi {
     return parseUserJson(json);
   }
 
+  async function postVerifyEmail(token: string): Promise<void> {
+    const url = joinApiUrl(baseUrl, "/api/v1/auth/verify-email");
+    const res = await fetchNetwork(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token: token.trim() }),
+    });
+    if (!res.ok) await httpError(res, "POST /api/v1/auth/verify-email");
+  }
+
+  async function postForgotPassword(email: string): Promise<void> {
+    const url = joinApiUrl(baseUrl, "/api/v1/auth/forgot-password");
+    const res = await fetchNetwork(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: email.trim() }),
+    });
+    if (res.ok || res.status === 404) return;
+    await httpError(res, "POST /api/v1/auth/forgot-password");
+  }
+
+  async function postResetPassword(token: string, password: string): Promise<void> {
+    const url = joinApiUrl(baseUrl, "/api/v1/auth/reset-password");
+    const res = await fetchNetwork(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token: token.trim(), password }),
+    });
+    if (!res.ok) await httpError(res, "POST /api/v1/auth/reset-password");
+  }
+
+  async function postResendVerification(email: string): Promise<void> {
+    const url = joinApiUrl(baseUrl, "/api/v1/auth/resend-verification");
+    const res = await fetchNetwork(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: email.trim() }),
+    });
+    if (!res.ok) await httpError(res, "POST /api/v1/auth/resend-verification");
+  }
+
   return {
     jobs: {
       list: async () => {
@@ -182,6 +223,10 @@ export function createHttpApi(baseUrl: string): LogIQApi {
     utilities: mocks.utilities,
     auth: {
       login: postAuthLogin,
+      verifyEmail: postVerifyEmail,
+      forgotPassword: postForgotPassword,
+      resetPassword: postResetPassword,
+      resendVerificationEmail: postResendVerification,
     },
     users: {
       create: async (input: CreateUserInput) => {

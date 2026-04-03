@@ -47,11 +47,49 @@ export function isPasswordPolicySatisfied(password: string): boolean {
   );
 }
 
-function validateEmailField(email: string): string | undefined {
+/** Exported for forgot-password and other single-field email checks. */
+export function validateEmailField(email: string): string | undefined {
   const t = email.trim();
   if (!t) return "Email is required";
   if (!EMAIL_RE.test(t)) return "Enter a valid email address";
   return undefined;
+}
+
+export type ResetPasswordFormValues = {
+  password: string;
+  confirmPassword: string;
+};
+
+export function validateResetPasswordForm(
+  values: ResetPasswordFormValues
+): Partial<Record<keyof ResetPasswordFormValues, string>> {
+  const errors: Partial<Record<keyof ResetPasswordFormValues, string>> = {};
+  if (!values.password) {
+    errors.password = "Password is required";
+  } else if (!isPasswordPolicySatisfied(values.password)) {
+    const c = getPasswordRuleChecks(values.password);
+    if (!c.minLength) {
+      errors.password = `Use at least ${MIN_PASSWORD_LENGTH} characters`;
+    } else if (!c.lowercase) {
+      errors.password = "Include at least one lowercase letter";
+    } else if (!c.uppercase) {
+      errors.password = "Include at least one uppercase letter";
+    } else if (!c.number) {
+      errors.password = "Include at least one number";
+    } else if (!c.special) {
+      errors.password = "Include at least one special character (!@#$…)";
+    }
+  }
+  if (!values.confirmPassword) {
+    errors.confirmPassword = "Confirm your password";
+  } else if (values.password !== values.confirmPassword) {
+    errors.confirmPassword = "Passwords do not match";
+  }
+  return errors;
+}
+
+export function isResetPasswordFormValid(values: ResetPasswordFormValues): boolean {
+  return !hasFieldErrors(validateResetPasswordForm(values));
 }
 
 export function validateLogin(values: LoginFormValues): Partial<

@@ -65,4 +65,23 @@ export const mockAuthService: AuthService = {
     }
     return user;
   },
+
+  async verifyEmail(_token: string): Promise<void> {
+    return;
+  },
+
+  async forgotPassword(_email: string): Promise<void> {
+    return;
+  },
+
+  async resetPassword(_token: string, password: string): Promise<void> {
+    if (!password) {
+      throw new Error("[LogIQ API] POST /api/v1/auth/reset-password 400");
+    }
+    return;
+  },
+
+  async resendVerificationEmail(_email: string): Promise<void> {
+    return;
+  },
 };
