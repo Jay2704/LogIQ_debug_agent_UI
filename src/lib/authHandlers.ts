@@ -20,6 +20,25 @@ function genericRequestError(error: unknown, fallback: string): string {
   return fallback;
 }
 
+function loginIsUnverifiedError(error: unknown): boolean {
+  const raw = error instanceof Error ? error.message : String(error);
+  const lower = raw.toLowerCase();
+  if (/\[LogIQ API\] LOGIN_STATUS 403_UNVERIFIED\b/.test(raw)) {
+    return true;
+  }
+  if (/\b403\b/.test(raw) && /verify|unverified|not verified/i.test(lower)) {
+    return true;
+  }
+  if (
+    /unverified|not verified|verify your email|email (?:is )?not verified|must verify/i.test(
+      lower
+    )
+  ) {
+    return true;
+  }
+  return false;
+}
+
 function loginErrorMessage(error: unknown): string {
   const raw = error instanceof Error ? error.message : String(error);
   if (/\[LogIQ API\] LOGIN_STATUS 401\b/.test(raw)) {
@@ -55,6 +74,14 @@ export async function submitLogin(
       user,
     };
   } catch (e) {
+    if (loginIsUnverifiedError(e)) {
+      return {
+        status: "error",
+        reason: "unverified",
+        message:
+          "Please verify your email before logging in. Check your inbox for the link, or resend it below.",
+      };
+    }
     return {
       status: "error",
       message: loginErrorMessage(e),
@@ -110,7 +137,7 @@ export async function submitSignup(
     return {
       status: "success",
       message:
-        "Your account was created. Please verify your email before continuing — check your inbox for a verification link.",
+        "Your account was created. Please verify your email before logging in. Check your inbox for a verification link.",
     };
   } catch (e) {
     return {
@@ -118,6 +145,27 @@ export async function submitSignup(
       message: signupErrorMessage(e),
     };
   }
+}
+
+function verifyEmailErrorMessage(error: unknown): string {
+  const raw = error instanceof Error ? error.message : String(error);
+  const lower = raw.toLowerCase();
+  if (lower.includes("network error") || lower.includes("failed to fetch")) {
+    return genericRequestError(
+      error,
+      "We couldn’t verify your email right now. Try again in a moment."
+    );
+  }
+  if (
+    /\b(400|401|403|404|410)\b/.test(raw) ||
+    /expired|invalid.*token|token.*invalid|verification link/i.test(lower)
+  ) {
+    return "This link doesn’t work anymore. It may have expired — use Resend verification from signup, or sign up again.";
+  }
+  return genericRequestError(
+    error,
+    "We couldn’t verify your email right now. Try again in a moment."
+  );
 }
 
 /**
@@ -130,15 +178,12 @@ export async function submitVerifyEmail(
     await api.auth.verifyEmail(token);
     return {
       status: "success",
-      message: "Your email is verified. You can log in now.",
+      message: "Your email is verified. You can use Login with your password.",
     };
   } catch (e) {
     return {
       status: "error",
-      message: genericRequestError(
-        e,
-        "This verification link is invalid or has expired. Request a new one from signup or contact support."
-      ),
+      message: verifyEmailErrorMessage(e),
     };
   }
 }
@@ -148,9 +193,54 @@ export async function submitVerifyEmail(
  */
 export async function submitForgotPassword(
   email: string
-): Promise<{ status: "success" }> {
-  await api.auth.forgotPassword(email);
-  return { status: "success" };
+): Promise<AuthSubmitResult> {
+  try {
+    await api.auth.forgotPassword(email);
+    return { status: "success" };
+  } catch (e) {
+    return {
+      status: "error",
+      message: genericRequestError(
+        e,
+        "Could not send reset instructions. Check your connection and try again."
+      ),
+    };
+  }
+}
+
+function resetPasswordErrorMessage(error: unknown): string {
+  const raw = error instanceof Error ? error.message : String(error);
+  const lower = raw.toLowerCase();
+
+  /** HTTP status or API text suggests the reset token/link, not password policy. */
+  const looksLikeBadToken =
+    /\b401\b/.test(raw) ||
+    /\b403\b/.test(raw) ||
+    /\b404\b/.test(raw) ||
+    /expired.*\b(token|link)\b|\b(token|link)\b.*expired/i.test(lower) ||
+    /invalid.*\b(token|reset)\b|\b(reset)\b.*\b(token|link)\b/i.test(lower);
+
+  if (looksLikeBadToken) {
+    return "This reset link is invalid or has expired. Request a new reset email from Forgot password.";
+  }
+
+  if (
+    /\b(400|422)\b/.test(raw) ||
+    /validation|password|weak|policy|requirements|does not meet|must contain|at least/i.test(
+      lower
+    )
+  ) {
+    const trimmed = raw.replace(/^\[LogIQ API\]\s*/i, "").trim();
+    if (trimmed.length > 0 && trimmed.length < 400) {
+      return trimmed;
+    }
+    return "Password does not meet requirements. Use a stronger password.";
+  }
+
+  return genericRequestError(
+    error,
+    "Could not reset your password. Try again or request a new reset link."
+  );
 }
 
 /**
@@ -169,10 +259,7 @@ export async function submitResetPassword(
   } catch (e) {
     return {
       status: "error",
-      message: genericRequestError(
-        e,
-        "Could not reset your password. The link may have expired — request a new reset email."
-      ),
+      message: resetPasswordErrorMessage(e),
     };
   }
 }

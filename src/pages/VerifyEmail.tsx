@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { submitVerifyEmail } from "@/lib/authHandlers";
@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 type VerifyState = "loading" | "success" | "error" | "missing";
 
 export function VerifyEmail() {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token")?.trim() ?? "";
   const [state, setState] = useState<VerifyState>(token ? "loading" : "missing");
@@ -18,7 +19,7 @@ export function VerifyEmail() {
     if (!token) {
       setState("missing");
       setMessage(
-        "This link is missing a verification token. Open the link from your email, or sign up again."
+        "Open the verification link from your email. If the link is incomplete, check your inbox or use Resend verification from signup."
       );
       return;
     }
@@ -39,6 +40,14 @@ export function VerifyEmail() {
       cancelled = true;
     };
   }, [token]);
+
+  useEffect(() => {
+    if (state !== "success") return;
+    const id = window.setTimeout(() => {
+      navigate("/login", { replace: true });
+    }, 2800);
+    return () => window.clearTimeout(id);
+  }, [state, navigate]);
 
   const cardTitle =
     state === "loading"
@@ -85,18 +94,23 @@ export function VerifyEmail() {
         ) : null}
 
         {state === "success" ? (
-          <Link
-            to="/login"
-            className={cn(
-              "inline-flex w-full items-center justify-center rounded-xl py-3 text-sm font-semibold text-white",
-              ctaButtonGradient,
-              ctaGlowBlueOnly,
-              "ring-1 ring-blue-400/35 transition hover:shadow-[0_0_0_1px_rgba(56,189,248,0.35)]",
-              "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400/70"
-            )}
-          >
-            Continue to Login
-          </Link>
+          <div className="space-y-2">
+            <p className="text-center text-xs text-slate-500">
+              Redirecting to Login…
+            </p>
+            <Link
+              to="/login"
+              className={cn(
+                "inline-flex w-full items-center justify-center rounded-xl py-3 text-sm font-semibold text-white",
+                ctaButtonGradient,
+                ctaGlowBlueOnly,
+                "ring-1 ring-blue-400/35 transition hover:shadow-[0_0_0_1px_rgba(56,189,248,0.35)]",
+                "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400/70"
+              )}
+            >
+              Continue to Login
+            </Link>
+          </div>
         ) : null}
 
         {state === "error" || state === "missing" ? (

@@ -67,6 +67,9 @@ export function createHttpApi(baseUrl: string): LogIQApi {
     if (res.status === 401) {
       throw new Error("[LogIQ API] LOGIN_STATUS 401");
     }
+    if (res.status === 403) {
+      throw new Error("[LogIQ API] LOGIN_STATUS 403_UNVERIFIED");
+    }
     if (res.status === 404) {
       throw new Error("[LogIQ API] LOGIN_STATUS 404");
     }

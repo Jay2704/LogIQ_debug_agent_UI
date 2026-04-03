@@ -5,7 +5,7 @@ import { Loader2 } from "lucide-react";
 import { useCurrentUser } from "@/auth";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { AuthField, AuthInput, AuthPasswordInput } from "@/components/auth/AuthField";
-import { submitLogin } from "@/lib/authHandlers";
+import { submitLogin, submitResendVerificationEmail } from "@/lib/authHandlers";
 import {
   hasFieldErrors,
   isLoginFormValid,
@@ -46,6 +46,9 @@ export function Login() {
   >({});
   const [submitStatus, setSubmitStatus] = useState<AuthSubmitStatus>("idle");
   const [banner, setBanner] = useState("");
+  const [unverified, setUnverified] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
+  const [resendNote, setResendNote] = useState<string | null>(null);
 
   const loading = submitStatus === "loading";
   const errs = validateLogin(values);
@@ -65,6 +68,8 @@ export function Login() {
     if (submitStatus !== "idle") {
       setSubmitStatus("idle");
       setBanner("");
+      setUnverified(false);
+      setResendNote(null);
     }
   }
 
@@ -75,6 +80,8 @@ export function Login() {
 
     setSubmitStatus("loading");
     setBanner("");
+    setUnverified(false);
+    setResendNote(null);
     const result = await submitLogin(values.email, values.password);
     if (result.status === "success" && result.user) {
       setCurrentUser(result.user);
@@ -84,6 +91,17 @@ export function Login() {
     }
     setSubmitStatus("error");
     setBanner(result.message ?? "Login failed.");
+    setUnverified(result.reason === "unverified");
+  }
+
+  async function handleResendVerification() {
+    const email = values.email.trim();
+    if (!email) return;
+    setResendLoading(true);
+    setResendNote(null);
+    const r = await submitResendVerificationEmail(email);
+    setResendLoading(false);
+    setResendNote(r.message ?? "");
   }
 
   if (user?.userId?.trim()) {
@@ -96,7 +114,39 @@ export function Login() {
       cardDescription="Enter your email and password. Your password is not stored in the browser — only the returned user profile is saved for this session."
     >
       <form onSubmit={handleSubmit} className="space-y-5" noValidate>
-        {submitStatus === "error" && banner ? (
+        {unverified && banner ? (
+          <div
+            className="space-y-3 rounded-xl border border-amber-500/25 bg-amber-500/[0.08] px-3 py-3 text-sm text-amber-100/95"
+            role="status"
+            aria-live="polite"
+          >
+            <p>{banner}</p>
+            <button
+              type="button"
+              onClick={() => void handleResendVerification()}
+              disabled={resendLoading || !values.email.trim()}
+              className={cn(
+                "w-full rounded-lg border border-white/[0.1] bg-surface-975/80 py-2 text-sm font-semibold text-slate-200 transition",
+                "hover:border-sky-500/25",
+                "disabled:cursor-not-allowed disabled:opacity-50",
+                "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400/70"
+              )}
+            >
+              {resendLoading ? (
+                <span className="inline-flex items-center justify-center gap-2">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Sending…
+                </span>
+              ) : (
+                "Resend verification email"
+              )}
+            </button>
+            {resendNote ? (
+              <p className="text-xs text-slate-400">{resendNote}</p>
+            ) : null}
+          </div>
+        ) : null}
+        {!unverified && submitStatus === "error" && banner ? (
           <div
             className="rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-2.5 text-sm text-red-200"
             role="alert"
@@ -123,7 +173,9 @@ export function Login() {
             disabled={loading}
             error={visibleLoginError("email", errs, values, touched)}
             success={Boolean(
-              values.email.trim() && !errs.email && submitStatus !== "error"
+              values.email.trim() &&
+                !errs.email &&
+                (submitStatus !== "error" || unverified)
             )}
           />
         </AuthField>
@@ -144,7 +196,9 @@ export function Login() {
             disabled={loading}
             error={visibleLoginError("password", errs, values, touched)}
             success={Boolean(
-              values.password && !errs.password && submitStatus !== "error"
+              values.password &&
+                !errs.password &&
+                (submitStatus !== "error" || unverified)
             )}
           />
         </AuthField>

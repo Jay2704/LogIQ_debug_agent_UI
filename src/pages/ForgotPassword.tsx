@@ -25,6 +25,8 @@ export function ForgotPassword() {
     return <Navigate to="/" replace />;
   }
 
+  const emailInvalid = Boolean(validateEmailField(email));
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     const eErr = validateEmailField(email);
@@ -33,15 +35,12 @@ export function ForgotPassword() {
 
     setSubmitting(true);
     setBanner("");
-    try {
-      await submitForgotPassword(email);
+    const result = await submitForgotPassword(email);
+    setSubmitting(false);
+    if (result.status === "success") {
       setDone(true);
-    } catch (err) {
-      setBanner(
-        err instanceof Error ? err.message : "Something went wrong. Try again."
-      );
-    } finally {
-      setSubmitting(false);
+    } else {
+      setBanner(result.message ?? "Something went wrong. Try again.");
     }
   }
 
@@ -106,7 +105,7 @@ export function ForgotPassword() {
 
           <button
             type="submit"
-            disabled={submitting}
+            disabled={submitting || emailInvalid}
             className={cn(
               "relative flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold text-white",
               ctaButtonGradient,

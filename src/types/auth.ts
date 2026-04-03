@@ -22,6 +22,8 @@ export interface LoginSubmitResult {
   status: "success" | "error";
   message?: string;
   user?: User;
+  /** Set when the server rejects login because the email is not verified yet. */
+  reason?: "unverified";
 }
 
 /** @deprecated Use {@link LoginSubmitResult}. */

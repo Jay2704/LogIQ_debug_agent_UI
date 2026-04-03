@@ -1,5 +1,5 @@
 import type { FormEvent } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { useCurrentUser } from "@/auth";
@@ -37,6 +37,14 @@ export function ResetPassword() {
   const loading = submitStatus === "loading";
   const success = submitStatus === "success";
   const errs = validateResetPasswordForm(values);
+
+  useEffect(() => {
+    if (!success) return;
+    const id = window.setTimeout(() => {
+      navigate("/login", { replace: true });
+    }, 2800);
+    return () => window.clearTimeout(id);
+  }, [success, navigate]);
   const formValid = isResetPasswordFormValid(values);
   const inputsDisabled = loading || success;
   const submitDisabled = loading || success || !formValid;
@@ -121,11 +129,16 @@ export function ResetPassword() {
         ) : null}
 
         {success && banner ? (
-          <div
-            className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2.5 text-sm text-emerald-200"
-            role="status"
-          >
-            {banner}
+          <div className="space-y-2">
+            <div
+              className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2.5 text-sm text-emerald-200"
+              role="status"
+            >
+              {banner}
+            </div>
+            <p className="text-center text-xs text-slate-500">
+              Redirecting to Login…
+            </p>
           </div>
         ) : null}
 
