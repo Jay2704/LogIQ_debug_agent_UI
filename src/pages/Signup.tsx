@@ -64,6 +64,8 @@ export function Signup() {
   const [touched, setTouched] = useState<
     Partial<Record<keyof SignupFormValues, boolean>>
   >({});
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [confirmPasswordTouched, setConfirmPasswordTouched] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<AuthSubmitStatus>("idle");
   const [banner, setBanner] = useState("");
   const [registeredEmail, setRegisteredEmail] = useState<string | null>(null);
@@ -74,10 +76,19 @@ export function Signup() {
   const success = submitStatus === "success";
   const errs = validateSignup(values);
   const formValid = isSignupFormValid(values);
+  const passwordsMatch = values.password === confirmPassword;
+  const confirmPasswordError =
+    !confirmPassword
+      ? "Confirm your password"
+      : !passwordsMatch
+        ? "Passwords do not match"
+        : undefined;
+  const visibleConfirmError =
+    (confirmPasswordTouched || confirmPassword.length > 0) ? confirmPasswordError : undefined;
   /** Inputs only locked while submitting or after success — never because validation failed (user must be able to type). */
   const inputsDisabled = loading || success;
-  /** Submit gated by validation + loading + success state. */
-  const submitDisabled = loading || success || !formValid;
+  /** Submit gated by validation + loading + success + password match state. */
+  const submitDisabled = loading || success || !formValid || !passwordsMatch || !confirmPassword;
 
   function touch(field: keyof SignupFormValues) {
     setTouched((t) => ({ ...t, [field]: true }));
@@ -98,6 +109,7 @@ export function Signup() {
     e.preventDefault();
     const next = validateSignup(values);
     if (hasFieldErrors(next)) return;
+    if (values.password !== confirmPassword) return;
 
     setSubmitStatus("loading");
     setBanner("");
@@ -228,13 +240,40 @@ export function Signup() {
             error={visibleSignupError("password", errs, values, touched)}
             success={Boolean(
               values.password &&
-                !errs.password &&
-                isPasswordPolicySatisfied(values.password)
+              !errs.password &&
+              isPasswordPolicySatisfied(values.password)
             )}
           />
         </AuthField>
 
         <PasswordStrengthHint password={values.password} disabled={inputsDisabled} />
+
+        <AuthField
+          id="signup-confirm-password"
+          label="Confirm password"
+          error={visibleConfirmError}
+        >
+          <AuthPasswordInput
+            id="signup-confirm-password"
+            name="confirm-password"
+            autoComplete="new-password"
+            placeholder="••••••••"
+            value={confirmPassword}
+            onChange={(e) => {
+              setConfirmPassword(e.target.value);
+              if (submitStatus !== "idle") {
+                setSubmitStatus("idle");
+                setBanner("");
+              }
+            }}
+            onBlur={() => setConfirmPasswordTouched(true)}
+            disabled={inputsDisabled}
+            error={visibleConfirmError}
+            success={Boolean(
+              confirmPassword && !confirmPasswordError
+            )}
+          />
+        </AuthField>
 
         <AuthField
           id="signup-role"
