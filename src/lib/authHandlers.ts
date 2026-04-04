@@ -128,7 +128,8 @@ export async function submitSignup(
   const role = values.role as UserRole;
   try {
     await api.users.create({
-      name: values.fullName.trim(),
+      firstName: values.firstName.trim(),
+      lastName: values.lastName.trim(),
       email: values.email.trim(),
       role,
       team: values.team.trim(),

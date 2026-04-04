@@ -25,7 +25,8 @@ export const mockUsersService: UsersService = {
     }
     const user: User = {
       userId: makeId(),
-      name: input.name.trim(),
+      firstName: input.firstName.trim(),
+      lastName: input.lastName.trim(),
       email: input.email.trim(),
       role: input.role,
       team: input.team.trim(),

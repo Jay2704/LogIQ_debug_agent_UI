@@ -31,7 +31,8 @@ export type LoginLookupResult = LoginSubmitResult;
 
 /** Onboarding profile — password sent only on create; not persisted in the browser store. */
 export interface SignupFormValues {
-  fullName: string;
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
   role: UserRole | "";

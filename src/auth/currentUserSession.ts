@@ -10,10 +10,11 @@ import {
   PROTOTYPE_SESSION_STORAGE_KEY,
 } from "./prototypeSessionStorage";
 
-/** Plain fields (snake_case id) for interchange with backends or non-React code. */
+/** Plain fields (snake_case) for interchange with backends or non-React code. */
 export interface CurrentUserSnapshot {
   user_id: string;
-  name: string;
+  first_name: string;
+  last_name: string;
   email: string;
   role: UserRole;
   team: string;
@@ -32,7 +33,8 @@ export function normalizeToUser(input: User | CurrentUserSnapshot): User {
   }
   return {
     userId: input.user_id,
-    name: input.name,
+    firstName: input.first_name,
+    lastName: input.last_name,
     email: input.email,
     role: input.role,
     team: input.team,
@@ -44,7 +46,8 @@ export function normalizeToUser(input: User | CurrentUserSnapshot): User {
 export function toCurrentUserSnapshot(user: User): CurrentUserSnapshot {
   return {
     user_id: user.userId,
-    name: user.name,
+    first_name: user.firstName,
+    last_name: user.lastName,
     email: user.email,
     role: user.role,
     team: user.team,

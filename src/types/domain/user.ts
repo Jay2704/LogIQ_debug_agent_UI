@@ -13,7 +13,8 @@ export type UserRole =
 
 export interface User {
   userId: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   role: UserRole;
   team: string;
@@ -22,7 +23,8 @@ export interface User {
 
 /** POST /api/v1/users — camelCase in app code; serialized for HTTP in {@link import('@/api/http/parseUserApi').serializeCreateUserBody}. */
 export interface CreateUserInput {
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   role: UserRole;
   team: string;

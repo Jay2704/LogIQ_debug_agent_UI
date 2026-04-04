@@ -24,7 +24,8 @@ import type { AuthSubmitStatus, SignupFormValues } from "@/types";
 import { SIGNUP_ROLE_OPTIONS } from "@/types";
 
 const initial: SignupFormValues = {
-  fullName: "",
+  firstName: "",
+  lastName: "",
   email: "",
   password: "",
   role: "",
@@ -42,8 +43,10 @@ function visibleSignupError(
   switch (field) {
     case "email":
       return touched.email || values.email.length > 0 ? e : undefined;
-    case "fullName":
-      return touched.fullName || values.fullName.length > 0 ? e : undefined;
+    case "firstName":
+      return touched.firstName || values.firstName.length > 0 ? e : undefined;
+    case "lastName":
+      return touched.lastName || values.lastName.length > 0 ? e : undefined;
     case "password":
       return values.password.length > 0 ? e : undefined;
     case "role":
@@ -145,22 +148,44 @@ export function Signup() {
         ) : null}
 
         <AuthField
-          id="signup-name"
-          label="Full name"
-          error={visibleSignupError("fullName", errs, values, touched)}
+          id="signup-first-name"
+          label="First name"
+          error={visibleSignupError("firstName", errs, values, touched)}
         >
           <AuthInput
-            id="signup-name"
-            name="name"
-            autoComplete="name"
-            placeholder="Alex Rivera"
-            value={values.fullName}
-            onChange={(e) => update("fullName", e.target.value)}
-            onBlur={() => touch("fullName")}
+            id="signup-first-name"
+            name="given-name"
+            autoComplete="given-name"
+            placeholder="Alex"
+            value={values.firstName}
+            onChange={(e) => update("firstName", e.target.value)}
+            onBlur={() => touch("firstName")}
             disabled={inputsDisabled}
-            error={visibleSignupError("fullName", errs, values, touched)}
+            error={visibleSignupError("firstName", errs, values, touched)}
             success={Boolean(
-              values.fullName.trim() && !errs.fullName
+              values.firstName.trim() && !errs.firstName
+            )}
+          />
+        </AuthField>
+
+        <AuthField
+          id="signup-last-name"
+          label="Last name"
+          error={visibleSignupError("lastName", errs, values, touched)}
+          hint="Optional if you go by a single name."
+        >
+          <AuthInput
+            id="signup-last-name"
+            name="family-name"
+            autoComplete="family-name"
+            placeholder="Rivera"
+            value={values.lastName}
+            onChange={(e) => update("lastName", e.target.value)}
+            onBlur={() => touch("lastName")}
+            disabled={inputsDisabled}
+            error={visibleSignupError("lastName", errs, values, touched)}
+            success={Boolean(
+              values.lastName.trim() && !errs.lastName
             )}
           />
         </AuthField>

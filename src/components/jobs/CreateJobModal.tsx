@@ -4,7 +4,7 @@ import { X } from "lucide-react";
 import { useCurrentUser } from "@/auth";
 import { api } from "@/api";
 import { useRoleUiCapabilities } from "@/lib/roleUiCapabilities";
-import { formatUserRoleLabel } from "@/lib/userDisplay";
+import { formatUserRoleLabel, userDisplayName } from "@/lib/userDisplay";
 import { ctaButtonGradient, ctaGlowBlueOnly } from "@/lib/ctaTheme";
 import { cn } from "@/lib/utils";
 import type { CreateJobInput, Job } from "@/types";
@@ -197,7 +197,7 @@ export function CreateJobModal({
             {user?.userId && roleCaps.canCreateJob ? (
               <div className="mt-1.5 rounded-xl border border-white/[0.08] bg-surface-975/80 px-3 py-2.5 text-sm text-slate-200">
                 <p className="font-medium text-slate-100">
-                  {user.name?.trim() || user.email}
+                  {userDisplayName(user) || user.email}
                 </p>
                 <p className="mt-1 font-mono text-xs text-slate-500">
                   triggered_by_user_id · {user.userId}

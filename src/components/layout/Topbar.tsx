@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { LogOut, UserRound } from "lucide-react";
 import { useCurrentUser } from "@/auth";
 import { ApiModeBadge } from "@/components/layout/ApiModeBadge";
-import { formatUserContextLine } from "@/lib/userDisplay";
+import { formatUserContextLine, userDisplayName } from "@/lib/userDisplay";
 import { cn } from "@/lib/utils";
 
 export function Topbar() {
@@ -54,7 +54,7 @@ export function Topbar() {
           {user ? (
             <>
               <span className="block truncate font-semibold text-slate-100">
-                {user.name || user.email}
+                {userDisplayName(user) || user.email}
               </span>
               <span className="truncate text-slate-500">
                 {formatUserContextLine(user)}

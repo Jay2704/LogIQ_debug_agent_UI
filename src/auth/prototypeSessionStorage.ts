@@ -35,6 +35,25 @@ function isRecord(x: unknown): x is Record<string, unknown> {
   return typeof x === "object" && x !== null && !Array.isArray(x);
 }
 
+function namesFromPersisted(user: Record<string, unknown>): {
+  firstName: string;
+  lastName: string;
+} {
+  if (typeof user.firstName === "string" || typeof user.lastName === "string") {
+    return {
+      firstName: typeof user.firstName === "string" ? user.firstName : "",
+      lastName: typeof user.lastName === "string" ? user.lastName : "",
+    };
+  }
+  if (typeof user.name === "string" && user.name.trim()) {
+    const t = user.name.trim();
+    const i = t.indexOf(" ");
+    if (i < 0) return { firstName: t, lastName: "" };
+    return { firstName: t.slice(0, i).trim(), lastName: t.slice(i + 1).trim() };
+  }
+  return { firstName: "", lastName: "" };
+}
+
 export function loadPersistedUser(): User | null {
   try {
     const raw = localStorage.getItem(PROTOTYPE_SESSION_STORAGE_KEY);
@@ -46,9 +65,11 @@ export function loadPersistedUser(): User | null {
     const userId = user.userId;
     const email = user.email;
     if (typeof userId !== "string" || typeof email !== "string") return null;
+    const { firstName, lastName } = namesFromPersisted(user);
     return {
       userId,
-      name: typeof user.name === "string" ? user.name : "",
+      firstName,
+      lastName,
       email,
       role: parseRole(user.role),
       team: typeof user.team === "string" ? user.team : "",

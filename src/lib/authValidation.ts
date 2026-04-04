@@ -113,8 +113,8 @@ export function validateSignup(values: SignupFormValues): Partial<
   Record<keyof SignupFormValues, string>
 > {
   const errors: Partial<Record<keyof SignupFormValues, string>> = {};
-  if (!values.fullName.trim()) {
-    errors.fullName = "Name is required";
+  if (!values.firstName.trim()) {
+    errors.firstName = "First name is required";
   }
   const emailErr = validateEmailField(values.email);
   if (emailErr) errors.email = emailErr;

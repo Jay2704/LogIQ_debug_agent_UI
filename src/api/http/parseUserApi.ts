@@ -61,7 +61,20 @@ export function parseUserJson(json: unknown): User {
     pickStringOrNumber(o, ["user_id", "userId", "id"]) ?? "";
   const createdAt =
     pickString(o, ["created_at", "createdAt"]) ?? new Date().toISOString();
-  const name = pickString(o, ["name", "full_name", "fullName"]) ?? "";
+  let firstName = pickString(o, ["first_name", "firstName"]) ?? "";
+  let lastName = pickString(o, ["last_name", "lastName"]) ?? "";
+  const legacyName = pickString(o, ["name", "full_name", "fullName"]);
+  if ((!firstName && !lastName) && legacyName) {
+    const t = legacyName.trim();
+    const i = t.indexOf(" ");
+    if (i < 0) {
+      firstName = t;
+      lastName = "";
+    } else {
+      firstName = t.slice(0, i).trim();
+      lastName = t.slice(i + 1).trim();
+    }
+  }
   const email = pickString(o, ["email"]) ?? "";
   const team = pickString(o, ["team"]) ?? "";
   const role = normalizeRole(pickString(o, ["role"]));
@@ -70,7 +83,8 @@ export function parseUserJson(json: unknown): User {
   }
   return {
     userId,
-    name,
+    firstName,
+    lastName,
     email,
     role,
     team,
@@ -115,7 +129,8 @@ export function parseUserLookupJson(json: unknown): User | undefined {
 
 export function serializeCreateUserBody(input: CreateUserInput): Record<string, string> {
   return {
-    name: input.name,
+    first_name: input.firstName,
+    last_name: input.lastName,
     email: input.email,
     role: input.role,
     team: input.team,

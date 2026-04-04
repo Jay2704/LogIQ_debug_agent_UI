@@ -2,7 +2,11 @@ import { Bell, Plug, Server, Shield, UserRound } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useCurrentUser } from "@/auth";
 import { useRoleUiCapabilities } from "@/lib/roleUiCapabilities";
-import { formatUserContextLine, formatUserRoleLabel } from "@/lib/userDisplay";
+import {
+  formatUserContextLine,
+  formatUserRoleLabel,
+  userDisplayName,
+} from "@/lib/userDisplay";
 
 const sections = [
   {
@@ -59,7 +63,9 @@ export function Settings() {
                 <dt className="text-slate-500">User ID</dt>
                 <dd className="font-mono text-slate-300">{user.userId}</dd>
                 <dt className="text-slate-500">Name</dt>
-                <dd className="text-slate-200">{user.name || "—"}</dd>
+                <dd className="text-slate-200">
+                  {userDisplayName(user) || "—"}
+                </dd>
                 <dt className="text-slate-500">Email</dt>
                 <dd className="truncate text-slate-200">{user.email}</dd>
                 <dt className="text-slate-500">Role</dt>
