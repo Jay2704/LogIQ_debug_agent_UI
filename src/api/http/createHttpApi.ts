@@ -36,17 +36,52 @@ async function readJsonOrNull(res: Response): Promise<unknown> {
 
 async function httpError(res: Response, label: string): Promise<never> {
   const detail = await res.text().catch(() => "");
-  throw new Error(
-    `[LogIQ API] ${label} ${res.status} ${res.statusText}${detail ? `: ${detail.slice(0, 280)}` : ""}`
-  );
+  const slice = detail.slice(0, 280);
+  /** Some environments omit `statusText`; keep a non-empty token so clients can parse `POST … {status} … : body`. */
+  const reason = res.statusText?.trim() || "Error";
+  const suffix = slice.length > 0 ? `: ${slice}` : "";
+  throw new Error(`[LogIQ API] ${label} ${res.status} ${reason}${suffix}`);
 }
 
-/** Wraps `fetch` so offline / DNS failures surface as `[LogIQ API] Network error` instead of raw TypeError. */
+/**
+ * Wraps `fetch` so offline / DNS / CORS failures surface as
+ * `[LogIQ API] Network error (no response): …` instead of a raw TypeError.
+ * Does not run for HTTP 4xx/5xx — those are handled after `fetch` returns.
+ */
 async function fetchNetwork(url: string, init?: RequestInit): Promise<Response> {
+  const method = init?.method ?? "GET";
+  if (import.meta.env.DEV) {
+    console.info("[LogIQ API] request", method, url);
+  }
   try {
-    return await fetch(url, init);
+    const res = await fetch(url, init);
+    if (import.meta.env.DEV && !res.ok) {
+      const text = await res.clone().text().catch(() => "");
+      console.warn("[LogIQ API] response error", {
+        url,
+        method,
+        status: res.status,
+        statusText: res.statusText,
+        bodyPreview: text.slice(0, 500),
+      });
+    }
+    return res;
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : String(e);
+    const browserMsg = msg.toLowerCase();
+    const likelyCorsOrUnreachable =
+      browserMsg.includes("failed to fetch") ||
+      browserMsg.includes("load failed") ||
+      browserMsg.includes("networkerror when attempting to fetch");
+    if (import.meta.env.DEV) {
+      console.warn("[LogIQ API] fetch failed (no HTTP response)", {
+        url,
+        method,
+        errorType: e instanceof Error ? e.name : typeof e,
+        message: msg,
+        likelyCorsOrUnreachable,
+      });
+    }
     throw new Error(`[LogIQ API] Network error (no response): ${msg}`);
   }
 }
@@ -68,7 +103,26 @@ export function createHttpApi(baseUrl: string): LogIQApi {
       throw new Error("[LogIQ API] LOGIN_STATUS 401");
     }
     if (res.status === 403) {
-      throw new Error("[LogIQ API] LOGIN_STATUS 403_UNVERIFIED");
+      const text = await res.text();
+      let code: string | undefined;
+      try {
+        const j = JSON.parse(text) as { code?: unknown };
+        if (typeof j.code === "string") code = j.code;
+      } catch {
+        /* non-JSON body */
+      }
+      const isEmailNotVerified =
+        code === "email_not_verified" ||
+        /email_not_verified/i.test(text) ||
+        /verify your email before logging in/i.test(text);
+      if (isEmailNotVerified) {
+        throw new Error("[LogIQ API] LOGIN_STATUS 403_UNVERIFIED");
+      }
+      const reason = res.statusText?.trim() || "Error";
+      const slice = text.slice(0, 280);
+      throw new Error(
+        `[LogIQ API] POST /api/v1/auth/login 403 ${reason}${slice ? `: ${slice}` : ""}`
+      );
     }
     if (res.status === 404) {
       throw new Error("[LogIQ API] LOGIN_STATUS 404");
@@ -239,6 +293,15 @@ export function createHttpApi(baseUrl: string): LogIQApi {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(serializeCreateUserBody(input)),
         });
+        if (import.meta.env.DEV && !res.ok) {
+          const peek = await res.clone().text().catch(() => "");
+          console.warn("[LogIQ API] signup POST /api/v1/users", {
+            url,
+            status: res.status,
+            statusText: res.statusText,
+            bodyPreview: peek.slice(0, 500),
+          });
+        }
         if (!res.ok) await httpError(res, "POST /api/v1/users");
         const json: unknown = await readJsonOrNull(res);
         if (json === null || json === undefined) {

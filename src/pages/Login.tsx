@@ -120,6 +120,7 @@ export function Login() {
             role="status"
             aria-live="polite"
           >
+            <p className="font-medium text-amber-50/95">Verification required</p>
             <p>{banner}</p>
             <button
               type="button"
@@ -144,6 +145,23 @@ export function Login() {
             {resendNote ? (
               <p className="text-xs text-slate-400">{resendNote}</p>
             ) : null}
+            <p className="border-t border-amber-500/20 pt-3 text-xs text-slate-400">
+              After you verify from your email, use <strong className="text-amber-100/90">Login</strong>{" "}
+              below with the same email and password. If you already verified in another tab, dismiss
+              this notice and try again.
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                setUnverified(false);
+                setBanner("");
+                setResendNote(null);
+                setSubmitStatus("idle");
+              }}
+              className="w-full rounded-lg border border-white/[0.08] bg-surface-975/60 py-2 text-xs font-semibold text-sky-300/95 transition hover:border-sky-500/25 hover:text-sky-200"
+            >
+              I’ve verified my email — try Login again
+            </button>
           </div>
         ) : null}
         {!unverified && submitStatus === "error" && banner ? (

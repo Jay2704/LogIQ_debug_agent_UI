@@ -155,7 +155,11 @@ export function Signup() {
             className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2.5 text-sm text-emerald-200"
             aria-live="polite"
           >
-            {banner}
+            {banner.split(/\n\n/).map((para, i) => (
+              <p key={i} className={i > 0 ? "mt-2 text-emerald-100/90" : "font-medium"}>
+                {para}
+              </p>
+            ))}
           </div>
         ) : null}
 

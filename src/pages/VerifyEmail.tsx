@@ -11,7 +11,10 @@ type VerifyState = "loading" | "success" | "error" | "missing";
 export function VerifyEmail() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const token = searchParams.get("token")?.trim() ?? "";
+  const token =
+    searchParams.get("token")?.trim() ||
+    searchParams.get("verification_token")?.trim() ||
+    "";
   const [state, setState] = useState<VerifyState>(token ? "loading" : "missing");
   const [message, setMessage] = useState("");
 
@@ -19,7 +22,7 @@ export function VerifyEmail() {
     if (!token) {
       setState("missing");
       setMessage(
-        "Open the verification link from your email. If the link is incomplete, check your inbox or use Resend verification from signup."
+        "Open the verification link from your email. If this page has no token, go back to the message we sent you—or use Resend verification from signup or Login."
       );
       return;
     }

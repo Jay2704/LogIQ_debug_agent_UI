@@ -10,9 +10,6 @@ import { validateEmailField } from "@/lib/authValidation";
 import { ctaButtonGradient, ctaGlowBlueOnly } from "@/lib/ctaTheme";
 import { cn } from "@/lib/utils";
 
-const GENERIC_SUCCESS =
-  "If an account exists for this email, a reset link has been sent.";
-
 export function ForgotPassword() {
   const { user } = useCurrentUser();
   const [email, setEmail] = useState("");
@@ -20,6 +17,7 @@ export function ForgotPassword() {
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const [banner, setBanner] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   if (user?.userId?.trim()) {
     return <Navigate to="/" replace />;
@@ -38,6 +36,10 @@ export function ForgotPassword() {
     const result = await submitForgotPassword(email);
     setSubmitting(false);
     if (result.status === "success") {
+      setSuccessMessage(
+        result.message ??
+          "If an account exists for this email, a password reset link has been sent.\n\nCheck your inbox and spam or junk folder."
+      );
       setDone(true);
     } else {
       setBanner(result.message ?? "Something went wrong. Try again.");
@@ -49,7 +51,7 @@ export function ForgotPassword() {
       cardTitle="Forgot password"
       cardDescription={
         done
-          ? "Check your inbox for next steps."
+          ? "If we found an account, a reset link was sent by email."
           : "Enter your account email. We’ll send reset instructions if an account exists."
       }
     >
@@ -59,7 +61,11 @@ export function ForgotPassword() {
             className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2.5 text-sm text-emerald-200"
             role="status"
           >
-            {GENERIC_SUCCESS}
+            {successMessage.split(/\n\n/).map((para, i) => (
+              <p key={i} className={i > 0 ? "mt-2 text-emerald-100/90" : ""}>
+                {para}
+              </p>
+            ))}
           </div>
           <Link
             to="/login"

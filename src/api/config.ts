@@ -24,25 +24,45 @@ function readEnvBaseUrl(value: unknown): string | undefined {
   return t.length > 0 ? t : undefined;
 }
 
+/** Origin from env only (no dev fallback). Used to detect when the dev default applies. */
+const API_BASE_URL_FROM_ENV: string | undefined =
+  readEnvBaseUrl(import.meta.env.VITE_API_BASE_URL) ??
+  readEnvBaseUrl(import.meta.env.VITE_API_URL);
+
+/**
+ * Whether the user explicitly enabled HTTP mode (`VITE_USE_HTTP` truthy, case-insensitive).
+ * If `true` but {@link API_BASE_URL} is missing (non-dev), we still fall back to mocks (see {@link USE_HTTP_API}).
+ */
+export const HTTP_MODE_FLAG =
+  String(import.meta.env.VITE_USE_HTTP ?? "")
+    .trim()
+    .toLowerCase() === "true";
+
+/**
+ * When `VITE_USE_HTTP=true` and no base URL is set in `.env`, dev builds default to this origin
+ * so the UI hits a local API without extra configuration. Production builds never use this —
+ * set `VITE_API_BASE_URL` in your deploy environment.
+ */
+const DEV_DEFAULT_API_ORIGIN = "http://127.0.0.1:8000";
+
 /**
  * Resolved backend origin (scheme + host [+ port], no path, no trailing slash).
  * Set at build time via Vite env — works for localhost and production hosts alike.
  *
  * - Preferred: `VITE_API_BASE_URL`
  * - Legacy alias: `VITE_API_URL` (used only if `VITE_API_BASE_URL` is unset)
+ * - Dev only: if `VITE_USE_HTTP` is true and both env vars are unset/blank, defaults to
+ *   {@link DEV_DEFAULT_API_ORIGIN}. **Restart `npm run dev`** after changing `.env` — Vite inlines
+ *   env at startup.
  */
 export const API_BASE_URL: string | undefined =
-  readEnvBaseUrl(import.meta.env.VITE_API_BASE_URL) ??
-  readEnvBaseUrl(import.meta.env.VITE_API_URL);
+  API_BASE_URL_FROM_ENV ??
+  (HTTP_MODE_FLAG && import.meta.env.DEV ? DEV_DEFAULT_API_ORIGIN : undefined);
 
-/**
- * Whether the user explicitly enabled HTTP mode (`VITE_USE_HTTP` truthy, case-insensitive).
- * If `true` but {@link API_BASE_URL} is missing, we still fall back to mocks (see {@link USE_HTTP_API}).
- */
-export const HTTP_MODE_FLAG =
-  String(import.meta.env.VITE_USE_HTTP ?? "")
-    .trim()
-    .toLowerCase() === "true";
+/** `true` when the running dev server is using {@link DEV_DEFAULT_API_ORIGIN} (no URL in env). */
+export const API_BASE_URL_USES_DEV_DEFAULT = Boolean(
+  import.meta.env.DEV && HTTP_MODE_FLAG && !API_BASE_URL_FROM_ENV && API_BASE_URL
+);
 
 /**
  * `true` only when both a base URL is configured and HTTP mode is on — then `api` in `client.ts`
@@ -51,8 +71,9 @@ export const HTTP_MODE_FLAG =
  * | VITE_USE_HTTP | VITE_API_BASE_URL | Result        |
  * |---------------|-------------------|---------------|
  * | not `true`    | any               | mock          |
- * | `true`        | unset / blank     | mock (safe)   |
- * | `true`        | set               | HTTP client   |
+ * | `true` (prod) | unset / blank     | mock          |
+ * | `true` (dev)  | unset / blank     | HTTP client (dev default origin) |
+ * | `true`        | set (env)         | HTTP client   |
  */
 export const USE_HTTP_API = HTTP_MODE_FLAG && Boolean(API_BASE_URL);
 
