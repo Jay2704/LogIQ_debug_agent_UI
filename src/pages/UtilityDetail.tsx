@@ -2,17 +2,15 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { api } from "@/api";
 import { UtilityToolLayout } from "@/components/utilities/UtilityToolLayout";
-import { UtilityToolSidebar } from "@/components/utilities/UtilityToolSidebar";
 import { UtilityWorkspaceView } from "@/components/utilities/UtilityWorkspaceView";
 import { PageLoading } from "@/components/ui/PageLoading";
-import type { UtilityRunRecord, UtilityToolDefinition } from "@/types";
+import type { UtilityToolDefinition } from "@/types";
 
 export function UtilityDetail() {
   const { toolId } = useParams<{ toolId: string }>();
   const [loading, setLoading] = useState(true);
   const [tool, setTool] = useState<UtilityToolDefinition | undefined>();
   const [error, setError] = useState<Error | null>(null);
-  const [recentRuns, setRecentRuns] = useState<UtilityRunRecord[]>([]);
 
   useEffect(() => {
     if (!toolId) {
@@ -44,21 +42,6 @@ export function UtilityDetail() {
     };
   }, [toolId]);
 
-  useEffect(() => {
-    let cancelled = false;
-    api.utilities
-      .getRecentRuns()
-      .then((r) => {
-        if (!cancelled) setRecentRuns(r);
-      })
-      .catch(() => {
-        if (!cancelled) setRecentRuns([]);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
   if (loading) {
     return <PageLoading message="Loading tool…" />;
   }
@@ -86,10 +69,7 @@ export function UtilityDetail() {
   }
 
   return (
-    <UtilityToolLayout
-      tool={tool}
-      sidebar={<UtilityToolSidebar toolId={tool.id} recentRuns={recentRuns} />}
-    >
+    <UtilityToolLayout tool={tool}>
       <UtilityWorkspaceView tool={tool} />
     </UtilityToolLayout>
   );

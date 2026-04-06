@@ -32,7 +32,7 @@ export function UtilityPanel({
 
 interface UtilityToolLayoutProps {
   tool: UtilityToolDefinition;
-  sidebar: ReactNode;
+  sidebar?: ReactNode;
   children: ReactNode;
 }
 
@@ -70,7 +70,7 @@ export function UtilityToolLayout({ tool, sidebar, children }: UtilityToolLayout
 
       <div className="space-y-6">
         <div className="min-w-0 space-y-6">{children}</div>
-        <aside className="min-w-0">{sidebar}</aside>
+        {sidebar ? <aside className="min-w-0">{sidebar}</aside> : null}
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { Download } from "lucide-react";
 import { UtilityPanel } from "@/components/utilities/UtilityToolLayout";
 import { UtilityRunButton } from "@/components/utilities/UtilityRunButton";
 import { LogViewer } from "@/components/utilities/LogViewer";
@@ -44,6 +45,21 @@ export function KeywordSearchWorkspace({ logLines, hasUploadedLog }: UtilityWork
   const handleRun = () => {
     run(() => setShowResults(true));
   };
+  const hasDownloadableResults = showResults && results.length > 0;
+
+  const handleDownload = () => {
+    if (!hasDownloadableResults) return;
+    const outputText = results.map((row) => `${row.lineNum}  ${row.line}`).join("\n");
+    const blob = new Blob([outputText], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = "log-search-results.txt";
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <>
@@ -71,6 +87,23 @@ export function KeywordSearchWorkspace({ logLines, hasUploadedLog }: UtilityWork
           </UtilityRunButton>
         </div>
       </UtilityPanel>
+      <div className="px-1">
+        <button
+          type="button"
+          onClick={handleDownload}
+          disabled={!hasDownloadableResults}
+          className={cn(
+            "inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition",
+            "border border-white/[0.12] bg-surface-975/70 text-slate-200",
+            "hover:border-sky-500/40 hover:text-sky-200",
+            "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400/60",
+            "disabled:pointer-events-none disabled:opacity-40"
+          )}
+        >
+          <Download className="h-4 w-4" />
+          Download
+        </button>
+      </div>
 
       <UtilityPanel title="Results" className={cn(!showResults && "opacity-80")}>
         {!showResults ? (
