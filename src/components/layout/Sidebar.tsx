@@ -1,47 +1,24 @@
 import { Link, NavLink } from "react-router-dom";
-import {
-  Activity,
-  AlertTriangle,
-  BarChart3,
-  FileStack,
-  LayoutDashboard,
-  ListTodo,
-  Settings2,
-  Wrench,
-} from "lucide-react";
+import { LogIQFullLogo } from "@/components/branding/LogIQLogos";
 import { USE_HTTP_API } from "@/api/config";
+import { MAIN_NAV_ITEMS } from "@/lib/mainNav";
 import { navActiveInsetShadow, navItemActiveGradient } from "@/lib/ctaTheme";
 import { cn } from "@/lib/utils";
 import { ui } from "@/lib/ui";
 
-const nav = [
-  { to: "/", label: "Dashboard", icon: LayoutDashboard, end: true },
-  { to: "/jobs", label: "Jobs", icon: ListTodo, end: false },
-  { to: "/anomalies", label: "Anomalies", icon: AlertTriangle, end: false },
-  { to: "/insights", label: "Insights", icon: BarChart3, end: false },
-  { to: "/reports", label: "Reports", icon: FileStack, end: false },
-  { to: "/utilities", label: "Utilities", icon: Wrench, end: false },
-  { to: "/settings", label: "Settings", icon: Settings2, end: false },
-];
-
 export function Sidebar() {
   return (
     <aside className="fixed left-0 top-0 z-40 hidden h-screen w-[260px] flex-col border-r border-white/[0.08] bg-surface-975/[0.92] shadow-[inset_-1px_0_0_rgba(59,130,246,0.05)] backdrop-blur-2xl md:flex">
-      <div className="flex h-16 items-center gap-3 border-b border-white/[0.08] px-5">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500/40 to-violet-600/35 ring-1 ring-white/15 shadow-glow-blue">
-          <Activity className="h-5 w-5 text-sky-300" strokeWidth={2} />
-        </div>
-        <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">
-            LogIQ
-          </p>
-          <p className="text-sm font-bold tracking-tight text-white">
-            Debug Agent
-          </p>
-        </div>
+      <div className="flex min-h-[5.25rem] items-center border-b border-white/[0.08] px-4 py-3">
+        <Link
+          to="/"
+          className="flex min-w-0 items-center outline-none ring-offset-2 ring-offset-surface-975 transition hover:opacity-95 focus-visible:rounded-lg focus-visible:ring-2 focus-visible:ring-sky-500/50"
+        >
+          <LogIQFullLogo className="max-h-16 max-w-[260px] sm:max-h-[4.5rem] sm:max-w-[300px]" />
+        </Link>
       </div>
       <nav className="flex-1 space-y-1.5 overflow-y-auto px-2 py-4">
-        {nav.map((item) => (
+        {MAIN_NAV_ITEMS.map((item) => (
           <NavLink
             key={item.to}
             to={item.to}

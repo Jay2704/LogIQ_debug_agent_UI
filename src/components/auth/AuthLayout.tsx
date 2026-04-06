@@ -1,13 +1,7 @@
 import type { ReactNode } from "react";
-import {
-  Activity,
-  GitBranch,
-  Network,
-  Radar,
-  Sparkles,
-  Zap,
-} from "lucide-react";
+import { GitBranch, Network, Radar, Sparkles, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
+import { LogIQFullLogo } from "@/components/branding/LogIQLogos";
 import { cn } from "@/lib/utils";
 
 interface AuthLayoutProps {
@@ -23,19 +17,6 @@ const highlightBadges = [
   { label: "Graph context", icon: Network },
   { label: "LLM assist", icon: Zap },
 ] as const;
-
-function BrandLogo({ className }: { className?: string }) {
-  return (
-    <div
-      className={cn(
-        "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500/45 to-violet-600/40 ring-1 ring-white/15 shadow-glow-blue",
-        className
-      )}
-    >
-      <Activity className="h-6 w-6 text-sky-300" strokeWidth={2} />
-    </div>
-  );
-}
 
 export function AuthLayout({
   children,
@@ -80,18 +61,13 @@ export function AuthLayout({
               />
               <Link
                 to="/"
-                className="inline-flex max-w-full items-center gap-3 rounded-xl outline-none ring-offset-2 ring-offset-[#080d18] transition hover:opacity-90 focus-visible:ring-2 focus-visible:ring-sky-500/50"
+                className="inline-flex max-w-full items-center rounded-xl outline-none ring-offset-2 ring-offset-[#080d18] transition hover:opacity-90 focus-visible:ring-2 focus-visible:ring-sky-500/50"
               >
-                <BrandLogo />
-                <div className="min-w-0">
-                  <p className="truncate text-lg font-bold tracking-tight text-white">
-                    LogIQ Debug Agent
-                  </p>
-                  <p className="mt-0.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">
-                    AI debugging platform
-                  </p>
-                </div>
+                <LogIQFullLogo className="max-h-20 max-w-[min(380px,92%)] sm:max-h-24" />
               </Link>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">
+                AI debugging platform
+              </p>
 
               <div className="flex flex-wrap gap-2">
                 {highlightBadges.map(({ label, icon: Icon }) => (
@@ -144,10 +120,9 @@ export function AuthLayout({
             <div className="flex w-full items-center gap-3">
               <Link
                 to="/"
-                className="inline-flex min-w-0 flex-1 items-center gap-2 rounded-lg text-slate-400 transition hover:text-sky-400"
+                className="inline-flex min-w-0 flex-1 items-center rounded-lg text-slate-400 transition hover:opacity-90"
               >
-                <BrandLogo className="h-9 w-9 [&_svg]:h-5 [&_svg]:w-5" />
-                <span className="truncate text-sm font-bold text-white">LogIQ Debug Agent</span>
+                <LogIQFullLogo className="max-h-16 max-w-[min(340px,88vw)] sm:max-h-18" />
               </Link>
             </div>
             <div className="flex flex-wrap gap-2">

@@ -1,12 +1,10 @@
 import { Link } from "react-router-dom";
 import {
-  Activity,
   ArrowRight,
   Brain,
   CheckCircle2,
   Cpu,
   FileSearch,
-  Gauge,
   GitBranch,
   Headphones,
   Layers,
@@ -18,137 +16,11 @@ import {
   Workflow,
   Zap,
 } from "lucide-react";
+import { DashboardNavGrid } from "@/components/dashboard/DashboardNavGrid";
+import { LandingHero } from "@/components/landing/LandingHero";
+import { LandingMarketingNav } from "@/components/landing/LandingMarketingNav";
 import { ctaButtonGradient, ctaGlowBlueOnly } from "@/lib/ctaTheme";
 import { cn } from "@/lib/utils";
-
-function BrandLogo({ className }: { className?: string }) {
-  return (
-    <div
-      className={cn(
-        "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500/45 to-violet-600/40 ring-1 ring-white/15 shadow-glow-blue sm:h-11 sm:w-11",
-        className
-      )}
-    >
-      <Activity className="h-5 w-5 text-sky-300 sm:h-6 sm:w-6" strokeWidth={2} />
-    </div>
-  );
-}
-
-function LandingNav() {
-  return (
-    <header className="sticky top-0 z-40 border-b border-white/[0.06] bg-[#080d18]/80 backdrop-blur-xl">
-      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4 sm:h-16 sm:px-6 lg:px-8">
-        <Link
-          to="/"
-          className="flex min-w-0 items-center gap-2.5 rounded-lg outline-none ring-offset-2 ring-offset-[#080d18] transition hover:opacity-90 focus-visible:ring-2 focus-visible:ring-sky-500/50 sm:gap-3"
-        >
-          <BrandLogo className="h-9 w-9 sm:h-10 sm:w-10" />
-          <div className="min-w-0 text-left">
-            <p className="truncate text-sm font-bold tracking-tight text-white sm:text-base">
-              LogIQ Debug Agent
-            </p>
-            <p className="hidden text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-500 sm:block">
-              AI debugging platform
-            </p>
-          </div>
-        </Link>
-        <nav className="flex shrink-0 items-center gap-2 sm:gap-3">
-          <Link
-            to="/login"
-            className="rounded-lg px-3 py-2 text-xs font-semibold text-slate-300 transition hover:bg-white/[0.05] hover:text-white sm:text-sm"
-          >
-            Login
-          </Link>
-          <Link
-            to="/signup"
-            className={cn(
-              "rounded-lg px-3 py-2 text-xs font-semibold text-sky-400 transition hover:bg-white/[0.05] hover:text-sky-300 sm:text-sm"
-            )}
-          >
-            Sign up
-          </Link>
-        </nav>
-      </div>
-    </header>
-  );
-}
-
-function HeroMockPreview() {
-  return (
-    <div className="relative w-full max-w-xl lg:max-w-none">
-      <div
-        className="pointer-events-none absolute -inset-4 rounded-3xl bg-gradient-to-br from-sky-500/20 via-violet-600/10 to-transparent opacity-60 blur-2xl"
-        aria-hidden
-      />
-      <div
-        className={cn(
-          "relative overflow-hidden rounded-2xl border border-white/[0.1] bg-gradient-to-b from-surface-900/95 to-surface-975 shadow-[0_0_0_1px_rgba(59,130,246,0.12),0_24px_64px_-24px_rgba(0,0,0,0.65)]",
-          "ring-1 ring-white/[0.04] animate-investigation-reveal"
-        )}
-      >
-        <div className="flex items-center justify-between border-b border-white/[0.06] bg-surface-975/80 px-4 py-2.5">
-          <div className="flex items-center gap-2">
-            <span className="font-mono text-[11px] text-slate-400">dbg_inv_7f2a</span>
-            <span className="rounded-md bg-emerald-500/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-300/95">
-              Complete
-            </span>
-          </div>
-          <div className="flex items-center gap-1.5 rounded-lg bg-sky-500/10 px-2 py-1 ring-1 ring-sky-500/25">
-            <Gauge className="h-3.5 w-3.5 text-sky-400" />
-            <span className="text-[11px] font-semibold tabular-nums text-sky-200">94% confidence</span>
-          </div>
-        </div>
-        <div className="grid gap-0 sm:grid-cols-5">
-          <div className="border-b border-white/[0.06] p-4 sm:col-span-2 sm:border-b-0 sm:border-r">
-            <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-slate-500">
-              Root cause
-            </p>
-            <p className="mt-2 text-sm font-medium leading-snug text-slate-100">
-              Deploy <span className="font-mono text-sky-300/95">checkout-svc@v2.4.1</span>{" "}
-              introduced a regression in cart validation under load.
-            </p>
-            <div className="mt-3 flex flex-wrap gap-1.5">
-              {["trace", "deploy", "code"].map((t) => (
-                <span
-                  key={t}
-                  className="rounded-md bg-violet-500/10 px-2 py-0.5 text-[10px] font-medium text-violet-300/90 ring-1 ring-violet-500/20"
-                >
-                  {t}
-                </span>
-              ))}
-            </div>
-          </div>
-          <div className="p-4 sm:col-span-3">
-            <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-slate-500">
-              Evidence graph
-            </p>
-            <div className="mt-3 flex h-24 items-end justify-between gap-1 px-1">
-              {[40, 65, 45, 80, 55, 90, 70].map((h, i) => (
-                <div
-                  key={i}
-                  className="w-full max-w-[2rem] rounded-t bg-gradient-to-t from-sky-600/40 to-cyan-400/25 ring-1 ring-white/[0.06]"
-                  style={{ height: `${h}%` }}
-                />
-              ))}
-            </div>
-            <p className="mt-2 text-[11px] text-slate-500">
-              Correlated latency spike → failed rollout window → anchor file match.
-            </p>
-          </div>
-        </div>
-        <div className="border-t border-white/[0.06] bg-slate-950/40 px-4 py-3">
-          <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-slate-500">
-            AI explanation
-          </p>
-          <p className="mt-1.5 text-xs leading-relaxed text-slate-400">
-            Hypothesis ranks deploy change first; trace evidence supports rollback to{" "}
-            <span className="font-mono text-slate-300">v2.3.8</span> while metrics stabilize.
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 const trustPills = [
   "Deterministic RCA",
@@ -277,62 +149,43 @@ export function LandingPage() {
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,#0a101f_0%,#080d18_45%,#070b14_100%)] opacity-95" />
 
       <div className="relative z-10">
-        <LandingNav />
+        <LandingMarketingNav />
 
         <main>
-          {/* Hero */}
-          <section className="mx-auto max-w-6xl px-4 pb-16 pt-10 sm:px-6 sm:pt-14 lg:px-8 lg:pb-24">
-            <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-10 xl:gap-14">
-              <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-500/25 bg-sky-500/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-sky-300/95 ring-1 ring-sky-500/15">
-                    <span className="relative flex h-1.5 w-1.5">
-                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sky-400 opacity-40" />
-                      <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-sky-400" />
-                    </span>
-                    Deterministic + AI
-                  </span>
-                  <span className="rounded-full border border-white/[0.08] bg-white/[0.03] px-2.5 py-1 text-[11px] font-medium text-slate-400">
-                    Production debugging workspace
-                  </span>
-                </div>
-                <h1 className="mt-6 text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-[2.35rem] lg:leading-[1.15] xl:text-5xl xl:leading-tight">
-                  <span className="block">AI-Powered Debugging for Modern Systems</span>
-                  <span className="mt-3 block text-xl font-semibold leading-snug text-slate-200 sm:text-2xl lg:mt-4 lg:text-[1.65rem] xl:text-3xl">
-                    Find root cause faster with{" "}
-                    <span className="text-gradient-blue">deterministic RCA</span>
-                    {" + "}
-                    <span className="text-gradient-violet">AI</span>
-                  </span>
-                </h1>
-                <p className="mt-5 max-w-xl text-base leading-relaxed text-slate-400 sm:text-lg">
-                  Graph-based reasoning across traces and deploys, LLM-assisted explanations you
-                  can audit, and one workspace to debug production issues — without black-box
-                  guesswork.
-                </p>
-                <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-                  <PrimaryCta className="w-full sm:w-auto" />
-                  <SecondaryCta className="w-full sm:w-auto" />
-                </div>
-              </div>
-              <HeroMockPreview />
-            </div>
+          <LandingHero />
 
-            {/* Trust strip */}
-            <div className="mt-14 flex flex-wrap items-center justify-center gap-2 sm:mt-16 sm:gap-3 lg:mt-20">
-              {trustPills.map((label) => (
-                <span
-                  key={label}
-                  className="inline-flex items-center rounded-full border border-white/[0.08] bg-gradient-to-b from-surface-900/90 to-surface-975/95 px-3.5 py-1.5 text-xs font-medium text-slate-300 shadow-[0_0_24px_-8px_rgba(59,130,246,0.35)] ring-1 ring-white/[0.04] transition hover:border-sky-500/20 hover:shadow-[0_0_28px_-6px_rgba(56,189,248,0.35)]"
-                >
-                  {label}
-                </span>
-              ))}
+          {/* Interactive workspace blocks — same cards as in-app dashboard; guests route to login */}
+          <section
+            id="workspace-explore"
+            className="scroll-mt-24 border-t border-white/[0.06] bg-surface-975/20 py-14 sm:py-16"
+          >
+            <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+              <div className="mb-8 max-w-2xl">
+                <p className="ui-section-eyebrow">Explore</p>
+                <h2 className="ui-section-title mt-1">Explore the workspace</h2>
+                <p className="ui-section-desc">
+                  Everything you need to investigate faster — sign in to open Jobs, Anomalies,
+                  Utilities, and more.
+                </p>
+              </div>
+              <DashboardNavGrid forPublicLanding hideIntro />
             </div>
           </section>
 
+          {/* Trust strip */}
+          <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-2 px-4 pb-12 sm:gap-3 sm:px-6 lg:px-8">
+            {trustPills.map((label) => (
+              <span
+                key={label}
+                className="inline-flex items-center rounded-full border border-white/[0.08] bg-gradient-to-b from-surface-900/90 to-surface-975/95 px-3.5 py-1.5 text-xs font-medium text-slate-300 shadow-[0_0_24px_-8px_rgba(59,130,246,0.35)] ring-1 ring-white/[0.04] transition hover:border-sky-500/20 hover:shadow-[0_0_28px_-6px_rgba(56,189,248,0.35)]"
+              >
+                {label}
+              </span>
+            ))}
+          </div>
+
           {/* Features */}
-          <section className="border-t border-white/[0.06] bg-surface-975/20 py-16 sm:py-20">
+          <section id="features" className="border-t border-white/[0.06] bg-surface-975/20 py-16 sm:py-20">
             <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
               <div className="max-w-2xl">
                 <p className="ui-section-eyebrow">Platform</p>
@@ -369,7 +222,7 @@ export function LandingPage() {
           </section>
 
           {/* How it works */}
-          <section className="py-16 sm:py-20">
+          <section id="how-it-works" className="scroll-mt-20 py-16 sm:py-20">
             <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
               <div className="max-w-2xl">
                 <p className="ui-section-eyebrow">Flow</p>
@@ -552,7 +405,10 @@ export function LandingPage() {
             </div>
           </section>
 
-          <footer className="border-t border-white/[0.06] py-8 text-center text-xs text-slate-600">
+          <footer
+            id="contact"
+            className="scroll-mt-16 border-t border-white/[0.06] py-8 text-center text-xs text-slate-600"
+          >
             © {new Date().getFullYear()} LogIQ · Demo workspace
           </footer>
         </main>

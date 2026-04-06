@@ -1,12 +1,21 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
 import { QuickNav } from "./QuickNav";
+import { cn } from "@/lib/utils";
 
 export function AppLayout() {
+  const { pathname } = useLocation();
+  const hideSidebarOnDashboard = pathname === "/";
+
   return (
-    <div className="min-h-screen md:pl-[260px]">
-      <Sidebar />
+    <div
+      className={cn(
+        "min-h-screen",
+        !hideSidebarOnDashboard && "md:pl-[260px]"
+      )}
+    >
+      {!hideSidebarOnDashboard ? <Sidebar /> : null}
       <div className="flex min-h-screen flex-col">
         <Topbar />
         <QuickNav />

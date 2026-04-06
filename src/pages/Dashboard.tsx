@@ -14,6 +14,8 @@ import { Link } from "react-router-dom";
 import { USE_HTTP_API } from "@/api/config";
 import { useCurrentUser } from "@/auth";
 import { AnomalyActivityMiniChart } from "@/components/dashboard/AnomalyActivityMiniChart";
+import { DashboardNavGrid } from "@/components/dashboard/DashboardNavGrid";
+import { DashboardHomeHero } from "@/components/landing/DashboardHomeHero";
 import { DashboardKpiCard } from "@/components/dashboard/DashboardKpiCard";
 import { InvestigationCard } from "@/components/dashboard/InvestigationCard";
 import { SystemHealthPanel } from "@/components/dashboard/SystemHealthPanel";
@@ -175,55 +177,57 @@ export function Dashboard() {
 
   return (
     <div className="space-y-10">
-      {/* Hero — product landing feel */}
-      <section className="relative overflow-hidden rounded-2xl border border-blue-500/20 bg-gradient-to-br from-surface-900/95 via-[#0c1428] to-surface-975 p-6 shadow-[0_0_0_1px_rgba(59,130,246,0.1),0_24px_64px_-32px_rgba(0,0,0,0.6)] sm:p-8 md:p-10">
-        <div className="pointer-events-none absolute -right-24 top-0 h-64 w-64 rounded-full bg-blue-500/10 blur-3xl" />
-        <div className="pointer-events-none absolute -left-20 bottom-0 h-48 w-48 rounded-full bg-violet-600/10 blur-3xl" />
-        <div className="relative flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-2xl">
-            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-sky-500/90">
-              LogIQ Debug Agent
+      <DashboardHomeHero />
+
+      <section id="workspace-explore" className="scroll-mt-8 space-y-4">
+        <div className="px-1">
+          <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-sky-500/90">
+            Workspace
+          </p>
+          <h2 className="mt-1 text-xl font-bold tracking-tight text-white sm:text-2xl">
+            Everything you need to investigate faster
+          </h2>
+          <p className="mt-1 max-w-2xl text-sm text-slate-500">
+            Jump into jobs, anomalies, utilities, and settings — same navigation as the sidebar when
+            you browse other pages.
+          </p>
+        </div>
+        <DashboardNavGrid
+          hideIntro
+          jobsCount={!jobsLoading && !jobsError ? total : undefined}
+        />
+      </section>
+
+      <section className="flex flex-col gap-3 rounded-2xl border border-white/[0.06] bg-surface-975/40 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+        <div>
+          {USE_HTTP_API && !jobsLoading && !jobsError ? (
+            <p className="text-xs font-medium text-emerald-400/90">
+              Jobs KPIs and recent investigations use live API data.
             </p>
-            <h1 className="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">
-              Command center
-            </h1>
-            <p className="mt-3 text-base leading-relaxed text-slate-400">
-              Deterministic root-cause investigations, evidence-backed RCAs, and
-              assistive AI explanations — one workspace for production debugging.
+          ) : (
+            <p className="text-xs text-slate-500">
+              Workspace metrics and widgets may use mock data when APIs are unavailable.
             </p>
-            {USE_HTTP_API && !jobsLoading && !jobsError ? (
-              <p className="mt-3 text-xs font-medium text-emerald-400/90">
-                Jobs KPIs and recent investigations use live API data.
-              </p>
-            ) : null}
-            <div className="mt-5 flex flex-wrap gap-3 text-xs text-slate-500">
-              <span className="rounded-lg border border-white/[0.08] bg-surface-975/80 px-2.5 py-1 font-mono">
-                Workspace · prod-debug
-              </span>
-              <span className="rounded-lg border border-white/[0.08] bg-surface-975/80 px-2.5 py-1">
-                128 services · 14 regions
-              </span>
+          )}
+        </div>
+        <div className="flex flex-col items-stretch gap-2 sm:items-end">
+          <div className="rounded-2xl bg-gradient-to-r from-sky-500/30 via-blue-600/25 to-violet-600/25 p-[1px] shadow-[0_0_40px_-8px_rgba(56,189,248,0.35)]">
+            <div className="rounded-2xl bg-surface-975/95 p-1.5">
+              <RunDebugButton
+                to="/jobs"
+                disabled={!roleCaps.canUseRunDebugShortcut}
+                disabledTitle={getRunDebugShortcutDisabledTitle(user)}
+                className="w-full justify-center px-6 py-3 text-sm sm:w-auto"
+              />
             </div>
           </div>
-          <div className="flex shrink-0 flex-col items-stretch gap-3 sm:items-end">
-            <div className="rounded-2xl bg-gradient-to-r from-sky-500/30 via-blue-600/25 to-violet-600/25 p-[1px] shadow-[0_0_40px_-8px_rgba(56,189,248,0.35)]">
-              <div className="rounded-2xl bg-surface-975/95 p-1.5">
-                <RunDebugButton
-                  to="/jobs"
-                  disabled={!roleCaps.canUseRunDebugShortcut}
-                  disabledTitle={getRunDebugShortcutDisabledTitle(user)}
-                  className="w-full justify-center px-8 py-4 text-base sm:w-auto"
-                />
-              </div>
-            </div>
-            <p className="text-center text-[11px] text-slate-500 sm:text-right">
-              {roleCaps.canUseRunDebugShortcut
-                ? "Spawns a new investigation pipeline with trace + log correlation."
-                : user?.userId
-                  ? "Shortcut hidden for viewer role — browse jobs read-only (UI only)."
-                  : "Login with a non-viewer role to use this shortcut (UI only)."}
-            </p>
-          </div>
+          <p className="text-center text-[11px] text-slate-500 sm:text-right">
+            {roleCaps.canUseRunDebugShortcut
+              ? "Spawns a new investigation pipeline with trace + log correlation."
+              : user?.userId
+                ? "Shortcut hidden for viewer role — browse jobs read-only (UI only)."
+                : "Login with a non-viewer role to use this shortcut (UI only)."}
+          </p>
         </div>
       </section>
 
