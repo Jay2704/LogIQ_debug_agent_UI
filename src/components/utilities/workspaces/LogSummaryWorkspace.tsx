@@ -1,35 +1,39 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { FileText } from "lucide-react";
 import { UtilityPanel } from "@/components/utilities/UtilityToolLayout";
 import { UtilityRunButton } from "@/components/utilities/UtilityRunButton";
-import { MOCK_LOG_SUMMARY_OUTPUT, MOCK_SOURCE_LOG } from "@/data/mock/utilityWorkspaceMocks";
 import { useSimulatedUtilityRun } from "@/hooks/useSimulatedUtilityRun";
 import { cn } from "@/lib/utils";
+import type { UtilityWorkspaceInputProps } from "@/components/utilities/UtilityWorkspaceView";
 
-export function LogSummaryWorkspace() {
-  const [text, setText] = useState(MOCK_SOURCE_LOG);
+export function LogSummaryWorkspace({
+  logContent,
+  logLines,
+  hasUploadedLog,
+}: UtilityWorkspaceInputProps) {
   const [summary, setSummary] = useState<string | null>(null);
   const { running, run } = useSimulatedUtilityRun(550);
+  const generatedSummary = useMemo(() => {
+    const total = logLines.length;
+    const errorCount = logLines.filter((line) => /error|exception|fail/i.test(line)).length;
+    const warnCount = logLines.filter((line) => /warn/i.test(line)).length;
+    const infoCount = Math.max(total - errorCount - warnCount, 0);
+    return `Uploaded log contains ${total.toLocaleString()} lines. Error-like entries: ${errorCount.toLocaleString()}, warning entries: ${warnCount.toLocaleString()}, remaining informational lines: ${infoCount.toLocaleString()}.`;
+  }, [logLines]);
 
   const handleRun = () => {
-    run(() => setSummary(MOCK_LOG_SUMMARY_OUTPUT));
+    run(() => setSummary(generatedSummary));
   };
 
   return (
     <>
-      <UtilityPanel title="Log input">
-        <textarea
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          rows={12}
-          className="w-full resize-y rounded-lg border border-white/[0.1] bg-surface-960/90 px-3 py-2.5 font-mono text-[11px] leading-relaxed text-slate-300 placeholder:text-slate-600 focus:border-sky-500/40 focus:outline-none focus:ring-1 focus:ring-sky-500/30"
-          placeholder="Paste raw logs…"
-        />
+      <UtilityPanel title="Apply utility">
+        <p className="text-sm text-slate-400">Generate summary from uploaded logs.</p>
         <p className="mt-2 text-[11px] text-slate-500">
-          {text.length.toLocaleString()} characters · mock client only
+          {logContent.length.toLocaleString()} characters from uploaded file
         </p>
         <div className="mt-5">
-          <UtilityRunButton onClick={handleRun} loading={running} disabled={!text.trim()}>
+          <UtilityRunButton onClick={handleRun} loading={running} disabled={!hasUploadedLog}>
             Summarize
           </UtilityRunButton>
         </div>
@@ -38,7 +42,7 @@ export function LogSummaryWorkspace() {
       <UtilityPanel title="Summary" className={cn(!summary && "opacity-80")}>
         {!summary ? (
           <p className="text-sm text-slate-500">
-            Generate a concise narrative of patterns and failure hints (static mock).
+            Generate a concise narrative of patterns and failure hints.
           </p>
         ) : (
           <div className="rounded-xl border border-sky-500/20 bg-gradient-to-br from-sky-500/[0.07] to-transparent p-4">

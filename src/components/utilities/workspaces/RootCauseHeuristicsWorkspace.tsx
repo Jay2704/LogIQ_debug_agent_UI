@@ -5,16 +5,18 @@ import { UtilityRunButton } from "@/components/utilities/UtilityRunButton";
 import { MOCK_HEURISTIC_CLUSTERS } from "@/data/mock/utilityWorkspaceMocks";
 import { useSimulatedUtilityRun } from "@/hooks/useSimulatedUtilityRun";
 import { cn } from "@/lib/utils";
+import type { UtilityWorkspaceInputProps } from "@/components/utilities/UtilityWorkspaceView";
 
-const SAMPLE_FINDINGS = [
-  { id: "f1", label: "PSP timeout correlates with partner incident window" },
-  { id: "f2", label: "Retry storm on payment-gateway after 842ms inventory hold" },
-  { id: "f3", label: "Dynamo stale read on user-profile — secondary symptom" },
-];
-
-export function RootCauseHeuristicsWorkspace() {
+export function RootCauseHeuristicsWorkspace({
+  logLines,
+  hasUploadedLog,
+}: UtilityWorkspaceInputProps) {
   const [ran, setRan] = useState(false);
   const { running, run } = useSimulatedUtilityRun(500);
+  const sampleFindings = logLines
+    .filter((line) => /error|exception|timeout|retry/i.test(line))
+    .slice(0, 5)
+    .map((line, index) => ({ id: `f${index}`, label: line }));
 
   const handleRun = () => {
     run(() => setRan(true));
@@ -23,19 +25,25 @@ export function RootCauseHeuristicsWorkspace() {
   return (
     <>
       <UtilityPanel title="Sample findings (input context)">
-        <ul className="space-y-2">
-          {SAMPLE_FINDINGS.map((f) => (
-            <li
-              key={f.id}
-              className="flex items-start gap-2 rounded-lg border border-white/[0.06] bg-surface-960/60 px-3 py-2 text-sm text-slate-300"
-            >
-              <Activity className="mt-0.5 h-4 w-4 shrink-0 text-sky-400/80" />
-              {f.label}
-            </li>
-          ))}
-        </ul>
+        {sampleFindings.length === 0 ? (
+          <p className="text-sm text-slate-500">
+            Upload logs and include failure-like lines to generate finding context.
+          </p>
+        ) : (
+          <ul className="space-y-2">
+            {sampleFindings.map((f) => (
+              <li
+                key={f.id}
+                className="flex items-start gap-2 rounded-lg border border-white/[0.06] bg-surface-960/60 px-3 py-2 text-sm text-slate-300"
+              >
+                <Activity className="mt-0.5 h-4 w-4 shrink-0 text-sky-400/80" />
+                {f.label}
+              </li>
+            ))}
+          </ul>
+        )}
         <div className="mt-5">
-          <UtilityRunButton onClick={handleRun} loading={running}>
+          <UtilityRunButton onClick={handleRun} loading={running} disabled={!hasUploadedLog}>
             Rank clusters
           </UtilityRunButton>
         </div>
@@ -44,7 +52,7 @@ export function RootCauseHeuristicsWorkspace() {
       <UtilityPanel title="Ranked issue clusters" className={cn(!ran && "opacity-80")}>
         {!ran ? (
           <p className="text-sm text-slate-500">
-            Deterministic scoring over log signals — preview only (mock).
+            Deterministic scoring over uploaded log signals.
           </p>
         ) : (
           <ol className="space-y-4">

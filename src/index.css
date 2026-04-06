@@ -67,6 +67,22 @@
 }
 
 @layer utilities {
+  .log-error {
+    color: #ef4444;
+    font-weight: 600;
+  }
+  .log-warn {
+    color: #f59e0b;
+    font-weight: 600;
+  }
+  .log-info {
+    color: #22c55e;
+    font-weight: 600;
+  }
+  .log-debug {
+    color: #3b82f6;
+    font-weight: 600;
+  }
   .animate-investigation-reveal {
     animation: investigation-reveal 0.55s ease-out forwards;
   }

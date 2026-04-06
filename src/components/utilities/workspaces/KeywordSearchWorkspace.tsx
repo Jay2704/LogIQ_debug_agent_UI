@@ -1,9 +1,9 @@
 import { useMemo, useState } from "react";
 import { UtilityPanel } from "@/components/utilities/UtilityToolLayout";
 import { UtilityRunButton } from "@/components/utilities/UtilityRunButton";
-import { MOCK_SOURCE_LOG } from "@/data/mock/utilityWorkspaceMocks";
 import { useSimulatedUtilityRun } from "@/hooks/useSimulatedUtilityRun";
 import { cn } from "@/lib/utils";
+import type { UtilityWorkspaceInputProps } from "@/components/utilities/UtilityWorkspaceView";
 
 function findFirstMatch(line: string, q: string, caseSensitive: boolean) {
   if (!q) return null;
@@ -35,7 +35,7 @@ function HighlightedLine({
   );
 }
 
-export function KeywordSearchWorkspace() {
+export function KeywordSearchWorkspace({ logLines, hasUploadedLog }: UtilityWorkspaceInputProps) {
   const [keyword, setKeyword] = useState("ERROR");
   const [caseSensitive, setCaseSensitive] = useState(false);
   const [showResults, setShowResults] = useState(false);
@@ -43,11 +43,11 @@ export function KeywordSearchWorkspace() {
 
   const lineIndex = useMemo(
     () =>
-      MOCK_SOURCE_LOG.split("\n").map((line, i) => ({
+      logLines.map((line, i) => ({
         lineNum: i + 1,
         line,
       })),
-    []
+    [logLines]
   );
 
   const results = useMemo(() => {
@@ -86,7 +86,7 @@ export function KeywordSearchWorkspace() {
           Case-sensitive match
         </label>
         <div className="mt-5">
-          <UtilityRunButton onClick={handleRun} loading={running}>
+          <UtilityRunButton onClick={handleRun} loading={running} disabled={!hasUploadedLog}>
             Search logs
           </UtilityRunButton>
         </div>
@@ -95,10 +95,10 @@ export function KeywordSearchWorkspace() {
       <UtilityPanel title="Results" className={cn(!showResults && "opacity-80")}>
         {!showResults ? (
           <p className="text-sm text-slate-500">
-            Run a search to see matching lines with highlighted tokens (mock data).
+            Run search after uploading logs to see matching lines with highlighted tokens.
           </p>
         ) : results.length === 0 ? (
-          <p className="text-sm text-slate-500">No mock matches for this query.</p>
+          <p className="text-sm text-slate-500">No matches for this query in the uploaded log.</p>
         ) : (
           <ul className="space-y-3">
             {results.map((row) => (

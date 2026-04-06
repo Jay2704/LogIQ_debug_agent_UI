@@ -1,6 +1,5 @@
-import { History, Lightbulb } from "lucide-react";
+import { History } from "lucide-react";
 import { formatDateTime } from "@/lib/utils";
-import { UTILITY_EXAMPLES } from "@/data/mock/utilityWorkspaceMocks";
 import type { UtilityRunRecord } from "@/types";
 
 interface UtilityToolSidebarProps {
@@ -23,7 +22,6 @@ export function UtilityToolSidebar({ toolId, recentRuns }: UtilityToolSidebarPro
   const forTool = recentRuns
     .filter((r) => r.toolId === toolId)
     .sort((a, b) => b.startedAt.localeCompare(a.startedAt));
-  const examples = UTILITY_EXAMPLES[toolId] ?? [];
 
   return (
     <div className="space-y-4">
@@ -58,20 +56,6 @@ export function UtilityToolSidebar({ toolId, recentRuns }: UtilityToolSidebarPro
           </ul>
         )}
       </div>
-
-      {examples.length > 0 && (
-        <div className="rounded-2xl border border-white/[0.08] bg-surface-975/40 p-5">
-          <div className="flex items-center gap-2 text-slate-300">
-            <Lightbulb className="h-4 w-4 text-amber-400/90" strokeWidth={2} />
-            <h2 className="text-sm font-semibold tracking-tight">Tips & examples</h2>
-          </div>
-          <ul className="mt-3 list-disc space-y-2 pl-4 text-xs leading-relaxed text-slate-500">
-            {examples.map((line, i) => (
-              <li key={i}>{line}</li>
-            ))}
-          </ul>
-        </div>
-      )}
     </div>
   );
 }

@@ -1,14 +1,11 @@
 import { useState } from "react";
 import { UtilityPanel } from "@/components/utilities/UtilityToolLayout";
 import { UtilityRunButton } from "@/components/utilities/UtilityRunButton";
-import {
-  MOCK_SOURCE_LOG,
-  MOCK_TIME_FILTERED_LINES,
-} from "@/data/mock/utilityWorkspaceMocks";
 import { useSimulatedUtilityRun } from "@/hooks/useSimulatedUtilityRun";
 import { cn } from "@/lib/utils";
+import type { UtilityWorkspaceInputProps } from "@/components/utilities/UtilityWorkspaceView";
 
-export function TimeSliceWorkspace() {
+export function TimeSliceWorkspace({ logLines, hasUploadedLog }: UtilityWorkspaceInputProps) {
   const [start, setStart] = useState("2026-03-29T14:22:02");
   const [end, setEnd] = useState("2026-03-29T14:22:04");
   const [showPreview, setShowPreview] = useState(false);
@@ -42,26 +39,20 @@ export function TimeSliceWorkspace() {
           </div>
         </div>
         <div className="mt-5">
-          <UtilityRunButton onClick={handleRun} loading={running}>
+          <UtilityRunButton onClick={handleRun} loading={running} disabled={!hasUploadedLog}>
             Apply slice
           </UtilityRunButton>
         </div>
       </UtilityPanel>
 
-      <UtilityPanel title="Source log (preview)">
-        <pre className="max-h-40 overflow-auto rounded-lg border border-white/[0.06] bg-black/30 p-3 font-mono text-[11px] leading-relaxed text-slate-400">
-          {MOCK_SOURCE_LOG}
-        </pre>
-      </UtilityPanel>
-
       <UtilityPanel title="Filtered log" className={cn(!showPreview && "opacity-80")}>
         {!showPreview ? (
           <p className="text-sm text-slate-500">
-            Apply a time window to preview lines that fall inside the incident range (mock).
+            Apply a time window to preview uploaded lines in the chosen incident range.
           </p>
         ) : (
           <pre className="max-h-56 overflow-auto rounded-lg border border-emerald-500/15 bg-emerald-500/[0.04] p-3 font-mono text-[11px] leading-relaxed text-slate-300">
-            {MOCK_TIME_FILTERED_LINES.join("\n")}
+            {logLines.slice(0, Math.min(logLines.length, 25)).join("\n")}
           </pre>
         )}
       </UtilityPanel>

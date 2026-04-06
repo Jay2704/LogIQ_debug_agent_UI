@@ -1,0 +1,40 @@
+2026-04-06T09:15:01.102Z INFO auth-service Request received request_id=8f1b2d user_id=usr_102 ip=10.2.4.18
+2026-04-06T09:15:01.248Z INFO gateway Route matched service=payments method=POST path=/v1/charge request_id=8f1b2d
+2026-04-06T09:15:01.413Z WARN rate-limiter Near threshold key=user:usr_102 usage=92% window=60s
+2026-04-06T09:15:01.709Z INFO payments Validation passed request_id=8f1b2d amount=149.99 currency=USD
+2026-04-06T09:15:02.034Z INFO inventory Reserve start sku=SKU-4431 qty=1 request_id=8f1b2d
+2026-04-06T09:15:02.587Z ERROR inventory Reserve failed sku=SKU-4431 reason=LOCK_TIMEOUT request_id=8f1b2d
+2026-04-06T09:15:02.623Z WARN payments Retrying inventory reserve attempt=1 request_id=8f1b2d
+2026-04-06T09:15:03.081Z INFO inventory Reserve success sku=SKU-4431 qty=1 request_id=8f1b2d
+2026-04-06T09:15:03.402Z INFO payments PSP auth start provider=acmepay request_id=8f1b2d
+2026-04-06T09:15:04.119Z ERROR payments PSP timeout provider=acmepay timeout_ms=700 request_id=8f1b2d
+2026-04-06T09:15:04.221Z WARN payments Fallback provider selected provider=swiftpay request_id=8f1b2d
+2026-04-06T09:15:04.768Z INFO payments PSP auth success provider=swiftpay auth_code=AP9931 request_id=8f1b2d
+2026-04-06T09:15:05.043Z INFO orders Create order start order_id=ord_7712 request_id=8f1b2d
+2026-04-06T09:15:05.588Z INFO orders Order persisted order_id=ord_7712 db=orders-primary latency_ms=42
+2026-04-06T09:15:05.912Z WARN notifications Email queue lag detected lag_ms=1280 region=us-east-1
+2026-04-06T09:15:06.204Z INFO notifications Email enqueue success template=receipt order_id=ord_7712
+2026-04-06T09:15:06.497Z ERROR audit Write failed stream=audit-events reason=THROTTLED retry_in_ms=250
+2026-04-06T09:15:06.812Z INFO audit Retry succeeded stream=audit-events partition=14
+2026-04-06T09:15:07.103Z INFO payments Charge complete request_id=8f1b2d order_id=ord_7712 status=SUCCESS
+2026-04-06T09:15:07.289Z INFO gateway Response sent request_id=8f1b2d status=200 duration_ms=6187
+2026-04-06T09:16:00.041Z DEBUG auth-service Token cache lookup user_id=usr_102 hit=true ttl_ms=8421
+2026-04-06T09:16:00.366Z INFO gateway Request received method=GET path=/v1/orders/ord_7712 request_id=1a4d9c
+2026-04-06T09:16:00.732Z DEBUG orders Query builder generated sql_id=q_7712 join_count=2
+2026-04-06T09:16:01.188Z WARN database Connection pool saturation pool=orders-primary usage=87%
+2026-04-06T09:16:01.459Z ERROR database Query timeout sql_id=q_7712 timeout_ms=1200 request_id=1a4d9c
+2026-04-06T09:16:01.721Z DEBUG database Retry strategy selected policy=exponential_backoff base_ms=100
+2026-04-06T09:16:02.074Z INFO database Query retry success sql_id=q_7712 latency_ms=233
+2026-04-06T09:16:02.402Z DEBUG payments Fraud check started request_id=1a4d9c rule_set=v3
+2026-04-06T09:16:02.816Z ERROR payments Fraud score service unavailable endpoint=/score/v3 request_id=1a4d9c
+2026-04-06T09:16:03.105Z INFO payments Fraud check fallback engaged provider=local-cache request_id=1a4d9c
+2026-04-06T09:16:03.492Z DEBUG inventory Stock projection calc sku=SKU-4431 window=24h
+2026-04-06T09:16:03.834Z WARN inventory Low stock threshold reached sku=SKU-4431 remaining=3
+2026-04-06T09:16:04.207Z ERROR inventory Stock update conflict sku=SKU-4431 version_mismatch=true
+2026-04-06T09:16:04.511Z DEBUG inventory Conflict resolver selected strategy=reload_and_apply
+2026-04-06T09:16:04.903Z INFO inventory Stock update success sku=SKU-4431 remaining=2
+2026-04-06T09:16:05.294Z ERROR notifications SMTP handshake failed provider=mail-core region=us-east-1
+2026-04-06T09:16:05.667Z DEBUG notifications SMTP fallback attempt provider=mail-edge attempt=1
+2026-04-06T09:16:06.031Z INFO notifications SMTP fallback succeeded provider=mail-edge latency_ms=188
+2026-04-06T09:16:06.399Z ERROR audit Event serialization failed event=order_status_changed reason=invalid_utf8
+2026-04-06T09:16:06.744Z DEBUG audit Sanitizer applied replacement_char_count=2 event=order_status_changed

@@ -40,7 +40,7 @@ export function UtilityToolLayout({ tool, sidebar, children }: UtilityToolLayout
   const Icon = utilityIconMap[tool.iconKey];
 
   return (
-    <div className="mx-auto max-w-[1400px] space-y-8">
+    <div className="mx-auto w-full max-w-[1600px] space-y-8">
       <Link
         to="/utilities"
         className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 transition hover:text-sky-400"
@@ -68,9 +68,9 @@ export function UtilityToolLayout({ tool, sidebar, children }: UtilityToolLayout
         </div>
       </header>
 
-      <div className="grid gap-6 xl:grid-cols-12 xl:items-start">
-        <div className="min-w-0 space-y-6 xl:col-span-8">{children}</div>
-        <aside className="min-w-0 space-y-4 xl:col-span-4">{sidebar}</aside>
+      <div className="space-y-6">
+        <div className="min-w-0 space-y-6">{children}</div>
+        <aside className="min-w-0">{sidebar}</aside>
       </div>
     </div>
   );
