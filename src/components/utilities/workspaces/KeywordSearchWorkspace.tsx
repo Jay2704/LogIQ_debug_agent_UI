@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { UtilityPanel } from "@/components/utilities/UtilityToolLayout";
 import { UtilityRunButton } from "@/components/utilities/UtilityRunButton";
+import { LogViewer } from "@/components/utilities/LogViewer";
 import { useSimulatedUtilityRun } from "@/hooks/useSimulatedUtilityRun";
 import { cn } from "@/lib/utils";
 import type { UtilityWorkspaceInputProps } from "@/components/utilities/UtilityWorkspaceView";
@@ -12,27 +13,6 @@ function findFirstMatch(line: string, q: string, caseSensitive: boolean) {
   const idx = hay.indexOf(needle);
   if (idx === -1) return null;
   return { start: idx, len: needle.length };
-}
-
-function HighlightedLine({
-  line,
-  matchStart,
-  matchLen,
-}: {
-  line: string;
-  matchStart: number;
-  matchLen: number;
-}) {
-  const before = line.slice(0, matchStart);
-  const mid = line.slice(matchStart, matchStart + matchLen);
-  const after = line.slice(matchStart + matchLen);
-  return (
-    <span className="font-mono text-[11px] leading-relaxed text-slate-300">
-      {before}
-      <mark className="rounded bg-sky-500/40 px-0.5 text-sky-50">{mid}</mark>
-      {after}
-    </span>
-  );
 }
 
 export function KeywordSearchWorkspace({ logLines, hasUploadedLog }: UtilityWorkspaceInputProps) {
@@ -100,23 +80,12 @@ export function KeywordSearchWorkspace({ logLines, hasUploadedLog }: UtilityWork
         ) : results.length === 0 ? (
           <p className="text-sm text-slate-500">No matches for this query in the uploaded log.</p>
         ) : (
-          <ul className="space-y-3">
-            {results.map((row) => (
-              <li
-                key={`${row.lineNum}-${row.matchStart}`}
-                className="rounded-lg border border-white/[0.06] bg-surface-960/60 px-3 py-2"
-              >
-                <span className="font-mono text-[10px] text-slate-500">L{row.lineNum}</span>
-                <div className="mt-1">
-                  <HighlightedLine
-                    line={row.line}
-                    matchStart={row.matchStart}
-                    matchLen={row.matchLen}
-                  />
-                </div>
-              </li>
-            ))}
-          </ul>
+          <LogViewer
+            entries={results.map((row) => ({
+              lineNumber: row.lineNum,
+              line: row.line,
+            }))}
+          />
         )}
       </UtilityPanel>
     </>

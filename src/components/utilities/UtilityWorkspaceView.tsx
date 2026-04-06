@@ -1,7 +1,8 @@
-import { useRef, useState, type ReactNode } from "react";
+import { useRef, useState } from "react";
 import { AlertTriangle, Upload } from "lucide-react";
 import type { UtilityToolDefinition } from "@/types";
 import { UtilityPanel } from "@/components/utilities/UtilityToolLayout";
+import { LogViewer } from "@/components/utilities/LogViewer";
 import { KeywordSearchWorkspace } from "@/components/utilities/workspaces/KeywordSearchWorkspace";
 import { TimeSliceWorkspace } from "@/components/utilities/workspaces/TimeSliceWorkspace";
 import { ErrorSplitterWorkspace } from "@/components/utilities/workspaces/ErrorSplitterWorkspace";
@@ -20,50 +21,6 @@ export interface UtilityWorkspaceInputProps {
   logContent: string;
   logLines: string[];
   hasUploadedLog: boolean;
-}
-
-const LOG_LEVEL_REGEX = /\b(ERROR|WARN|INFO|DEBUG)\b/g;
-
-function levelClass(level: string) {
-  switch (level) {
-    case "ERROR":
-      return "log-error";
-    case "WARN":
-      return "log-warn";
-    case "INFO":
-      return "log-info";
-    case "DEBUG":
-      return "log-debug";
-    default:
-      return "";
-  }
-}
-
-function renderHighlightedLogLine(line: string) {
-  const matches = [...line.matchAll(LOG_LEVEL_REGEX)];
-  if (matches.length === 0) return <span>{line || " "}</span>;
-
-  const chunks: ReactNode[] = [];
-  let cursor = 0;
-  matches.forEach((match, index) => {
-    const token = match[0];
-    const start = match.index ?? 0;
-    if (start > cursor) {
-      chunks.push(
-        <span key={`plain-${index}-${start}`}>{line.slice(cursor, start)}</span>
-      );
-    }
-    chunks.push(
-      <span key={`level-${index}-${start}`} className={levelClass(token)}>
-        {token}
-      </span>
-    );
-    cursor = start + token.length;
-  });
-  if (cursor < line.length) {
-    chunks.push(<span key={`tail-${cursor}`}>{line.slice(cursor)}</span>);
-  }
-  return chunks;
 }
 
 function UtilityLogUploadPanel({
@@ -116,16 +73,12 @@ function UtilityLogUploadPanel({
             Uploaded file is empty.
           </p>
         ) : (
-          <ol className="h-96 w-full overflow-y-auto rounded-xl border border-white/[0.08] bg-black/35 p-4 font-mono text-[11px] leading-relaxed text-slate-300 shadow-inner">
-            {uploadedLog.lines.map((line, index) => (
-              <li key={`${index}-${line}`} className="flex gap-3">
-                <span className="w-8 shrink-0 text-right text-slate-500">{index + 1}</span>
-                <span className="whitespace-pre-wrap break-words">
-                  {renderHighlightedLogLine(line)}
-                </span>
-              </li>
-            ))}
-          </ol>
+          <LogViewer
+            entries={uploadedLog.lines.map((line, index) => ({
+              lineNumber: index + 1,
+              line,
+            }))}
+          />
         )}
       </UtilityPanel>
     </>
