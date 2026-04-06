@@ -17,6 +17,7 @@ function isLogiqFetchNetworkError(raw: string): boolean {
 
 /** Shown when `fetch` fails before any HTTP response (offline, DNS, CORS, wrong host, etc.). */
 function networkFailureUserMessage(_raw: string): string {
+  void _raw;
   return "Could not reach the API. Check that the backend is running, the API URL is correct, and CORS allows this origin.";
 }
 

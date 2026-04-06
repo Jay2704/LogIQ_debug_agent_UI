@@ -119,7 +119,7 @@ export function parseRcaResultsJson(json: unknown, jobId: string): RcaResult | n
     (primary ? pickStr(primary, ["evidence_ref", "evidence_reference"]) : undefined) ??
     "";
 
-  let runId =
+  const runId =
     pickStr(root, ["run_id", "runId", "pipeline_run_id"]) ?? "—";
 
   let rank = pickNum(root, ["rank", "candidate_rank"]) ?? 1;

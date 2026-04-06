@@ -157,10 +157,6 @@ function Section({
  * Internal-only integration surface. Route is registered only when `import.meta.env.DEV`.
  */
 export function DevIntegrationCheck() {
-  if (!import.meta.env.DEV) {
-    return <Navigate to="/" replace />;
-  }
-
   const [listJobs, setListJobs] = useState<Block>(empty);
   const [createJob, setCreateJob] = useState<Block>(empty);
   const [jobDetail, setJobDetail] = useState<Block>(empty);
@@ -180,6 +176,10 @@ export function DevIntegrationCheck() {
   const [anomalyForRca, setAnomalyForRca] = useState("anomaly_001");
   const [jobIdForRca, setJobIdForRca] = useState("");
   const [anomalyForExplanation, setAnomalyForExplanation] = useState("anomaly_001");
+
+  if (!import.meta.env.DEV) {
+    return <Navigate to="/" replace />;
+  }
 
   return (
     <div className="mx-auto max-w-5xl space-y-6 pb-16 font-mono text-xs text-slate-300">
