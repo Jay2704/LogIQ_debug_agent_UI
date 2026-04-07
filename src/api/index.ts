@@ -17,6 +17,7 @@ export type {
   InsightsService,
   DashboardService,
   UtilitiesService,
+  JiraService,
   UsersService,
   AuthService,
 } from "./contracts";

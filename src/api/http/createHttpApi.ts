@@ -1,6 +1,13 @@
 import type { LogIQApi } from "@/api/contracts";
 import { createMockApi } from "@/api/mock/mockApi";
-import type { CreateJobInput, CreateUserInput, LoginInput, User } from "@/types";
+import type {
+  CreateJobInput,
+  CreateUserInput,
+  JiraRcaResult,
+  JiraTicketSummary,
+  LoginInput,
+  User,
+} from "@/types";
 import { logApiDebug } from "./debugLog";
 import { joinApiUrl } from "./apiUrl";
 import { buildJobDetailBundleFromApiJob } from "./jobDetailMerge";
@@ -41,6 +48,58 @@ async function httpError(res: Response, label: string): Promise<never> {
   const reason = res.statusText?.trim() || "Error";
   const suffix = slice.length > 0 ? `: ${slice}` : "";
   throw new Error(`[LogIQ API] ${label} ${res.status} ${reason}${suffix}`);
+}
+
+function parseJiraTicketSummaryJson(json: unknown): JiraTicketSummary {
+  if (!json || typeof json !== "object") {
+    throw new Error("[LogIQ API] GET /api/v1/jira/tickets/:key: invalid JSON payload");
+  }
+  const row = json as Record<string, unknown>;
+  const labels = Array.isArray(row.labels)
+    ? row.labels.filter((x): x is string => typeof x === "string")
+    : [];
+  const extractedHints = Array.isArray(row.extracted_hints)
+    ? row.extracted_hints.filter((x): x is string => typeof x === "string")
+    : [];
+  return {
+    key: typeof row.key === "string" ? row.key : "",
+    summary: typeof row.summary === "string" ? row.summary : "",
+    status: typeof row.status === "string" ? row.status : "Unknown",
+    priority: typeof row.priority === "string" ? row.priority : "Unknown",
+    labels,
+    cleanedDescription:
+      typeof row.cleaned_description === "string" ? row.cleaned_description : "",
+    extractedHints,
+  };
+}
+
+function parseJiraRcaResultJson(json: unknown): JiraRcaResult {
+  if (!json || typeof json !== "object") {
+    throw new Error("[LogIQ API] POST /api/v1/jira/rca: invalid JSON payload");
+  }
+  const row = json as Record<string, unknown>;
+  const evidenceSummary = Array.isArray(row.evidence_summary)
+    ? row.evidence_summary.filter((x): x is string => typeof x === "string")
+    : [];
+  const extractedLogSignals = Array.isArray(row.extracted_log_signals)
+    ? row.extracted_log_signals.filter((x): x is string => typeof x === "string")
+    : [];
+  return {
+    rootCause:
+      typeof row.root_cause === "string"
+        ? row.root_cause
+        : typeof row.rootCause === "string"
+          ? row.rootCause
+          : "Root cause not returned by backend.",
+    evidenceSummary,
+    extractedLogSignals,
+    explanation:
+      typeof row.explanation === "string"
+        ? row.explanation
+        : typeof row.summary === "string"
+          ? row.summary
+          : undefined,
+  };
 }
 
 /**
@@ -278,6 +337,37 @@ export function createHttpApi(baseUrl: string): LogIQApi {
     insights: mocks.insights,
     dashboard: mocks.dashboard,
     utilities: mocks.utilities,
+    jira: {
+      getTicketSummary: async (ticketKey: string) => {
+        const key = ticketKey.trim().toUpperCase();
+        const url = joinApiUrl(
+          baseUrl,
+          `/api/v1/jira/tickets/${encodeURIComponent(key)}`
+        );
+        const res = await fetchNetwork(url);
+        if (!res.ok) await httpError(res, "GET /api/v1/jira/tickets/:key");
+        const json: unknown = await readJsonOrNull(res);
+        return parseJiraTicketSummaryJson(json);
+      },
+      runRcaWithTicket: async ({ ticket, logContent }) => {
+        const url = joinApiUrl(baseUrl, "/api/v1/jira/rca");
+        const res = await fetchNetwork(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ticket_key: ticket.key,
+            ticket_summary: ticket.summary,
+            ticket_status: ticket.status,
+            ticket_priority: ticket.priority,
+            extracted_hints: ticket.extractedHints,
+            log_content: logContent,
+          }),
+        });
+        if (!res.ok) await httpError(res, "POST /api/v1/jira/rca");
+        const json: unknown = await readJsonOrNull(res);
+        return parseJiraRcaResultJson(json);
+      },
+    },
     auth: {
       login: postAuthLogin,
       verifyEmail: postVerifyEmail,

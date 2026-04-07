@@ -12,6 +12,8 @@ import type {
   ReportArtifact,
   TopRootCauseFileRow,
   User,
+  JiraRcaResult,
+  JiraTicketSummary,
   UtilityRunRecord,
   UtilityToolDefinition,
 } from "@/types";
@@ -73,6 +75,15 @@ export interface UtilitiesService {
   getRecentRuns(): Promise<UtilityRunRecord[]>;
 }
 
+/** JIRA ticket intake used as the first step of investigation workflow. */
+export interface JiraService {
+  getTicketSummary(ticketKey: string): Promise<JiraTicketSummary>;
+  runRcaWithTicket(input: {
+    ticket: JiraTicketSummary;
+    logContent: string;
+  }): Promise<JiraRcaResult>;
+}
+
 /** User CRUD-style helpers for signup / lookup (no token auth in this layer yet). */
 export interface UsersService {
   create(input: CreateUserInput): Promise<User>;
@@ -104,6 +115,7 @@ export interface LogIQApi {
   insights: InsightsService;
   dashboard: DashboardService;
   utilities: UtilitiesService;
+  jira: JiraService;
   users: UsersService;
   auth: AuthService;
 }

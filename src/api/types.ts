@@ -28,6 +28,8 @@ export type {
   UtilityIconKey,
   UtilityToolDefinition,
   UtilityRunRecord,
+  JiraTicketSummary,
+  JiraRcaResult,
 } from "@/types";
 
 /** Future: pagination envelope from the backend */

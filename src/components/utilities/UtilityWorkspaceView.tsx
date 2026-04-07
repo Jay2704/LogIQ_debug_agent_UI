@@ -10,6 +10,10 @@ import { LogSummaryWorkspace } from "@/components/utilities/workspaces/LogSummar
 import { StackTraceParserWorkspace } from "@/components/utilities/workspaces/StackTraceParserWorkspace";
 import { ErrorLinesExtractorWorkspace } from "@/components/utilities/workspaces/ErrorLinesExtractorWorkspace";
 import { RootCauseHeuristicsWorkspace } from "@/components/utilities/workspaces/RootCauseHeuristicsWorkspace";
+import {
+  parseUploadedLogFile,
+  SUPPORTED_LOG_EXTENSIONS,
+} from "@/lib/logFileUpload";
 
 interface UploadedLogState {
   fileName: string;
@@ -102,7 +106,7 @@ export function UtilityWorkspaceView({ tool }: { tool: UtilityToolDefinition }) 
     if (!file) return;
 
     const ext = file.name.split(".").pop()?.toLowerCase();
-    if (!ext || !["log", "txt", "csv"].includes(ext)) {
+    if (!ext || !SUPPORTED_LOG_EXTENSIONS.some((allowed) => allowed === ext)) {
       setUploadedLog(null);
       setError("Unsupported file type. Please upload a .log, .txt, or .csv file.");
       return;
@@ -112,26 +116,20 @@ export function UtilityWorkspaceView({ tool }: { tool: UtilityToolDefinition }) 
       setWarning("Large file detected (>5MB). Preview and utility actions may be slower.");
     }
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      const content = typeof reader.result === "string" ? reader.result : "";
-      const normalized = content.replace(/\r\n/g, "\n");
-      const lines = normalized.length > 0 ? normalized.split("\n") : [];
-      setUploadedLog({
-        fileName: file.name,
-        content: normalized,
-        lines,
+    void parseUploadedLogFile(file)
+      .then((parsed) => {
+        setUploadedLog(parsed);
+        if (parsed.lines.length === 0) {
+          setWarning("Uploaded file is empty.");
+        }
+      })
+      .catch(() => {
+        setUploadedLog(null);
+        setError("Failed to read file. Please try again.");
+      })
+      .finally(() => {
+        event.target.value = "";
       });
-      if (lines.length === 0) {
-        setWarning("Uploaded file is empty.");
-      }
-    };
-    reader.onerror = () => {
-      setUploadedLog(null);
-      setError("Failed to read file. Please try again.");
-    };
-    reader.readAsText(file);
-    event.target.value = "";
   };
 
   const workspaceProps: UtilityWorkspaceInputProps = {

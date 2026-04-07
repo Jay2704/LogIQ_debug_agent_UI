@@ -15,6 +15,7 @@ import { mockRcaService } from "./rca";
 import { mockReportsService } from "./reports";
 import { mockUtilitiesService } from "./utilitiesTools";
 import { mockDebugAgentService } from "./debugAgent";
+import { mockJiraService } from "./jira";
 import { mockAuthService, mockUsersService } from "./users";
 
 export function createMockApi(): LogIQApi {
@@ -27,6 +28,7 @@ export function createMockApi(): LogIQApi {
     insights: mockInsightsService,
     dashboard: mockDashboardService,
     utilities: mockUtilitiesService,
+    jira: mockJiraService,
     users: mockUsersService,
     auth: mockAuthService,
   };

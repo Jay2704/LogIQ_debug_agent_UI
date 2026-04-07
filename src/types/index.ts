@@ -33,6 +33,7 @@ export type {
   UtilityToolDefinition,
   UtilityRunRecord,
 } from "./domain/utilities";
+export type { JiraTicketSummary, JiraRcaResult } from "./domain/jira";
 export type { UserRole, User, CreateUserInput } from "./domain/user";
 export { SIGNUP_ROLE_OPTIONS } from "./domain/user";
 
