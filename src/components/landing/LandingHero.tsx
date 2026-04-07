@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { LogIQFullLogo } from "@/components/branding/LogIQLogos";
+import { HeroAmbientGlow } from "@/components/landing/HeroAmbientGlow";
 import { ProductPreviewCard } from "@/components/landing/ProductPreviewCard";
 import { ctaButtonGradient, ctaGlowBlueOnly } from "@/lib/ctaTheme";
 import { cn } from "@/lib/utils";
@@ -9,9 +10,10 @@ export function LandingHero() {
   return (
     <section
       id="top"
-      className="mx-auto max-w-6xl px-4 pb-16 pt-8 sm:px-6 sm:pt-10 lg:px-8 lg:pb-20"
+      className="relative mx-auto max-w-6xl overflow-hidden px-4 pb-16 pt-8 sm:px-6 sm:pt-10 lg:px-8 lg:pb-20"
     >
-      <div className="mx-auto max-w-3xl text-center">
+      <HeroAmbientGlow variant="landing" />
+      <div className="relative z-10 mx-auto max-w-3xl text-center">
         <div className="flex justify-center px-2 py-4 sm:py-6">
           <LogIQFullLogo className="mx-auto h-auto w-auto max-h-[min(18rem,52vw)] max-w-[min(980px,96vw)] object-contain sm:max-h-[min(22rem,48vh)] md:max-h-[min(26rem,52vh)] lg:max-h-[min(28rem,56vh)]" />
         </div>
@@ -29,29 +31,29 @@ export function LandingHero() {
           <Link
             to="/login"
             className={cn(
-              "inline-flex min-w-[10rem] items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold text-white transition",
+              "cta-shimmer-primary inline-flex min-w-[10rem] items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold text-white transition",
               ctaButtonGradient,
               ctaGlowBlueOnly,
-              "ring-1 ring-blue-400/35 hover:shadow-[0_0_0_1px_rgba(56,189,248,0.35)]",
+              "ring-1 ring-blue-400/35",
               "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400/70"
             )}
           >
-            Try Demo
+            <span className="relative z-10">Try Demo</span>
           </Link>
           <a
             href="#features"
             className={cn(
-              "inline-flex min-w-[10rem] items-center justify-center gap-2 rounded-xl border border-white/[0.12] bg-surface-900/50 px-6 py-3 text-sm font-semibold text-slate-100 backdrop-blur-sm transition",
+              "cta-shimmer-secondary inline-flex min-w-[10rem] items-center justify-center gap-2 rounded-xl border border-white/[0.12] bg-surface-900/50 px-6 py-3 text-sm font-semibold text-slate-100 backdrop-blur-sm transition",
               "hover:border-sky-500/30 hover:bg-surface-900/75 hover:text-white",
               "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400/70"
             )}
           >
-            Explore Features
+            <span className="relative z-10">Explore Features</span>
           </a>
         </div>
       </div>
 
-      <div className="relative mx-auto mt-14 max-w-5xl sm:mt-16">
+      <div className="relative z-10 mx-auto mt-14 max-w-5xl sm:mt-16">
         <ProductPreviewCard />
       </div>
     </section>

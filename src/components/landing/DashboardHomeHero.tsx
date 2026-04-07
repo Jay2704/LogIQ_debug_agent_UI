@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { LogIQFullLogo } from "@/components/branding/LogIQLogos";
+import { HeroAmbientGlow } from "@/components/landing/HeroAmbientGlow";
 import { ProductPreviewCard } from "@/components/landing/ProductPreviewCard";
 import { ctaButtonGradient, ctaGlowBlueOnly } from "@/lib/ctaTheme";
 import { cn } from "@/lib/utils";
@@ -9,11 +10,10 @@ import { cn } from "@/lib/utils";
  */
 export function DashboardHomeHero() {
   return (
-    <section className="relative overflow-hidden rounded-2xl border border-blue-500/15 bg-gradient-to-br from-surface-900/95 via-[#0a1020] to-surface-975 p-6 shadow-[0_0_0_1px_rgba(59,130,246,0.1),0_24px_64px_-32px_rgba(0,0,0,0.55)] sm:p-10">
-      <div className="pointer-events-none absolute -right-32 top-0 h-80 w-80 rounded-full bg-blue-500/10 blur-3xl" />
-      <div className="pointer-events-none absolute -left-24 bottom-0 h-64 w-64 rounded-full bg-violet-600/10 blur-3xl" />
+    <section className="hero-glow-panel relative overflow-hidden rounded-2xl border border-blue-500/15 bg-gradient-to-br from-surface-900/95 via-[#0a1020] to-surface-975 p-6 shadow-[0_0_0_1px_rgba(59,130,246,0.1),0_24px_64px_-32px_rgba(0,0,0,0.55)] sm:p-10">
+      <HeroAmbientGlow variant="dashboard" />
 
-      <div className="relative mx-auto max-w-3xl text-center">
+      <div className="relative z-10 mx-auto max-w-3xl text-center">
         <div className="flex justify-center py-2">
           <LogIQFullLogo className="mx-auto max-h-[9rem] max-w-[min(880px,94vw)] object-contain sm:max-h-40 lg:max-h-48" />
         </div>
@@ -31,29 +31,29 @@ export function DashboardHomeHero() {
           <Link
             to="/jobs"
             className={cn(
-              "inline-flex min-w-[10rem] items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold text-white transition",
+              "cta-shimmer-primary inline-flex min-w-[10rem] items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold text-white transition",
               ctaButtonGradient,
               ctaGlowBlueOnly,
-              "ring-1 ring-blue-400/35 hover:shadow-[0_0_0_1px_rgba(56,189,248,0.35)]",
+              "ring-1 ring-blue-400/35",
               "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400/70"
             )}
           >
-            Try Demo
+            <span className="relative z-10">Try Demo</span>
           </Link>
           <a
             href="#workspace-explore"
             className={cn(
-              "inline-flex min-w-[10rem] items-center justify-center gap-2 rounded-xl border border-white/[0.12] bg-surface-900/50 px-6 py-3 text-sm font-semibold text-slate-100 backdrop-blur-sm transition",
+              "cta-shimmer-secondary inline-flex min-w-[10rem] items-center justify-center gap-2 rounded-xl border border-white/[0.12] bg-surface-900/50 px-6 py-3 text-sm font-semibold text-slate-100 backdrop-blur-sm transition",
               "hover:border-sky-500/30 hover:bg-surface-900/75 hover:text-white",
               "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400/70"
             )}
           >
-            Explore Features
+            <span className="relative z-10">Explore Features</span>
           </a>
         </div>
       </div>
 
-      <div className="relative mx-auto mt-10 max-w-4xl">
+      <div className="relative z-10 mx-auto mt-10 max-w-4xl">
         <ProductPreviewCard />
       </div>
     </section>

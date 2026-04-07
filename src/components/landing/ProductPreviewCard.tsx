@@ -11,7 +11,7 @@ export function ProductPreviewCard({ className }: { className?: string }) {
       />
       <div
         className={cn(
-          "relative overflow-hidden rounded-2xl border border-white/[0.1] bg-gradient-to-b from-surface-900/95 to-surface-975 shadow-[0_0_0_1px_rgba(59,130,246,0.12),0_24px_64px_-24px_rgba(0,0,0,0.65)]",
+          "hero-glow-card relative overflow-hidden rounded-2xl border border-white/[0.1] bg-gradient-to-b from-surface-900/95 to-surface-975 shadow-[0_0_0_1px_rgba(59,130,246,0.12),0_24px_64px_-24px_rgba(0,0,0,0.65)]",
           "ring-1 ring-white/[0.04] animate-investigation-reveal"
         )}
       >
