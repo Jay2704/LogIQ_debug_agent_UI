@@ -31,33 +31,33 @@ const trustPills = [
 
 const features = [
   {
-    title: "Deterministic Root Cause Analysis",
+    title: "Instant Root Cause Detection",
     description:
-      "Reproducible investigation graphs — same inputs yield the same ranked causes, auditable end to end.",
+      "Find the root cause in seconds, not hours. LogIQ pinpoints the exact issue using intelligent signal analysis.",
     icon: Sparkles,
     ring: "hover:ring-sky-500/25",
     glow: "group-hover:shadow-[0_0_40px_-12px_rgba(56,189,248,0.25)]",
   },
   {
-    title: "AI-Assisted Debugging",
+    title: "AI-Powered Debugging Agent",
     description:
-      "Narratives grounded in traces, logs, and code anchors — not generic advice.",
+      "Get clear explanations, not just errors. Understand what went wrong and why with human-readable insights.",
     icon: Brain,
     ring: "hover:ring-violet-500/25",
     glow: "group-hover:shadow-[0_0_40px_-12px_rgba(139,92,246,0.22)]",
   },
   {
-    title: "Knowledge Graph Context",
+    title: "Smart Log Analysis",
     description:
-      "Map services, deploys, and dependencies to see how failures propagate through the stack.",
+      "Upload logs and uncover hidden patterns instantly. Parse logs, detect anomalies, and surface meaningful signals automatically.",
     icon: Network,
     ring: "hover:ring-cyan-500/25",
     glow: "group-hover:shadow-[0_0_40px_-12px_rgba(34,211,238,0.2)]",
   },
   {
-    title: "Investigation Workflows",
+    title: "Real-Time Anomaly Detection",
     description:
-      "One workspace for anomalies, jobs, RCA output, and handoff — from triage to remediation.",
+      "Catch issues before they escalate. Detect unusual behavior across services instantly.",
     icon: Workflow,
     ring: "hover:ring-indigo-500/25",
     glow: "group-hover:shadow-[0_0_40px_-12px_rgba(99,102,241,0.22)]",
@@ -189,10 +189,11 @@ export function LandingPage() {
             <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
               <div className="max-w-2xl">
                 <p className="ui-section-eyebrow">Platform</p>
-                <h2 className="ui-section-title mt-1">Built for serious incidents</h2>
+                <h2 className="ui-section-title mt-1">
+                  Everything you need to debug production faster
+                </h2>
                 <p className="ui-section-desc">
-                  Everything you need to go from alert to actionable root cause — with evidence
-                  that holds up in postmortems.
+                  From raw logs to root cause — all in one intelligent debugging workspace.
                 </p>
               </div>
               <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:gap-5">

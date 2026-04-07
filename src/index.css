@@ -95,6 +95,17 @@
   .text-gradient-violet {
     @apply bg-gradient-to-r from-violet-400 to-fuchsia-300 bg-clip-text text-transparent;
   }
+
+  /** Animated hero headline — blue → purple → cyan, subtle drift + soft glow */
+  .gradient-text {
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6, #06b6d4, #3b82f6);
+    background-size: 200% auto;
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: gradientMove 8s ease-in-out infinite;
+    filter: drop-shadow(0 0 14px rgba(99, 102, 241, 0.28));
+  }
 }
 
 @keyframes investigation-reveal {
@@ -114,5 +125,17 @@
   }
   100% {
     transform: translateX(350%);
+  }
+}
+
+@keyframes gradientMove {
+  0% {
+    background-position: 0% center;
+  }
+  50% {
+    background-position: 100% center;
+  }
+  100% {
+    background-position: 0% center;
   }
 }

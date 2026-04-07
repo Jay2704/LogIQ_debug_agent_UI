@@ -18,7 +18,7 @@ export function LandingHero() {
         <span className="mt-8 inline-flex items-center rounded-full border border-sky-500/30 bg-sky-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-sky-200/95 ring-1 ring-sky-500/20 sm:mt-10">
           AI-Powered Deterministic RCA
         </span>
-        <h1 className="mt-6 text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-[2.75rem] lg:leading-[1.12]">
+        <h1 className="gradient-text mt-6 text-3xl font-bold tracking-tight sm:text-4xl lg:text-[2.75rem] lg:leading-[1.12]">
           Debug production incidents with deterministic RCA and AI explanations
         </h1>
         <p className="mt-5 text-base leading-relaxed text-slate-400 sm:text-lg">

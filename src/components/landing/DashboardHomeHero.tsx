@@ -18,14 +18,14 @@ export function DashboardHomeHero() {
           <LogIQFullLogo className="mx-auto max-h-[9rem] max-w-[min(880px,94vw)] object-contain sm:max-h-40 lg:max-h-48" />
         </div>
         <span className="mt-10 inline-flex items-center rounded-full border border-sky-500/30 bg-sky-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-sky-200/95 ring-1 ring-sky-500/20">
-          AI-Powered Deterministic RCA
+          AI-Agent powered Deterministic Root Cause Analysis and remediation
         </span>
-        <h1 className="mt-6 text-2xl font-bold tracking-tight text-white sm:text-3xl lg:text-4xl lg:leading-tight">
-          Debug production incidents with deterministic RCA and AI explanations
+        <h1 className="gradient-text mt-6 text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl lg:leading-tight">
+          Debug production issues in seconds, not hours
         </h1>
         <p className="mt-4 text-base leading-relaxed text-slate-400 sm:text-lg">
-          Upload logs, trace anomalies, identify root cause, and generate evidence-backed
-          explanations in one intelligent debugging workspace.
+          Upload logs, trace anomalies, and uncover root cause instantly — all in one intelligent
+          debugging workspace.
         </p>
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
           <Link
