@@ -21,13 +21,27 @@ export function Topbar() {
       )}
     >
       {showCompactBrand ? (
-        <Link
-          to="/"
-          className="mr-auto flex shrink-0 items-center rounded-lg outline-none ring-offset-2 ring-offset-surface-975 transition hover:opacity-90 focus-visible:ring-2 focus-visible:ring-sky-500/50"
-          aria-label="LogIQ home"
-        >
-          <LogIQIconMark className="h-10 w-10 sm:h-11 sm:w-11" />
-        </Link>
+        <div className="mr-auto flex items-center gap-4 sm:gap-6">
+          <Link
+            to="/"
+            className="flex shrink-0 items-center rounded-lg outline-none ring-offset-2 ring-offset-surface-975 transition hover:opacity-90 focus-visible:ring-2 focus-visible:ring-sky-500/50"
+            aria-label="LogIQ home"
+          >
+            <LogIQIconMark className="h-10 w-10 sm:h-11 sm:w-11" />
+          </Link>
+          <Link
+            to="/about"
+            className="truncate text-sm font-medium text-slate-400 transition hover:text-slate-200"
+          >
+            About Us
+          </Link>
+          <Link
+            to="/faq"
+            className="truncate text-sm font-medium text-slate-400 transition hover:text-slate-200"
+          >
+            FAQs
+          </Link>
+        </div>
       ) : null}
       <div className="flex min-w-0 flex-1 items-center justify-end gap-2 sm:gap-3">
         {pathname !== "/" ? <ApiModeBadge /> : null}

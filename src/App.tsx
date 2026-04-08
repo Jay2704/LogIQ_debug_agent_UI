@@ -1,6 +1,8 @@
 import { Route, Routes } from "react-router-dom";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { AuthenticatedAppShell } from "@/components/layout/AuthenticatedAppShell";
+import { About } from "@/pages/About";
+import { Faq } from "@/pages/Faq";
 import { Anomalies } from "@/pages/Anomalies";
 import { Dashboard } from "@/pages/Dashboard";
 import { Insights } from "@/pages/Insights";
@@ -37,6 +39,8 @@ export default function App() {
           <Route path="utilities" element={<Utilities />} />
           <Route path="utilities/:toolId" element={<UtilityDetail />} />
           <Route path="settings" element={<Settings />} />
+          <Route path="about" element={<About />} />
+          <Route path="faq" element={<Faq />} />
           {import.meta.env.DEV ? (
             <Route
               path="dev/integration-check"

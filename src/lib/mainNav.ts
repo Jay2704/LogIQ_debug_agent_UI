@@ -2,6 +2,8 @@ import type { LucideIcon } from "lucide-react";
 import {
   AlertTriangle,
   BarChart3,
+  BadgeInfo,
+  CircleHelp,
   FileStack,
   LayoutDashboard,
   ListTodo,
@@ -54,6 +56,18 @@ export const MAIN_NAV_ITEMS: MainNavItem[] = [
     label: "Utilities",
     icon: Wrench,
     description: "Upload logs, search, split errors, summarize",
+  },
+  {
+    to: "/about",
+    label: "About Us",
+    icon: BadgeInfo,
+    description: "What LogIQ is, how it works, and how we help teams debug",
+  },
+  {
+    to: "/faq",
+    label: "FAQs",
+    icon: CircleHelp,
+    description: "Common questions about the product and investigation workflow",
   },
   {
     to: "/settings",

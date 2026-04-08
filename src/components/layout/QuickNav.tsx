@@ -10,6 +10,8 @@ const links = [
   { to: "/insights", label: "Insights" },
   { to: "/reports", label: "Reports" },
   { to: "/utilities", label: "Utilities" },
+  { to: "/about", label: "About Us" },
+  { to: "/faq", label: "FAQs" },
   { to: "/settings", label: "Settings" },
 ];
 
