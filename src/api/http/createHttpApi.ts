@@ -4,6 +4,7 @@ import type {
   CreateJobInput,
   CreateUserInput,
   JiraRcaResult,
+  JiraTicketSearchHit,
   JiraTicketSummary,
   LoginInput,
   User,
@@ -73,6 +74,39 @@ function parseJiraTicketSummaryJson(json: unknown): JiraTicketSummary {
   };
 }
 
+function parseJiraSearchHitRow(row: unknown): JiraTicketSearchHit | null {
+  if (!row || typeof row !== "object") return null;
+  const r = row as Record<string, unknown>;
+  const rawKey = typeof r.key === "string" ? r.key.trim() : "";
+  if (!rawKey) return null;
+  const updatedAt =
+    typeof r.updated_at === "string"
+      ? r.updated_at
+      : typeof r.updatedAt === "string"
+        ? r.updatedAt
+        : typeof r.updated === "string"
+          ? r.updated
+          : undefined;
+  return {
+    key: rawKey.toUpperCase(),
+    summary: typeof r.summary === "string" ? r.summary : "",
+    status: typeof r.status === "string" ? r.status : "Unknown",
+    priority: typeof r.priority === "string" ? r.priority : "Unknown",
+    updatedAt,
+  };
+}
+
+function parseJiraSearchHitsJson(json: unknown): JiraTicketSearchHit[] {
+  const raw: unknown[] = Array.isArray(json)
+    ? json
+    : json && typeof json === "object" && Array.isArray((json as Record<string, unknown>).items)
+      ? ((json as Record<string, unknown>).items as unknown[])
+      : json && typeof json === "object" && Array.isArray((json as Record<string, unknown>).tickets)
+        ? ((json as Record<string, unknown>).tickets as unknown[])
+        : [];
+  return raw.map(parseJiraSearchHitRow).filter((x): x is JiraTicketSearchHit => x !== null);
+}
+
 function parseJiraRcaResultJson(json: unknown): JiraRcaResult {
   if (!json || typeof json !== "object") {
     throw new Error("[LogIQ API] POST /api/v1/jira/rca: invalid JSON payload");
@@ -84,6 +118,17 @@ function parseJiraRcaResultJson(json: unknown): JiraRcaResult {
   const extractedLogSignals = Array.isArray(row.extracted_log_signals)
     ? row.extracted_log_signals.filter((x): x is string => typeof x === "string")
     : [];
+  const remediationSuggestions = Array.isArray(row.remediation_suggestions)
+    ? row.remediation_suggestions.filter((x): x is string => typeof x === "string")
+    : Array.isArray(row.remediation)
+      ? row.remediation.filter((x): x is string => typeof x === "string")
+      : [];
+  const confidenceRaw =
+    typeof row.confidence === "number"
+      ? row.confidence
+      : typeof row.confidence_score === "number"
+        ? row.confidence_score
+        : undefined;
   return {
     rootCause:
       typeof row.root_cause === "string"
@@ -93,12 +138,19 @@ function parseJiraRcaResultJson(json: unknown): JiraRcaResult {
           : "Root cause not returned by backend.",
     evidenceSummary,
     extractedLogSignals,
+    confidence:
+      typeof confidenceRaw === "number"
+        ? confidenceRaw > 1
+          ? Math.max(0, Math.min(1, confidenceRaw / 100))
+          : Math.max(0, Math.min(1, confidenceRaw))
+        : undefined,
     explanation:
       typeof row.explanation === "string"
         ? row.explanation
         : typeof row.summary === "string"
           ? row.summary
           : undefined,
+    remediationSuggestions,
   };
 }
 
@@ -338,6 +390,17 @@ export function createHttpApi(baseUrl: string): LogIQApi {
     dashboard: mocks.dashboard,
     utilities: mocks.utilities,
     jira: {
+      searchTickets: async (query: string) => {
+        const q = query.trim();
+        const url = joinApiUrl(
+          baseUrl,
+          `/api/v1/jira/tickets/search?q=${encodeURIComponent(q)}`
+        );
+        const res = await fetchNetwork(url);
+        if (!res.ok) await httpError(res, "GET /api/v1/jira/tickets/search");
+        const json: unknown = await readJsonOrNull(res);
+        return parseJiraSearchHitsJson(json);
+      },
       getTicketSummary: async (ticketKey: string) => {
         const key = ticketKey.trim().toUpperCase();
         const url = joinApiUrl(

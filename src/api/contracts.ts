@@ -13,6 +13,7 @@ import type {
   TopRootCauseFileRow,
   User,
   JiraRcaResult,
+  JiraTicketSearchHit,
   JiraTicketSummary,
   UtilityRunRecord,
   UtilityToolDefinition,
@@ -77,6 +78,8 @@ export interface UtilitiesService {
 
 /** JIRA ticket intake used as the first step of investigation workflow. */
 export interface JiraService {
+  /** GET /api/v1/jira/tickets/search?q=… — partial key or summary text. */
+  searchTickets(query: string): Promise<JiraTicketSearchHit[]>;
   getTicketSummary(ticketKey: string): Promise<JiraTicketSummary>;
   runRcaWithTicket(input: {
     ticket: JiraTicketSummary;
