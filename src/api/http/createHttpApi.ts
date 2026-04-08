@@ -51,25 +51,72 @@ async function httpError(res: Response, label: string): Promise<never> {
   throw new Error(`[LogIQ API] ${label} ${res.status} ${reason}${suffix}`);
 }
 
+/**
+ * Backend may return a flat ticket object or `{ ticket: { ticket_key, summary, description, ... }, hints: [...] }`.
+ * Normalize to {@link JiraTicketSummary} in one place so the dashboard shows real priority and description.
+ */
 function parseJiraTicketSummaryJson(json: unknown): JiraTicketSummary {
   if (!json || typeof json !== "object") {
     throw new Error("[LogIQ API] GET /api/v1/jira/tickets/:key: invalid JSON payload");
   }
-  const row = json as Record<string, unknown>;
-  const labels = Array.isArray(row.labels)
-    ? row.labels.filter((x): x is string => typeof x === "string")
+  const root = json as Record<string, unknown>;
+  const nested =
+    root.ticket && typeof root.ticket === "object"
+      ? (root.ticket as Record<string, unknown>)
+      : null;
+  const t = nested ?? root;
+
+  const labels = Array.isArray(t.labels)
+    ? t.labels.filter((x): x is string => typeof x === "string")
+    : Array.isArray(root.labels)
+      ? root.labels.filter((x): x is string => typeof x === "string")
+      : [];
+
+  const hintsFromRoot = Array.isArray(root.hints)
+    ? root.hints.filter((x): x is string => typeof x === "string")
     : [];
-  const extractedHints = Array.isArray(row.extracted_hints)
-    ? row.extracted_hints.filter((x): x is string => typeof x === "string")
+  const hintsFromTicket = Array.isArray(t.extracted_hints)
+    ? t.extracted_hints.filter((x): x is string => typeof x === "string")
     : [];
+  const hintsFromRootLegacy = Array.isArray(root.extracted_hints)
+    ? root.extracted_hints.filter((x): x is string => typeof x === "string")
+    : [];
+  const extractedHints =
+    hintsFromRoot.length > 0
+      ? hintsFromRoot
+      : hintsFromTicket.length > 0
+        ? hintsFromTicket
+        : hintsFromRootLegacy;
+
+  const str = (v: unknown) => (typeof v === "string" ? v : "");
+
+  const key =
+    str(t.ticket_key).trim() ||
+    str(t.key).trim() ||
+    str(root.key).trim() ||
+    "";
+
+  const summary = str(t.summary) || str(root.summary);
+
+  const statusRaw = str(t.status) || str(root.status);
+  const status = statusRaw.trim() ? statusRaw : "Unknown";
+
+  const priorityRaw = str(t.priority) || str(root.priority);
+  const priority = priorityRaw.trim() ? priorityRaw : "Unknown";
+
+  const cleanedDescription =
+    str(t.cleaned_description) ||
+    str(t.description) ||
+    str(root.cleaned_description) ||
+    str(root.description);
+
   return {
-    key: typeof row.key === "string" ? row.key : "",
-    summary: typeof row.summary === "string" ? row.summary : "",
-    status: typeof row.status === "string" ? row.status : "Unknown",
-    priority: typeof row.priority === "string" ? row.priority : "Unknown",
+    key,
+    summary,
+    status,
+    priority,
     labels,
-    cleanedDescription:
-      typeof row.cleaned_description === "string" ? row.cleaned_description : "",
+    cleanedDescription,
     extractedHints,
   };
 }
