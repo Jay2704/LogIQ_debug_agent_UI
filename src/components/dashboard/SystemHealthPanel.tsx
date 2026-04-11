@@ -89,38 +89,38 @@ export function SystemHealthPanel({
   return (
     <div
       className={cn(
-        "rounded-card border border-emerald-500/20 bg-gradient-to-b from-emerald-500/[0.08] via-surface-960 to-surface-975 p-5 shadow-card-premium",
+        "rounded-card border border-nexus/[0.15] bg-surface-925/80 p-5 shadow-glow-nexus",
         className
       )}
     >
       <div className="flex items-center justify-between gap-2">
         <div>
-          <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-emerald-500/90">
+          <p className="font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-nexus/70">
             Platform
           </p>
-          <h3 className="mt-0.5 text-sm font-bold text-white">System health</h3>
+          <h3 className="mt-0.5 font-display text-sm font-bold text-white">System health</h3>
         </div>
-        <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-300">
+        <span className="rounded border border-nexus/[0.3] bg-nexus/[0.08] px-2 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wide text-nexus">
           Live
         </span>
       </div>
-      <ul className="mt-4 space-y-3">
+      <ul className="mt-4 space-y-2">
         {rows.map((row) => {
           const st = stateStyles[row.state];
           const Icon = row.icon;
           return (
             <li
               key={row.name}
-              className="flex items-center gap-3 rounded-xl border border-white/[0.04] bg-surface-975/60 px-3 py-2.5"
+              className="flex items-center gap-3 rounded-card border border-cyber/[0.06] bg-surface-950/60 px-3 py-2.5"
             >
               <span
                 className={cn("h-2 w-2 shrink-0 rounded-full", st.dot)}
                 title={st.label}
               />
-              <Icon className="h-4 w-4 shrink-0 text-slate-500" strokeWidth={1.75} />
+              <Icon className="h-3.5 w-3.5 shrink-0 text-slate-600" strokeWidth={1.75} />
               <div className="min-w-0 flex-1">
-                <p className="text-xs font-semibold text-slate-200">{row.name}</p>
-                <p className="truncate font-mono text-[10px] text-slate-500">
+                <p className="text-xs font-medium text-slate-300">{row.name}</p>
+                <p className="truncate font-mono text-[10px] text-slate-600">
                   {row.detail}
                 </p>
               </div>

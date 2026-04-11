@@ -247,6 +247,7 @@ export function Dashboard() {
             subtitle="Total jobs in workspace"
             icon={ListTodo}
             accent="ice"
+            index={0}
           />
           <DashboardKpiCard
             title="Active"
@@ -254,6 +255,7 @@ export function Dashboard() {
             subtitle="Running & triaging now"
             icon={Activity}
             accent="amber"
+            index={1}
           />
           <DashboardKpiCard
             title="Completed"
@@ -261,6 +263,7 @@ export function Dashboard() {
             subtitle="RCA pipeline finished"
             icon={CheckCircle2}
             accent="emerald"
+            index={2}
           />
           <DashboardKpiCard
             title="Failed"
@@ -268,6 +271,7 @@ export function Dashboard() {
             subtitle="Needs engineer review"
             icon={AlertOctagon}
             accent="rose"
+            index={3}
           />
         </section>
       )}
@@ -277,10 +281,10 @@ export function Dashboard() {
         <div className="space-y-5 xl:col-span-8">
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
-              <h2 className="text-lg font-bold tracking-tight text-white">
+              <h2 className="font-display text-lg font-bold tracking-tight text-white">
                 Recent investigations
               </h2>
-              <p className="mt-1 text-sm text-slate-500">
+              <p className="mt-1 text-sm text-slate-600">
                 Latest debug jobs ranked by recency — click through for full RCA.
               </p>
             </div>
@@ -345,10 +349,11 @@ export function Dashboard() {
             </div>
           ) : (
             <div className="grid gap-4 sm:grid-cols-2">
-              {investigations.map(({ job, anomalySummary, confidence }) => (
+              {investigations.map(({ job, anomalySummary, confidence }, idx) => (
                 <InvestigationCard
                   key={getJobRouteId(job)}
                   job={job}
+                  index={idx}
                   anomalySummary={anomalySummary}
                   confidence={confidence}
                 />

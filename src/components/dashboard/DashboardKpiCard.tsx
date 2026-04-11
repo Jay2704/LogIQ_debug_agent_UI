@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -5,31 +6,46 @@ type Accent = "ice" | "amber" | "emerald" | "rose";
 
 const accents: Record<
   Accent,
-  { border: string; glow: string; icon: string; bar: string }
+  {
+    border: string;
+    glow: string;
+    icon: string;
+    bar: string;
+    badge: string;
+    scanline: string;
+  }
 > = {
   ice: {
-    border: "border-cyan-500/25",
-    glow: "shadow-[0_0_60px_-20px_rgba(34,211,238,0.35)]",
-    icon: "bg-gradient-to-br from-cyan-500/25 to-blue-600/20 text-cyan-300 ring-cyan-400/30",
-    bar: "from-cyan-500 to-blue-500",
+    border: "border-cyber/[0.2]",
+    glow: "shadow-glow-cyber",
+    icon: "bg-cyber/[0.1] ring-cyber/[0.2] text-cyan-300",
+    bar: "from-cyber to-cyan-500",
+    badge: "text-cyber",
+    scanline: "rgba(34,211,238,0.03)",
   },
   amber: {
-    border: "border-amber-500/30",
-    glow: "shadow-[0_0_50px_-18px_rgba(245,158,11,0.4)]",
-    icon: "bg-gradient-to-br from-amber-500/25 to-orange-600/15 text-amber-300 ring-amber-400/35",
+    border: "border-amber-500/[0.22]",
+    glow: "shadow-glow-amber",
+    icon: "bg-amber-500/[0.1] ring-amber-500/[0.2] text-amber-300",
     bar: "from-amber-400 to-orange-500",
+    badge: "text-amber-400",
+    scanline: "rgba(245,158,11,0.03)",
   },
   emerald: {
-    border: "border-emerald-500/30",
-    glow: "shadow-[0_0_50px_-18px_rgba(16,185,129,0.35)]",
-    icon: "bg-gradient-to-br from-emerald-500/25 to-teal-700/20 text-emerald-300 ring-emerald-400/30",
-    bar: "from-emerald-400 to-teal-500",
+    border: "border-nexus/[0.2]",
+    glow: "shadow-glow-nexus",
+    icon: "bg-nexus/[0.1] ring-nexus/[0.2] text-nexus",
+    bar: "from-nexus to-emerald-500",
+    badge: "text-nexus",
+    scanline: "rgba(52,211,153,0.03)",
   },
   rose: {
-    border: "border-rose-500/25",
-    glow: "shadow-[0_0_50px_-18px_rgba(244,63,94,0.3)]",
-    icon: "bg-gradient-to-br from-rose-500/20 to-red-900/20 text-rose-300 ring-rose-400/25",
+    border: "border-rose-500/[0.18]",
+    glow: "shadow-glow-rose",
+    icon: "bg-rose-500/[0.1] ring-rose-500/[0.2] text-rose-300",
     bar: "from-rose-400 to-red-500",
+    badge: "text-rose-400",
+    scanline: "rgba(244,63,94,0.03)",
   },
 };
 
@@ -39,6 +55,7 @@ interface DashboardKpiCardProps {
   subtitle?: string;
   icon: LucideIcon;
   accent: Accent;
+  index?: number;
 }
 
 export function DashboardKpiCard({
@@ -47,48 +64,59 @@ export function DashboardKpiCard({
   subtitle,
   icon: Icon,
   accent,
+  index = 0,
 }: DashboardKpiCardProps) {
   const a = accents[accent];
+
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.45, delay: index * 0.08, ease: "easeOut" }}
       className={cn(
-        "relative overflow-hidden rounded-card border bg-gradient-to-br p-5",
-        "from-surface-850/95 via-surface-960 to-surface-975",
+        "nexus-card-scanline relative overflow-hidden rounded-card border bg-surface-925/80 p-5",
         a.border,
-        a.glow,
-        "ring-1 ring-inset ring-white/[0.04]"
+        a.glow
       )}
     >
+      {/* Scanline texture */}
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          backgroundImage: `repeating-linear-gradient(0deg, transparent, transparent 3px, ${a.scanline} 3px, ${a.scanline} 4px)`,
+        }}
+        aria-hidden
+      />
+
+      {/* Top accent bar */}
       <div
         className={cn(
-          "absolute left-0 top-0 h-full w-1 rounded-l-card bg-gradient-to-b opacity-90",
+          "absolute left-0 top-0 h-[2px] w-full rounded-t-card bg-gradient-to-r",
           a.bar
         )}
       />
-      <div className="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full bg-gradient-to-br from-white/[0.04] to-transparent blur-2xl" />
-      <div className="relative flex items-start justify-between gap-3 pl-2">
-        <div>
-          <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500">
+
+      <div className="relative flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className={cn("font-mono text-[10px] font-bold uppercase tracking-[0.18em]", a.badge)}>
             {title}
           </p>
-          <p className="mt-2 text-3xl font-bold tabular-nums tracking-tight text-white">
+          <p className="mt-2.5 font-display text-3xl font-bold tabular-nums tracking-tight text-white">
             {value}
           </p>
           {subtitle ? (
-            <p className="mt-1.5 text-xs leading-relaxed text-slate-500">
-              {subtitle}
-            </p>
+            <p className="mt-1.5 text-xs leading-relaxed text-slate-600">{subtitle}</p>
           ) : null}
         </div>
         <div
           className={cn(
-            "flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ring-1",
+            "flex h-11 w-11 shrink-0 items-center justify-center rounded-card ring-1",
             a.icon
           )}
         >
-          <Icon className="h-6 w-6" strokeWidth={1.5} />
+          <Icon className="h-5 w-5" strokeWidth={1.75} />
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

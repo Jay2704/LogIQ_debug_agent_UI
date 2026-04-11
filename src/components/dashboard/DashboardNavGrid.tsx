@@ -29,16 +29,16 @@ export function DashboardNavGrid({
     forPublicLanding ? "/login" : item.to;
 
   return (
-    <section className="relative overflow-hidden rounded-2xl border border-blue-500/15 bg-gradient-to-br from-surface-900/90 via-[#0b1222] to-surface-975 p-6 shadow-[0_0_0_1px_rgba(59,130,246,0.08),0_24px_64px_-32px_rgba(0,0,0,0.55)] sm:p-8">
-      <div className="pointer-events-none absolute -right-24 top-0 h-72 w-72 rounded-full bg-blue-500/10 blur-3xl" />
-      <div className="pointer-events-none absolute -left-16 bottom-0 h-56 w-56 rounded-full bg-violet-600/10 blur-3xl" />
+    <section className="relative overflow-hidden rounded-card border border-cyber/[0.12] bg-surface-925/80 p-5 shadow-card-premium sm:p-7">
+      <div className="pointer-events-none absolute -right-24 top-0 h-64 w-64 rounded-full bg-cyber/[0.06] blur-3xl" />
+      <div className="pointer-events-none absolute -left-16 bottom-0 h-48 w-48 rounded-full bg-nexus/[0.05] blur-3xl" />
       <div className="relative">
         {!hideIntro ? (
           <>
-            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-sky-500/90">
+            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-cyber/90">
               Workspace
             </p>
-            <h2 className="mt-2 text-2xl font-bold tracking-tight text-white sm:text-3xl">
+            <h2 className="mt-2 font-display text-2xl font-bold tracking-tight text-white sm:text-3xl">
               Navigate
             </h2>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-400">
@@ -62,32 +62,32 @@ export function DashboardNavGrid({
                 <div className="flex items-start justify-between gap-3">
                   <div
                     className={cn(
-                      "flex h-12 w-12 items-center justify-center rounded-2xl ring-1 transition-colors duration-300",
+                      "flex h-11 w-11 items-center justify-center rounded-card ring-1 transition-colors duration-300",
                       isActive
-                        ? "bg-sky-500/20 ring-sky-500/40"
-                        : "bg-white/[0.06] ring-white/[0.08] group-hover:bg-sky-500/15 group-hover:ring-sky-500/30"
+                        ? "bg-cyber/[0.15] ring-cyber/[0.3]"
+                        : "bg-surface-950/80 ring-cyber/[0.08] group-hover:bg-cyber/[0.1] group-hover:ring-cyber/[0.22]"
                     )}
                   >
                     <Icon
                       className={cn(
-                        "h-6 w-6 transition-colors duration-300",
-                        isActive ? "text-sky-200" : "text-slate-400 group-hover:text-sky-200"
+                        "h-5 w-5 transition-colors duration-300",
+                        isActive ? "text-cyan-300" : "text-slate-500 group-hover:text-cyan-300"
                       )}
-                      strokeWidth={2}
+                      strokeWidth={1.75}
                     />
                   </div>
                   {isActive ? (
-                    <span className="rounded-lg border border-sky-500/35 bg-sky-500/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-sky-200/95">
-                      Current
+                    <span className="rounded border border-cyber/[0.3] bg-cyber/[0.1] px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wide text-cyan-300">
+                      Active
                     </span>
                   ) : (
-                    <ArrowRight className="h-5 w-5 shrink-0 text-slate-600 transition group-hover:translate-x-0.5 group-hover:text-sky-400" />
+                    <ArrowRight className="h-4 w-4 shrink-0 text-slate-700 transition group-hover:translate-x-0.5 group-hover:text-cyber" />
                   )}
                 </div>
-                <h3 className="mt-4 text-lg font-bold tracking-tight text-white">{item.label}</h3>
-                <p className="mt-1.5 text-sm leading-relaxed text-slate-500">{item.description}</p>
+                <h3 className="mt-3.5 font-display text-base font-bold tracking-tight text-white">{item.label}</h3>
+                <p className="mt-1 text-sm leading-relaxed text-slate-500">{item.description}</p>
                 {showJobsStat ? (
-                  <p className="mt-3 font-mono text-xs text-emerald-400/90">
+                  <p className="mt-2.5 font-mono text-xs text-nexus/80">
                     {jobsCount} investigation{jobsCount === 1 ? "" : "s"} in workspace
                   </p>
                 ) : null}
@@ -95,10 +95,10 @@ export function DashboardNavGrid({
             );
 
             const cardClass = cn(
-              "group relative block overflow-hidden rounded-2xl border border-white/[0.08] bg-surface-975/70 p-5 text-left shadow-inner transition duration-300",
-              "hover:-translate-y-1 hover:border-sky-500/25 hover:shadow-[0_0_40px_-12px_rgba(56,189,248,0.35)]",
-              "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400/60",
-              isActive && "ring-2 ring-sky-500/35"
+              "nexus-card-scanline group relative block overflow-hidden rounded-card border border-cyber/[0.08] bg-surface-975/70 p-4 text-left transition-all duration-200",
+              "hover:-translate-y-0.5 hover:border-cyber/[0.22] hover:shadow-glow-cyber",
+              "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400/60",
+              isActive && "ring-1 ring-cyber/[0.3] border-cyber/[0.2]"
             );
 
             if (isActive) {
