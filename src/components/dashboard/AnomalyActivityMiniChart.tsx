@@ -28,7 +28,7 @@ export function AnomalyActivityMiniChart({
   return (
     <div
       className={cn(
-        "flex flex-col rounded-card border border-cyan-500/15 bg-gradient-to-b from-surface-900/90 to-surface-975 p-5",
+        "flex flex-col rounded-card border border-cyan-500/15 bg-gradient-to-b from-black/[0.85] to-black/[0.96] p-5",
         className
       )}
     >

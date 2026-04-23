@@ -13,7 +13,6 @@ import {
   ArrowRight,
   Brain,
   CheckCircle2,
-  ChevronRight,
   Cpu,
   FileSearch,
   GitBranch,
@@ -51,104 +50,6 @@ function AnimatedCounter({ to, suffix = "" }: { to: number; suffix?: string }) {
   }, [spring]);
 
   return <span ref={ref}>{display}{suffix}</span>;
-}
-
-// ── Terminal demo typewriter ───────────────────────────────────────────────
-const terminalLines = [
-  { text: "$ logiq analyze --source prod --anomaly ANO-7F2A", type: "cmd" },
-  { text: "[14:32:01.442] ERROR checkout-svc: Payment validation failed", type: "error" },
-  { text: "[14:32:01.445] ERROR checkout-svc: CartValidator.validate() threw", type: "error" },
-  { text: "[14:32:01.451] WARN  payment-gw: Timeout on stripe webhook", type: "warn" },
-  { text: "[14:32:01.453] ERROR checkout-svc: 5xx rate +340% vs baseline", type: "error" },
-  { text: "[14:32:01.460] INFO  logiq: Ingesting 2,847 log events...", type: "info" },
-  { text: "[14:32:01.512] INFO  logiq: Correlating with deploy history", type: "info" },
-  { text: "[14:32:01.601] INFO  logiq: Tracing checkout → payment edge", type: "info" },
-  { text: "──────────────────────────────────────────────────", type: "divider" },
-  { text: "⚡ ROOT CAUSE: checkout-svc@v2.4.1", type: "result" },
-  { text: "   └─ CartValidator.validate() L128 — timeout budget exceeded", type: "detail" },
-  { text: "   └─ Confidence: 94%  |  Evidence strength: HIGH", type: "detail" },
-  { text: "✓ Remediation: rollback or hotfix L128 timeout guard", type: "success" },
-];
-
-function TerminalDemo() {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-100px" });
-  const [visibleCount, setVisibleCount] = useState(0);
-
-  useEffect(() => {
-    if (!inView) return;
-    const delays = terminalLines.map((_, i) => i * 220 + 400);
-    const timers = delays.map((d, i) =>
-      setTimeout(() => setVisibleCount((c) => Math.max(c, i + 1)), d)
-    );
-    return () => timers.forEach(clearTimeout);
-  }, [inView]);
-
-  return (
-    <div
-      ref={ref}
-      className="relative overflow-hidden rounded-card border border-cyber/[0.18] bg-surface-975/95 shadow-glow-cyber"
-    >
-      {/* Terminal titlebar */}
-      <div className="flex items-center gap-2 border-b border-cyber/[0.1] bg-surface-950/80 px-4 py-2.5">
-        <span className="h-3 w-3 rounded-full bg-rose-500/80" />
-        <span className="h-3 w-3 rounded-full bg-amber-500/80" />
-        <span className="h-3 w-3 rounded-full bg-nexus/80" />
-        <span className="ml-3 font-mono text-[11px] text-slate-500">
-          logiq-rca — bash — 80×24
-        </span>
-        <span className="ml-auto flex items-center gap-1.5 font-mono text-[10px] text-cyber/70">
-          <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-nexus/60 opacity-75" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-nexus" />
-          </span>
-          LIVE
-        </span>
-      </div>
-
-      {/* Terminal content */}
-      <div className="space-y-1 p-4 font-mono text-[12px] leading-relaxed sm:text-[13px]">
-        {terminalLines.slice(0, visibleCount).map((line, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, x: -8 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.25, ease: "easeOut" }}
-            className={cn(
-              "flex items-start gap-2",
-              line.type === "cmd" && "text-cyber",
-              line.type === "error" && "text-rose-400",
-              line.type === "warn" && "text-amber-400",
-              line.type === "info" && "text-slate-400",
-              line.type === "divider" && "text-slate-700",
-              line.type === "result" && "font-bold text-cyber",
-              line.type === "detail" && "text-slate-300 pl-2",
-              line.type === "success" && "text-nexus font-semibold"
-            )}
-          >
-            {line.type !== "divider" && line.type !== "detail" && (
-              <ChevronRight className="mt-0.5 h-3 w-3 shrink-0 opacity-40" />
-            )}
-            <span>{line.text}</span>
-          </motion.div>
-        ))}
-        {visibleCount < terminalLines.length && visibleCount > 0 && (
-          <span className="terminal-cursor" />
-        )}
-        {visibleCount === terminalLines.length && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="mt-3 flex items-center gap-2 border-t border-cyber/[0.1] pt-3"
-          >
-            <span className="font-mono text-[11px] text-slate-600">$</span>
-            <span className="terminal-cursor" />
-          </motion.div>
-        )}
-      </div>
-    </div>
-  );
 }
 
 // ── Features bento grid ────────────────────────────────────────────────────
@@ -227,7 +128,7 @@ function FeaturesSection() {
   return (
     <section
       id="features"
-      className="border-t border-cyber/[0.08] bg-surface-975/30 py-16 sm:py-24"
+      className="border-t border-cyber/[0.08] bg-black/[0.94] py-16 sm:py-24"
     >
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <motion.div
@@ -260,7 +161,7 @@ function FeaturesSection() {
               "lg:col-span-5 lg:row-span-2",
               lg.borderColor,
               lg.glowColor,
-              "bg-gradient-to-br from-surface-900/95 to-surface-975"
+              "bg-gradient-to-br from-black/[0.85] to-black/[0.96]"
             )}
           >
             <div
@@ -282,7 +183,7 @@ function FeaturesSection() {
               <p className="mt-3 text-sm leading-relaxed text-slate-400">{lg.desc}</p>
 
               {/* Mini evidence mockup */}
-              <div className="mt-6 space-y-2 rounded-card border border-cyber/[0.1] bg-surface-975/80 p-4">
+              <div className="mt-6 space-y-2 rounded-card border border-cyber/[0.1] bg-black/[0.94] p-4">
                 {[
                   { k: "Deploy delta", v: "checkout-svc@v2.4.1", color: "text-cyber" },
                   { k: "Error spike", v: "+340% vs baseline", color: "text-rose-400" },
@@ -311,7 +212,7 @@ function FeaturesSection() {
                 "lg:col-span-7",
                 f.borderColor,
                 f.glowColor,
-                "bg-gradient-to-br from-surface-900/95 to-surface-975"
+                "bg-gradient-to-br from-black/[0.85] to-black/[0.96]"
               )}
             >
               <div
@@ -380,13 +281,13 @@ function HowItWorksSection() {
                 className="relative flex items-start gap-6 lg:pl-20"
               >
                 {/* Step node */}
-                <div className="relative flex h-16 w-16 shrink-0 items-center justify-center rounded-card border border-cyber/[0.2] bg-surface-925 shadow-glow-cyber lg:absolute lg:left-0 lg:top-0">
+                <div className="relative flex h-16 w-16 shrink-0 items-center justify-center rounded-card border border-cyber/[0.2] bg-black/[0.88] shadow-glow-cyber lg:absolute lg:left-0 lg:top-0">
                   <s.icon className="h-6 w-6 text-cyber" strokeWidth={1.75} />
                   <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-cyber text-[10px] font-bold text-surface-975">
                     {s.n.slice(-1)}
                   </span>
                 </div>
-                <div className="min-h-[4rem] flex-1 rounded-card border border-cyber/[0.08] bg-surface-925/60 p-5 backdrop-blur-sm">
+                <div className="min-h-[4rem] flex-1 rounded-card border border-cyber/[0.08] bg-black/[0.84] p-5 backdrop-blur-sm">
                   <h3 className="font-display font-semibold text-white">{s.title}</h3>
                   <p className="mt-1 text-sm leading-relaxed text-slate-500">{s.body}</p>
                 </div>
@@ -407,7 +308,7 @@ function StatsSection() {
     { value: 2847, suffix: "", label: "Log events analyzed", sub: "per investigation on avg" },
   ];
   return (
-    <section className="border-y border-cyber/[0.08] bg-surface-975/60 py-14 sm:py-20">
+    <section className="border-y border-cyber/[0.08] bg-black/[0.94] py-14 sm:py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="grid gap-10 sm:grid-cols-3">
           {stats.map((s, i) => (
@@ -468,8 +369,8 @@ function SecondaryCta({ className }: { className?: string }) {
     <Link
       to="/signup"
       className={cn(
-        "cta-shimmer-secondary inline-flex items-center justify-center gap-2 rounded-card border border-cyber/[0.2] bg-surface-900/50 px-6 py-3 text-sm font-semibold text-slate-100 backdrop-blur-sm transition",
-        "hover:border-cyber/[0.35] hover:bg-surface-900/75 hover:text-white",
+        "cta-shimmer-secondary inline-flex items-center justify-center gap-2 rounded-card border border-cyber/[0.2] bg-black/[0.82] px-6 py-3 text-sm font-semibold text-slate-100 backdrop-blur-sm transition",
+        "hover:border-cyber/[0.35] hover:bg-black/[0.82] hover:text-white",
         "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400/70",
         className
       )}
@@ -493,7 +394,7 @@ function LandingNav() {
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className="sticky top-0 z-40 border-b border-cyber/[0.06] bg-surface-975/60 backdrop-blur-xl"
+      className="sticky top-0 z-40 border-b border-cyber/[0.06] bg-black/[0.94] backdrop-blur-xl"
     >
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-3 px-4 sm:h-16 sm:px-6 lg:px-8">
         <Link to="/" className="flex items-center gap-2 outline-none transition hover:opacity-90">
@@ -655,7 +556,7 @@ function DemoSection() {
   return (
     <section
       id="demo"
-      className="border-t border-cyber/[0.08] bg-gradient-to-b from-surface-975/50 to-transparent py-16 sm:py-24"
+      className="border-t border-cyber/[0.08] bg-gradient-to-b from-black/[0.94] to-transparent py-16 sm:py-24"
     >
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <motion.div
@@ -676,10 +577,10 @@ function DemoSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="mt-10 overflow-hidden rounded-card border border-cyber/[0.14] bg-surface-950 shadow-glow-cyber"
+          className="mt-10 overflow-hidden rounded-card border border-cyber/[0.14] bg-black/[0.9] shadow-glow-cyber"
         >
           {/* Tab bar */}
-          <div className="flex flex-wrap items-center gap-2 border-b border-cyber/[0.08] bg-surface-975/80 px-4 py-2.5">
+          <div className="flex flex-wrap items-center gap-2 border-b border-cyber/[0.08] bg-black/[0.94] px-4 py-2.5">
             {["RCA Summary", "Evidence", "AI Explanation"].map((tab, idx) => (
               <button
                 key={tab}
@@ -735,7 +636,7 @@ function DemoSection() {
                 ].map((row) => (
                   <div
                     key={row.k}
-                    className="flex justify-between gap-3 rounded-lg border border-cyber/[0.06] bg-surface-975/60 px-2.5 py-2 text-[11px]"
+                    className="flex justify-between gap-3 rounded-lg border border-cyber/[0.06] bg-black/[0.94] px-2.5 py-2 text-[11px]"
                   >
                     <span className="text-slate-500">{row.k}</span>
                     <span className="truncate text-right font-mono text-slate-300">{row.v}</span>
@@ -754,7 +655,7 @@ function DemoSection() {
                   "Open PR with guardrail test",
                 ].map((line, idx) => (
                   <li key={line} className="flex items-start gap-2 text-xs text-slate-400">
-                    <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded border border-cyber/[0.15] bg-surface-950/80 text-[10px] text-cyber/70">
+                    <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded border border-cyber/[0.15] bg-black/[0.88] text-[10px] text-cyber/70">
                       {idx + 1}
                     </span>
                     {line}
@@ -826,7 +727,7 @@ function CtaSection() {
 // ── Page root ──────────────────────────────────────────────────────────────
 export function LandingPage() {
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-surface-975 text-slate-200">
+    <div className="relative min-h-screen overflow-x-hidden bg-black/[0.96] text-slate-200">
       <LandingNav />
       <main>
         <HeroSection />
@@ -861,7 +762,7 @@ export function LandingPage() {
                 <motion.div
                   key={label}
                   variants={cardVariants}
-                  className="nexus-card-scanline flex min-w-[10rem] max-w-[14rem] flex-1 cursor-default flex-col rounded-card border border-cyber/[0.1] bg-surface-925/60 px-4 py-4 text-center transition hover:border-cyber/[0.25] hover:bg-surface-925/80"
+                  className="nexus-card-scanline flex min-w-[10rem] max-w-[14rem] flex-1 cursor-default flex-col rounded-card border border-cyber/[0.1] bg-black/[0.84] px-4 py-4 text-center transition hover:border-cyber/[0.25] hover:bg-black/[0.84]"
                 >
                   <Icon className="mx-auto h-5 w-5 text-cyber/80" strokeWidth={1.75} />
                   <p className="mt-2 font-display text-sm font-semibold text-white">{label}</p>

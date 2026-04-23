@@ -70,14 +70,14 @@ export function KeywordSearchWorkspace({ logLines, hasUploadedLog }: UtilityWork
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
           placeholder="e.g. ERROR, PSP_TIMEOUT, req id…"
-          className="mt-2 w-full rounded-lg border border-white/[0.1] bg-surface-960/90 px-3 py-2.5 font-mono text-sm text-slate-200 placeholder:text-slate-600 focus:border-sky-500/40 focus:outline-none focus:ring-1 focus:ring-sky-500/30"
+          className="mt-2 w-full rounded-lg border border-white/[0.1] bg-black/[0.92] px-3 py-2.5 font-mono text-sm text-slate-200 placeholder:text-slate-600 focus:border-sky-500/40 focus:outline-none focus:ring-1 focus:ring-sky-500/30"
         />
         <label className="mt-4 flex cursor-pointer items-center gap-2 text-sm text-slate-400">
           <input
             type="checkbox"
             checked={caseSensitive}
             onChange={(e) => setCaseSensitive(e.target.checked)}
-            className="rounded border-white/20 bg-surface-960 text-sky-500 focus:ring-sky-500/40"
+            className="rounded border-white/20 bg-black/[0.92] text-sky-500 focus:ring-sky-500/40"
           />
           Case-sensitive match
         </label>
@@ -94,7 +94,7 @@ export function KeywordSearchWorkspace({ logLines, hasUploadedLog }: UtilityWork
           disabled={!hasDownloadableResults}
           className={cn(
             "inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition",
-            "border border-white/[0.12] bg-surface-975/70 text-slate-200",
+            "border border-white/[0.12] bg-black/[0.94] text-slate-200",
             "hover:border-sky-500/40 hover:text-sky-200",
             "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400/60",
             "disabled:pointer-events-none disabled:opacity-40"

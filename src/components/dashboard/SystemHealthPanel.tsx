@@ -89,7 +89,7 @@ export function SystemHealthPanel({
   return (
     <div
       className={cn(
-        "rounded-card border border-nexus/[0.15] bg-surface-925/80 p-5 shadow-glow-nexus",
+        "rounded-card border border-nexus/[0.15] bg-black/[0.88] p-5 shadow-glow-nexus",
         className
       )}
     >
@@ -111,7 +111,7 @@ export function SystemHealthPanel({
           return (
             <li
               key={row.name}
-              className="flex items-center gap-3 rounded-card border border-cyber/[0.06] bg-surface-950/60 px-3 py-2.5"
+              className="flex items-center gap-3 rounded-card border border-cyber/[0.06] bg-black/[0.6] px-3 py-2.5"
             >
               <span
                 className={cn("h-2 w-2 shrink-0 rounded-full", st.dot)}

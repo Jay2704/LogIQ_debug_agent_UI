@@ -73,7 +73,7 @@ const capabilities = [
 export function About() {
   return (
     <div className="mx-auto max-w-4xl space-y-10 pb-8">
-      <section className="hero-glow-panel relative overflow-hidden rounded-2xl border border-blue-500/15 bg-gradient-to-br from-surface-900/95 via-[#0a1020] to-surface-975 p-6 shadow-[0_0_0_1px_rgba(59,130,246,0.1),0_24px_64px_-32px_rgba(0,0,0,0.55)] sm:p-10">
+      <section className="hero-glow-panel relative overflow-hidden rounded-2xl border border-blue-500/15 bg-gradient-to-br from-black/[0.85] via-[#0a1020] to-black/[0.96] p-6 shadow-[0_0_0_1px_rgba(59,130,246,0.1),0_24px_64px_-32px_rgba(0,0,0,0.55)] sm:p-10">
         <HeroAmbientGlow variant="dashboard" />
         <div className="relative z-10 text-center">
           <span className="inline-flex items-center rounded-full border border-sky-500/30 bg-sky-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-sky-200/95 ring-1 ring-sky-500/20">
@@ -134,7 +134,7 @@ export function About() {
           {whyDifferent.map((item) => (
             <div
               key={item.title}
-              className="rounded-xl border border-white/[0.08] bg-surface-900/50 p-4 ring-1 ring-white/[0.04] transition hover:border-sky-500/20"
+              className="rounded-xl border border-white/[0.08] bg-black/[0.82] p-4 ring-1 ring-white/[0.04] transition hover:border-sky-500/20"
             >
               <h3 className="text-sm font-semibold text-white">{item.title}</h3>
               <p className="mt-2 text-xs leading-relaxed text-slate-400">{item.body}</p>

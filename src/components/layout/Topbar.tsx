@@ -15,7 +15,7 @@ export function Topbar() {
   return (
     <header
       className={cn(
-        "sticky top-0 z-30 flex shrink-0 items-center gap-3 border-b border-cyber/[0.08] bg-surface-975/85 px-4 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.5)] backdrop-blur-xl sm:gap-3 sm:px-6",
+        "sticky top-0 z-30 flex shrink-0 items-center gap-3 border-b border-cyber/[0.08] bg-black/[0.9] px-4 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.5)] backdrop-blur-xl sm:gap-3 sm:px-6",
         showCompactBrand ? "h-14 sm:h-16" : "h-16"
       )}
     >
@@ -84,8 +84,8 @@ export function Topbar() {
         {/* User pill */}
         <div
           className={cn(
-            "flex max-w-[min(100vw-10rem,14rem)] items-center gap-2 rounded-card border border-cyber/[0.1] bg-surface-925/70 px-2 py-1.5 pl-2 pr-3 transition-all duration-200",
-            user ? "hover:border-cyber/[0.2] hover:bg-surface-925" : undefined
+            "flex max-w-[min(100vw-10rem,14rem)] items-center gap-2 rounded-card border border-cyber/[0.1] bg-black/[0.7] px-2 py-1.5 pl-2 pr-3 transition-all duration-200",
+            user ? "hover:border-cyber/[0.2] hover:bg-black/[0.85]" : undefined
           )}
         >
           <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-cyber/20 to-cyber/5 ring-1 ring-cyber/20">

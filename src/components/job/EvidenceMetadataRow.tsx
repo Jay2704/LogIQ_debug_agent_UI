@@ -56,7 +56,7 @@ export function EvidenceMetadataRow({
             className={cn(
               cellBase,
               missing
-                ? "border-dashed border-slate-600/45 bg-surface-950/50"
+                ? "border-dashed border-slate-600/45 bg-black/[0.88]"
                 : "border-white/[0.08]",
               key === "evidence" && !missing && "border-emerald-500/15 ring-emerald-500/10"
             )}

@@ -413,7 +413,7 @@ export function DashboardHomeHero() {
       </div>
 
       {/* ── Workflow panel ──────────────────────────────────────────────── */}
-      <div className="rounded-2xl border border-sky-500/20 bg-surface-975/65 p-4 text-left shadow-[0_0_0_1px_rgba(56,189,248,0.08)] sm:p-5">
+      <div className="rounded-2xl border border-sky-500/20 bg-black/[0.94] p-4 text-left shadow-[0_0_0_1px_rgba(56,189,248,0.08)] sm:p-5">
           <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-sky-500/30 bg-sky-500/10 px-3 py-1 text-[11px] font-semibold text-sky-200/95">
             <span
               className={cn(
@@ -460,7 +460,7 @@ export function DashboardHomeHero() {
                     ? "border-emerald-500/40 bg-emerald-500/15 text-emerald-200"
                     : step.active
                       ? "border-amber-500/45 bg-amber-500/20 text-amber-200"
-                    : "border-white/[0.12] bg-surface-900/60 text-slate-400"
+                    : "border-white/[0.12] bg-black/[0.82] text-slate-400"
                 )}
               >
                 {step.k} {step.label}
@@ -497,7 +497,7 @@ export function DashboardHomeHero() {
               }}
               placeholder="Key or words from summary"
               autoComplete="off"
-              className="w-full rounded-xl border border-white/[0.12] bg-surface-900/80 px-3.5 py-2.5 text-sm font-medium text-slate-100 outline-none transition placeholder:text-slate-600 focus:border-sky-400/55 focus:ring-2 focus:ring-sky-500/25"
+              className="w-full rounded-xl border border-white/[0.12] bg-black/[0.82] px-3.5 py-2.5 text-sm font-medium text-slate-100 outline-none transition placeholder:text-slate-600 focus:border-sky-400/55 focus:ring-2 focus:ring-sky-500/25"
             />
             <button
               type="button"
@@ -535,7 +535,7 @@ export function DashboardHomeHero() {
             </div>
           ) : null}
           {searchResults !== null && !searchLoading ? (
-            <div className="mt-3 rounded-xl border border-white/[0.08] bg-surface-900/40 p-2 text-left ring-1 ring-white/[0.04]">
+            <div className="mt-3 rounded-xl border border-white/[0.08] bg-black/[0.82] p-2 text-left ring-1 ring-white/[0.04]">
               {searchResults.length === 0 ? (
                 <p className="px-2 py-2 text-xs text-slate-500">
                   No tickets matched. Try another term or use an exact key below.
@@ -548,7 +548,7 @@ export function DashboardHomeHero() {
                         type="button"
                         onClick={() => selectSearchHit(hit)}
                         disabled={ticketLoading}
-                        className="w-full rounded-lg border border-transparent px-2 py-2 text-left transition hover:border-sky-500/25 hover:bg-surface-900/80 disabled:cursor-not-allowed disabled:opacity-60"
+                        className="w-full rounded-lg border border-transparent px-2 py-2 text-left transition hover:border-sky-500/25 hover:bg-black/[0.82] disabled:cursor-not-allowed disabled:opacity-60"
                       >
                         <div className="flex flex-wrap items-center justify-between gap-2">
                           <span className="font-mono text-xs font-semibold text-sky-300">
@@ -588,7 +588,7 @@ export function DashboardHomeHero() {
               value={ticketKey}
               onChange={(e) => setTicketKey(e.target.value.toUpperCase())}
               placeholder="LOG-123"
-              className="w-full rounded-xl border border-white/[0.12] bg-surface-900/80 px-3.5 py-2.5 text-sm font-medium text-slate-100 outline-none transition placeholder:text-slate-600 focus:border-sky-400/55 focus:ring-2 focus:ring-sky-500/25"
+              className="w-full rounded-xl border border-white/[0.12] bg-black/[0.82] px-3.5 py-2.5 text-sm font-medium text-slate-100 outline-none transition placeholder:text-slate-600 focus:border-sky-400/55 focus:ring-2 focus:ring-sky-500/25"
             />
             <button
               type="button"
@@ -631,7 +631,7 @@ export function DashboardHomeHero() {
             </div>
           ) : null}
           {ticket ? (
-            <div className="mt-4 rounded-xl border border-white/[0.08] bg-surface-900/55 p-4 ring-1 ring-white/[0.04]">
+            <div className="mt-4 rounded-xl border border-white/[0.08] bg-black/[0.82] p-4 ring-1 ring-white/[0.04]">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <p className="font-mono text-sm font-semibold text-sky-300">{ticket.key}</p>
                 <span className="rounded-full border border-white/[0.12] bg-white/[0.03] px-2.5 py-1 text-[11px] font-semibold text-slate-300">
@@ -675,7 +675,7 @@ export function DashboardHomeHero() {
             </div>
           ) : null}
 
-          <div className="mt-5 rounded-xl border border-white/[0.08] bg-surface-900/55 p-4">
+          <div className="mt-5 rounded-xl border border-white/[0.08] bg-black/[0.82] p-4">
             <div className="flex items-center gap-2">
               <span className="rounded-full border border-white/[0.16] bg-white/[0.03] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-300">
                 Step 2-3
@@ -745,7 +745,7 @@ export function DashboardHomeHero() {
                     type="checkbox"
                     checked={confirmedLogInput}
                     onChange={(e) => setConfirmedLogInput(e.target.checked)}
-                    className="h-4 w-4 rounded border-white/20 bg-surface-900"
+                    className="h-4 w-4 rounded border-white/20 bg-black/[0.85]"
                   />
                   Confirm this log file as RCA input
                 </label>
@@ -753,7 +753,7 @@ export function DashboardHomeHero() {
             ) : null}
           </div>
 
-          <div className="mt-5 rounded-xl border border-white/[0.08] bg-surface-900/55 p-4">
+          <div className="mt-5 rounded-xl border border-white/[0.08] bg-black/[0.82] p-4">
             <div className="flex items-center gap-2">
               <span className="rounded-full border border-white/[0.16] bg-white/[0.03] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-300">
                 Step 4
@@ -825,7 +825,7 @@ export function DashboardHomeHero() {
                   {workflowInfo}
                 </div>
               ) : null}
-              <div className="mt-3 rounded-lg border border-emerald-500/25 bg-gradient-to-br from-emerald-500/[0.12] to-surface-900/70 p-4">
+              <div className="mt-3 rounded-lg border border-emerald-500/25 bg-gradient-to-br from-emerald-500/[0.12] to-black/[0.85] p-4">
                 <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-emerald-200/90">
                   Primary root cause
                 </p>
@@ -843,7 +843,7 @@ export function DashboardHomeHero() {
                 )}
               </div>
               <div className="mt-3 grid gap-3 lg:grid-cols-2">
-                <div className="rounded-lg border border-white/[0.08] bg-surface-900/65 p-3">
+                <div className="rounded-lg border border-white/[0.08] bg-black/[0.82] p-3">
                   <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
                     Evidence summary
                   </p>
@@ -860,7 +860,7 @@ export function DashboardHomeHero() {
                     <p className="mt-2 text-xs text-slate-500">No evidence bullets for this run.</p>
                   )}
                 </div>
-                <div className="rounded-lg border border-white/[0.08] bg-surface-900/65 p-3">
+                <div className="rounded-lg border border-white/[0.08] bg-black/[0.82] p-3">
                   <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
                     Extracted log signals
                   </p>
@@ -879,7 +879,7 @@ export function DashboardHomeHero() {
                 </div>
               </div>
               <div className="mt-3 grid gap-3 lg:grid-cols-2">
-                <div className="rounded-lg border border-white/[0.08] bg-surface-900/65 p-3">
+                <div className="rounded-lg border border-white/[0.08] bg-black/[0.82] p-3">
                   <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
                     Ticket context
                   </p>
@@ -896,7 +896,7 @@ export function DashboardHomeHero() {
                     <p className="mt-2 text-xs text-slate-500">Ticket context unavailable.</p>
                   )}
                 </div>
-                <div className="rounded-lg border border-white/[0.08] bg-surface-900/65 p-3">
+                <div className="rounded-lg border border-white/[0.08] bg-black/[0.82] p-3">
                   <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
                     Log input summary
                   </p>
@@ -910,7 +910,7 @@ export function DashboardHomeHero() {
                   </ul>
                 </div>
               </div>
-              <div className="mt-3 rounded-lg border border-white/[0.08] bg-surface-900/65 p-3">
+              <div className="mt-3 rounded-lg border border-white/[0.08] bg-black/[0.82] p-3">
                 <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
                   Explanation
                 </p>
@@ -922,7 +922,7 @@ export function DashboardHomeHero() {
                   </p>
                 )}
               </div>
-              <div className="mt-3 rounded-lg border border-white/[0.08] bg-surface-900/65 p-3">
+              <div className="mt-3 rounded-lg border border-white/[0.08] bg-black/[0.82] p-3">
                 <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
                   Remediation suggestions
                 </p>
@@ -944,7 +944,7 @@ export function DashboardHomeHero() {
             </div>
           ) : null}
 
-          <div className="mt-5 rounded-xl border border-white/[0.08] bg-surface-900/40 p-4 ring-1 ring-white/[0.03]">
+          <div className="mt-5 rounded-xl border border-white/[0.08] bg-black/[0.82] p-4 ring-1 ring-white/[0.03]">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0 text-left">
                 <div className="flex items-center gap-2">
@@ -989,7 +989,7 @@ export function DashboardHomeHero() {
                         type="button"
                         onClick={() => restoreRecentInvestigation(entry)}
                         title={`Open from ${formatDateTime(entry.timestamp)}`}
-                        className="group flex w-full items-start gap-2 rounded-lg border border-white/[0.06] bg-surface-900/60 px-2.5 py-2 text-left transition hover:border-sky-500/35 hover:bg-surface-900/90"
+                        className="group flex w-full items-start gap-2 rounded-lg border border-white/[0.06] bg-black/[0.82] px-2.5 py-2 text-left transition hover:border-sky-500/35 hover:bg-black/[0.82]"
                       >
                         <div className="min-w-0 flex-1">
                           <div className="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-0.5">
@@ -1040,8 +1040,8 @@ export function DashboardHomeHero() {
           <a
             href="#workspace-explore"
             className={cn(
-              "cta-shimmer-secondary inline-flex min-w-[10rem] items-center justify-center gap-2 rounded-xl border border-white/[0.12] bg-surface-900/50 px-6 py-3 text-sm font-semibold text-slate-100 backdrop-blur-sm transition",
-              "hover:border-sky-500/30 hover:bg-surface-900/75 hover:text-white",
+              "cta-shimmer-secondary inline-flex min-w-[10rem] items-center justify-center gap-2 rounded-xl border border-white/[0.12] bg-black/[0.82] px-6 py-3 text-sm font-semibold text-slate-100 backdrop-blur-sm transition",
+              "hover:border-sky-500/30 hover:bg-black/[0.82] hover:text-white",
               "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400/70"
             )}
           >

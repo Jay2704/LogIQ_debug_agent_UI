@@ -27,7 +27,7 @@ const navGroups = [
 
 export function Sidebar() {
   return (
-    <aside className="fixed left-0 top-0 z-40 hidden h-screen w-[240px] flex-col border-r border-cyber/[0.08] bg-surface-975/[0.95] backdrop-blur-2xl md:flex">
+    <aside className="fixed left-0 top-0 z-40 hidden h-screen w-[240px] flex-col border-r border-cyber/[0.08] bg-black/[0.96] backdrop-blur-2xl md:flex">
       {/* Scanline overlay */}
       <div
         className="pointer-events-none absolute inset-0 z-0 opacity-[0.4]"
@@ -125,7 +125,7 @@ export function Sidebar() {
 
       {/* Footer */}
       <div className="relative border-t border-cyber/[0.06] p-3">
-        <div className="rounded-card border border-cyber/[0.08] bg-surface-950/80 p-3 font-mono">
+        <div className="rounded-card border border-cyber/[0.08] bg-black/[0.6] p-3 font-mono">
           <div className="flex items-center gap-2">
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-700">
               ENV

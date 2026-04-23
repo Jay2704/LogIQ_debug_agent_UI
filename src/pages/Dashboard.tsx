@@ -42,7 +42,7 @@ function KpiStripSkeleton() {
       {Array.from({ length: 4 }).map((_, i) => (
         <div
           key={i}
-          className="h-[120px] animate-pulse rounded-card border border-white/[0.06] bg-surface-975/60 ring-1 ring-inset ring-white/[0.04]"
+          className="h-[120px] animate-pulse rounded-card border border-white/[0.06] bg-black/[0.94] ring-1 ring-inset ring-white/[0.04]"
         />
       ))}
     </section>
@@ -59,7 +59,7 @@ function InvestigationGridSkeleton() {
       {Array.from({ length: 6 }).map((_, i) => (
         <div
           key={i}
-          className="h-[168px] animate-pulse rounded-card border border-blue-500/10 bg-surface-975/50"
+          className="h-[168px] animate-pulse rounded-card border border-blue-500/10 bg-black/[0.94]"
         />
       ))}
     </div>
@@ -69,8 +69,8 @@ function InvestigationGridSkeleton() {
 function WidgetsRowSkeleton() {
   return (
     <section className="grid gap-6 lg:grid-cols-12" aria-busy="true">
-      <div className="h-[min(22rem,55vh)] animate-pulse rounded-card border border-indigo-500/15 bg-surface-975/50 lg:col-span-5" />
-      <div className="h-[min(22rem,55vh)] animate-pulse rounded-card border border-cyan-500/15 bg-surface-975/50 lg:col-span-7" />
+      <div className="h-[min(22rem,55vh)] animate-pulse rounded-card border border-indigo-500/15 bg-black/[0.94] lg:col-span-5" />
+      <div className="h-[min(22rem,55vh)] animate-pulse rounded-card border border-cyan-500/15 bg-black/[0.94] lg:col-span-7" />
     </section>
   );
 }
@@ -199,7 +199,7 @@ export function Dashboard() {
         />
       </section>
 
-      <section className="flex flex-col gap-3 rounded-2xl border border-white/[0.06] bg-surface-975/40 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+      <section className="flex flex-col gap-3 rounded-2xl border border-white/[0.06] bg-black/[0.94] p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
         <div>
           {USE_HTTP_API && !jobsLoading && !jobsError ? (
             <p className="text-xs font-medium text-emerald-400/90">
@@ -213,7 +213,7 @@ export function Dashboard() {
         </div>
         <div className="flex flex-col items-stretch gap-2 sm:items-end">
           <div className="rounded-2xl bg-gradient-to-r from-sky-500/30 via-blue-600/25 to-violet-600/25 p-[1px] shadow-[0_0_40px_-8px_rgba(56,189,248,0.35)]">
-            <div className="rounded-2xl bg-surface-975/95 p-1.5">
+            <div className="rounded-2xl bg-black/[0.94] p-1.5">
               <RunDebugButton
                 to="/jobs"
                 disabled={!roleCaps.canUseRunDebugShortcut}
@@ -300,7 +300,7 @@ export function Dashboard() {
           {jobsLoading ? (
             <InvestigationGridSkeleton />
           ) : jobsError ? (
-            <div className="rounded-card border border-white/[0.08] bg-surface-975/50 px-5 py-10 text-center">
+            <div className="rounded-card border border-white/[0.08] bg-black/[0.94] px-5 py-10 text-center">
               <p className="text-sm text-slate-400">
                 Recent jobs unavailable — the jobs API request failed.
               </p>
@@ -319,7 +319,7 @@ export function Dashboard() {
               </button>
             </div>
           ) : investigations.length === 0 ? (
-            <div className="rounded-card border border-dashed border-slate-700/60 bg-surface-975/40 px-5 py-10 text-center text-sm text-slate-500">
+            <div className="rounded-card border border-dashed border-slate-700/60 bg-black/[0.94] px-5 py-10 text-center text-sm text-slate-500">
               No jobs yet.{" "}
               {canCreateJobFromRole ? (
                 <>
@@ -365,7 +365,7 @@ export function Dashboard() {
 
         <div className="space-y-5 xl:col-span-4">
           <SystemHealthPanel rcaWorkersBusy={jobsLoading ? 0 : running} />
-          <div className="rounded-card border border-blue-500/15 bg-gradient-to-br from-surface-900/90 to-surface-975 p-5 shadow-card">
+          <div className="rounded-card border border-blue-500/15 bg-gradient-to-br from-black/[0.85] to-black/[0.96] p-5 shadow-card">
             <div className="flex items-center gap-2">
               <TrendingUp className="h-4 w-4 text-sky-400" />
               <h3 className="text-sm font-bold text-white">Mean RCA confidence</h3>
@@ -418,7 +418,7 @@ export function Dashboard() {
       <section className="relative rounded-2xl bg-black/[0.96] overflow-hidden border border-cyber/[0.15] shadow-[0_0_80px_-20px_rgba(34,211,238,0.12)]">
         <Spotlight className="-top-40 left-0 md:left-60 md:-top-20" fill="white" />
         <div className="relative z-10 grid gap-6 lg:grid-cols-2 p-6">
-          <div className="rounded-card border border-amber-500/20 bg-gradient-to-br from-amber-500/[0.08] via-surface-925/98 to-surface-975 p-6 shadow-card-premium">
+          <div className="rounded-card border border-amber-500/20 bg-gradient-to-br from-amber-500/[0.08] via-black/[0.84] to-black/[0.96] p-6 shadow-card-premium">
             <div className="flex items-center gap-2">
               <ShieldAlert className="h-5 w-5 text-amber-400" />
               <h2 className="text-base font-bold text-white">Latest anomalies</h2>
@@ -430,7 +430,7 @@ export function Dashboard() {
               {recentAnomalies.map((a) => (
                 <li
                   key={a.id}
-                  className="rounded-xl border border-white/[0.06] bg-surface-975/90 px-4 py-3"
+                  className="rounded-xl border border-white/[0.06] bg-black/[0.94] px-4 py-3"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <span className="font-mono text-xs text-violet-300">{a.id}</span>
@@ -459,7 +459,7 @@ export function Dashboard() {
             <div
               className={cn(
                 "rounded-card border border-violet-500/25 p-5 shadow-glow-violet",
-                "bg-gradient-to-br from-violet-500/15 via-surface-925 to-surface-975"
+                "bg-gradient-to-br from-violet-500/15 via-black/[0.88] to-black/[0.96]"
               )}
             >
               <Sparkles className="h-5 w-5 text-violet-400" />
@@ -471,7 +471,7 @@ export function Dashboard() {
                 payment-gateway in the last 7 days — monitor confirm-path deploys.
               </p>
             </div>
-            <div className="rounded-card border border-white/[0.08] bg-surface-975/80 p-5 shadow-inner">
+            <div className="rounded-card border border-white/[0.08] bg-black/[0.94] p-5 shadow-inner">
               <Zap className="h-5 w-5 text-sky-400" />
               <p className="mt-3 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
                 Determinism
@@ -480,7 +480,7 @@ export function Dashboard() {
                 82% of on-call replays matched the same ranked file path as LogIQ.
               </p>
             </div>
-            <div className="rounded-card border border-white/[0.08] bg-surface-975/80 p-5 shadow-inner">
+            <div className="rounded-card border border-white/[0.08] bg-black/[0.94] p-5 shadow-inner">
               <Timer className="h-5 w-5 text-amber-400" />
               <p className="mt-3 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
                 Triage SLA
@@ -489,7 +489,7 @@ export function Dashboard() {
                 P50 first triage: 2m 14s · P95: 6m 02s (rolling 7d).
               </p>
             </div>
-            <div className="rounded-card border border-white/[0.08] bg-surface-975/80 p-5 shadow-inner">
+            <div className="rounded-card border border-white/[0.08] bg-black/[0.94] p-5 shadow-inner">
               <Activity className="h-5 w-5 text-emerald-400" />
               <p className="mt-3 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
                 Coverage

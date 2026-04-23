@@ -23,7 +23,7 @@ export function StackTraceParserWorkspace({
         <p className="text-sm text-slate-400">
           Parse stack-trace-like entries from the uploaded log content.
         </p>
-        <p className="mt-2 rounded-lg border border-white/[0.08] bg-surface-960/70 px-3 py-2 font-mono text-[11px] text-slate-500">
+        <p className="mt-2 rounded-lg border border-white/[0.08] bg-black/[0.92] px-3 py-2 font-mono text-[11px] text-slate-500">
           {logContent ? `${logContent.length.toLocaleString()} characters ready` : "No uploaded log"}
         </p>
         <div className="mt-5">
@@ -44,7 +44,7 @@ export function StackTraceParserWorkspace({
               (f, idx) => (
               <li
                 key={idx}
-                className="rounded-lg border border-white/[0.06] bg-surface-960/70 px-3 py-2.5"
+                className="rounded-lg border border-white/[0.06] bg-black/[0.92] px-3 py-2.5"
               >
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <span className="font-mono text-[10px] text-slate-500">#{f.frame}</span>

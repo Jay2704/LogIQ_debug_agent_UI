@@ -41,7 +41,7 @@ function RootCausePathBlock({ path }: { path: string }) {
     return (
       <div className="rounded-xl border border-dashed border-amber-500/25 bg-gradient-to-br from-amber-500/[0.06] to-[#060a12]/90 px-4 py-4 shadow-inner ring-1 ring-inset ring-amber-500/10">
         <div className="flex gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-slate-600/40 bg-surface-950/80">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-slate-600/40 bg-black/[0.88]">
             <FileCode2 className="h-5 w-5 text-slate-500" strokeWidth={1.75} />
           </div>
           <div className="min-w-0">
@@ -128,7 +128,7 @@ function CandidateWhyStrip({ rca }: { rca: RcaResult }) {
         Top pick from deterministic ranking — not from the assistive layer.
       </p>
       <div className="mt-3 grid gap-2.5 sm:grid-cols-3">
-        <div className="rounded-lg border border-white/[0.06] bg-surface-950/50 px-3 py-2.5">
+        <div className="rounded-lg border border-white/[0.06] bg-black/[0.88] px-3 py-2.5">
           <div className="flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-wide text-slate-500">
             <Hash className="h-3 w-3 text-emerald-500/80" strokeWidth={2.5} />
             Ranking
@@ -178,7 +178,7 @@ export function RcaResultCard({
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-2xl border-2 border-violet-500/40 bg-gradient-to-br from-violet-500/[0.18] via-[#0a0f1c] to-surface-975 p-6 sm:p-8",
+        "relative overflow-hidden rounded-2xl border-2 border-violet-500/40 bg-gradient-to-br from-violet-500/[0.18] via-[#0a0f1c] to-black/[0.96] p-6 sm:p-8",
         "shadow-[0_0_0_1px_rgba(139,92,246,0.25),0_20px_64px_-24px_rgba(0,0,0,0.65),0_0_100px_-30px_rgba(139,92,246,0.35)]",
         "ring-1 ring-inset ring-white/[0.07]",
         className

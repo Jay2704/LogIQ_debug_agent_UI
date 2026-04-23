@@ -44,8 +44,8 @@ export function InvestigationCard({
       <Link
         to={`/jobs/${encodeURIComponent(getJobRouteId(job))}`}
         className={cn(
-          "nexus-card-scanline group relative block overflow-hidden rounded-card border border-cyber/[0.1] bg-surface-925/80 p-4 transition-all duration-200",
-          "hover:border-cyber/[0.25] hover:bg-surface-900/90 hover:shadow-glow-cyber",
+          "nexus-card-scanline group relative block overflow-hidden rounded-card border border-cyber/[0.1] bg-black/[0.88] p-4 transition-all duration-200",
+          "hover:border-cyber/[0.25] hover:bg-black/[0.96] hover:shadow-glow-cyber",
           className
         )}
       >

@@ -74,7 +74,7 @@ export function DashboardKpiCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.45, delay: index * 0.08, ease: "easeOut" }}
       className={cn(
-        "nexus-card-scanline relative overflow-hidden rounded-card border bg-surface-925/80 p-5",
+        "nexus-card-scanline relative overflow-hidden rounded-card border bg-black/[0.88] p-5",
         a.border,
         a.glow
       )}

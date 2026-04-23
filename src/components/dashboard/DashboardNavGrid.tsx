@@ -29,7 +29,7 @@ export function DashboardNavGrid({
     forPublicLanding ? "/login" : item.to;
 
   return (
-    <section className="relative overflow-hidden rounded-card border border-cyber/[0.12] bg-surface-925/80 p-5 shadow-card-premium sm:p-7">
+    <section className="relative overflow-hidden rounded-card border border-cyber/[0.12] bg-black/[0.88] p-5 shadow-card-premium sm:p-7">
       <div className="pointer-events-none absolute -right-24 top-0 h-64 w-64 rounded-full bg-cyber/[0.06] blur-3xl" />
       <div className="pointer-events-none absolute -left-16 bottom-0 h-48 w-48 rounded-full bg-nexus/[0.05] blur-3xl" />
       <div className="relative">
@@ -65,7 +65,7 @@ export function DashboardNavGrid({
                       "flex h-11 w-11 items-center justify-center rounded-card ring-1 transition-colors duration-300",
                       isActive
                         ? "bg-cyber/[0.15] ring-cyber/[0.3]"
-                        : "bg-surface-950/80 ring-cyber/[0.08] group-hover:bg-cyber/[0.1] group-hover:ring-cyber/[0.22]"
+                        : "bg-black/[0.6] ring-cyber/[0.08] group-hover:bg-cyber/[0.1] group-hover:ring-cyber/[0.22]"
                     )}
                   >
                     <Icon
@@ -95,7 +95,7 @@ export function DashboardNavGrid({
             );
 
             const cardClass = cn(
-              "nexus-card-scanline group relative block overflow-hidden rounded-card border border-cyber/[0.08] bg-surface-975/70 p-4 text-left transition-all duration-200",
+              "nexus-card-scanline group relative block overflow-hidden rounded-card border border-cyber/[0.08] bg-black/[0.85] p-4 text-left transition-all duration-200",
               "hover:-translate-y-0.5 hover:border-cyber/[0.22] hover:shadow-glow-cyber",
               "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400/60",
               isActive && "ring-1 ring-cyber/[0.3] border-cyber/[0.2]"

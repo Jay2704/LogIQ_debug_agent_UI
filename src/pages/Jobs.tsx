@@ -205,7 +205,7 @@ export function Jobs() {
           </p>
           {summary ? (
             <div className="mt-5 flex flex-wrap gap-3">
-              <span className="inline-flex items-center gap-2 rounded-xl border border-white/[0.08] bg-surface-975/80 px-3 py-2 text-xs text-slate-400">
+              <span className="inline-flex items-center gap-2 rounded-xl border border-white/[0.08] bg-black/[0.7] px-3 py-2 text-xs text-slate-400">
                 <ListTodo className="h-3.5 w-3.5 text-slate-500" />
                 <span className="font-mono font-semibold tabular-nums text-slate-200">
                   {summary.total}
@@ -289,7 +289,7 @@ export function Jobs() {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-blue-500/15 bg-gradient-to-br from-surface-900/50 to-surface-975/80 p-5 shadow-inner sm:p-6">
+      <div className="rounded-2xl border border-cyber/[0.12] bg-black/[0.88] p-5 shadow-inner sm:p-6">
         <div className="flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
           <div className="min-w-0 flex-1 space-y-2">
             <label

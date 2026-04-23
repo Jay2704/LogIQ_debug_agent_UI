@@ -27,7 +27,7 @@ export function AuthLayout({
   return (
     <div
       className={cn(
-        "relative min-h-screen overflow-x-hidden bg-surface-975 text-slate-200",
+        "relative min-h-screen overflow-x-hidden bg-[#040C18] text-slate-200",
         className
       )}
     >
@@ -78,7 +78,7 @@ export function AuthLayout({
                 {highlightBadges.map(({ label, icon: Icon }) => (
                   <span
                     key={label}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-cyber/[0.15] bg-surface-950/80 px-2.5 py-1 text-[11px] font-medium text-slate-300 shadow-glow-cyber ring-1 ring-cyber/[0.06] transition hover:border-cyber/[0.3] hover:text-cyan-300"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-cyber/[0.15] bg-black/[0.88] px-2.5 py-1 text-[11px] font-medium text-slate-300 shadow-glow-cyber ring-1 ring-cyber/[0.06] transition hover:border-cyber/[0.3] hover:text-cyan-300"
                   >
                     <Icon className="h-3.5 w-3.5 text-cyber/80" strokeWidth={2} />
                     {label}
@@ -134,7 +134,7 @@ export function AuthLayout({
               {highlightBadges.map(({ label, icon: Icon }) => (
                 <span
                   key={label}
-                  className="inline-flex items-center gap-1 rounded-full border border-white/[0.08] bg-surface-975/70 px-2 py-0.5 text-[10px] font-medium text-slate-400"
+                  className="inline-flex items-center gap-1 rounded-full border border-white/[0.08] bg-black/[0.7] px-2 py-0.5 text-[10px] font-medium text-slate-400"
                 >
                   <Icon className="h-3 w-3 text-sky-400/80" strokeWidth={2} />
                   {label}
@@ -155,7 +155,7 @@ export function AuthLayout({
               />
               <div
                 className={cn(
-                  "relative rounded-card border border-cyber/[0.18] bg-surface-925/95",
+                  "relative rounded-card border border-cyber/[0.18] bg-black/[0.96]",
                   "p-6 shadow-glow-cyber",
                   "ring-1 ring-cyber/[0.06] transition duration-300 ease-out will-change-transform",
                   "group-hover:-translate-y-0.5 group-hover:border-cyber/[0.28]",

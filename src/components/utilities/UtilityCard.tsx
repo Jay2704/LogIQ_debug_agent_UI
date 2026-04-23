@@ -17,7 +17,7 @@ export function UtilityCard({ tool, className }: UtilityCardProps) {
   return (
     <div
       className={cn(
-        "group relative flex flex-col overflow-hidden rounded-2xl border border-white/[0.08] bg-gradient-to-b from-surface-850/90 via-surface-960 to-surface-975 p-5 shadow-card transition-all duration-200",
+        "group relative flex flex-col overflow-hidden rounded-2xl border border-white/[0.08] bg-gradient-to-b from-black/[0.75] via-black/[0.92] to-black/[0.96] p-5 shadow-card transition-all duration-200",
         "hover:border-sky-500/25 hover:shadow-[0_12px_48px_-24px_rgba(56,189,248,0.15)]",
         className
       )}
@@ -27,7 +27,7 @@ export function UtilityCard({ tool, className }: UtilityCardProps) {
         <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-sky-500/15 ring-1 ring-sky-500/25">
           <Icon className="h-5 w-5 text-sky-300" strokeWidth={1.75} />
         </div>
-        <span className="rounded-lg border border-white/[0.06] bg-surface-975/80 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-slate-500">
+        <span className="rounded-lg border border-white/[0.06] bg-black/[0.94] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-slate-500">
           {categoryLabel}
         </span>
       </div>

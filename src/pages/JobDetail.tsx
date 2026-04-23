@@ -176,7 +176,7 @@ export function JobDetail() {
               </button>
               <Link
                 to="/jobs"
-                className="rounded-xl border border-white/[0.12] bg-surface-975/80 px-5 py-2.5 text-sm font-semibold text-slate-300 transition hover:border-white/[0.2] hover:text-white"
+                className="rounded-xl border border-white/[0.12] bg-black/[0.94] px-5 py-2.5 text-sm font-semibold text-slate-300 transition hover:border-white/[0.2] hover:text-white"
               >
                 Back to jobs
               </Link>
@@ -248,7 +248,7 @@ export function JobDetail() {
               <Link
                 to="/jobs"
                 className={cn(
-                  "inline-flex items-center gap-2 rounded-xl border border-white/[0.12] bg-surface-975/80 px-5 py-2.5 text-sm font-semibold text-slate-300 transition hover:border-white/[0.2] hover:text-white"
+                  "inline-flex items-center gap-2 rounded-xl border border-white/[0.12] bg-black/[0.94] px-5 py-2.5 text-sm font-semibold text-slate-300 transition hover:border-white/[0.2] hover:text-white"
                 )}
               >
                 Back to jobs
@@ -326,19 +326,19 @@ export function JobDetail() {
           ) : null}
           <div className="mt-3 flex flex-wrap gap-2">
             {job.service ? (
-              <span className="rounded-lg border border-blue-500/15 bg-surface-900/80 px-2.5 py-1 font-mono text-xs text-slate-300">
+              <span className="rounded-lg border border-blue-500/15 bg-black/[0.82] px-2.5 py-1 font-mono text-xs text-slate-300">
                 {job.service}
               </span>
             ) : null}
-            <span className="rounded-lg border border-white/[0.08] bg-surface-900/60 px-2.5 py-1 text-xs text-slate-400">
+            <span className="rounded-lg border border-white/[0.08] bg-black/[0.82] px-2.5 py-1 text-xs text-slate-400">
               Trigger · {triggerDisplay}
             </span>
-            <span className="rounded-lg border border-white/[0.08] bg-surface-900/60 px-2.5 py-1 font-mono text-xs text-slate-500">
+            <span className="rounded-lg border border-white/[0.08] bg-black/[0.82] px-2.5 py-1 font-mono text-xs text-slate-500">
               {formatDateTime(job.createdAt)}
             </span>
             {job.triggeredByUserId ? (
               <span
-                className="rounded-lg border border-white/[0.08] bg-surface-900/60 px-2.5 py-1 font-mono text-xs text-slate-400"
+                className="rounded-lg border border-white/[0.08] bg-black/[0.82] px-2.5 py-1 font-mono text-xs text-slate-400"
                 title="triggered_by_user_id"
               >
                 User · {job.triggeredByUserId}
@@ -371,7 +371,7 @@ export function JobDetail() {
         </div>
       ) : null}
 
-      <section className="rounded-2xl border border-blue-500/15 bg-gradient-to-br from-surface-975/95 to-surface-900/40 p-5 shadow-card sm:p-6">
+      <section className="rounded-2xl border border-blue-500/15 bg-gradient-to-br from-black/[0.94] to-black/[0.85] p-5 shadow-card sm:p-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="min-w-0">
             <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-sky-400/90">
@@ -505,7 +505,7 @@ export function JobDetail() {
         ) : null}
       </section>
 
-      <section className="rounded-2xl border border-blue-500/15 bg-surface-975/90 p-4 shadow-card md:p-5">
+      <section className="rounded-2xl border border-blue-500/15 bg-black/[0.94] p-4 shadow-card md:p-5">
         <StepProgressBar stepState={pipelineSteps} />
       </section>
 
@@ -572,7 +572,7 @@ export function JobDetail() {
                       : "bg-gradient-to-br from-slate-700/20 to-transparent"
                   )}
                 >
-                  <div className="rounded-[1.25rem] bg-surface-975/30 backdrop-blur-[2px]">
+                  <div className="rounded-[1.25rem] bg-black/[0.94] backdrop-blur-[2px]">
                     {runBusy ? (
                       <div className="min-h-[min(28rem,70vh)] animate-investigation-reveal rounded-[1.25rem] border border-violet-500/25 bg-slate-950/40 p-6 shadow-inner ring-1 ring-inset ring-violet-500/15">
                         <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-violet-300/90">
@@ -589,7 +589,7 @@ export function JobDetail() {
                     ) : displayRca === null ? (
                       <div
                         className={cn(
-                          "rounded-[1.25rem] border border-amber-500/35 bg-gradient-to-br from-amber-500/[0.1] via-surface-975 to-surface-975 p-8 shadow-inner ring-1 ring-inset ring-amber-500/15",
+                          "rounded-[1.25rem] border border-amber-500/35 bg-gradient-to-br from-amber-500/[0.1] via-black/[0.96] to-black/[0.96] p-8 shadow-inner ring-1 ring-inset ring-amber-500/15",
                           investigationPhase === "ready" &&
                             liveRca !== undefined &&
                             "animate-investigation-reveal"
@@ -747,7 +747,7 @@ export function JobDetail() {
               </p>
             </div>
             <EvidenceList items={evidence} />
-            <section className="rounded-2xl border border-white/[0.08] bg-surface-975/80 p-6 shadow-inner">
+            <section className="rounded-2xl border border-white/[0.08] bg-black/[0.94] p-6 shadow-inner">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <h3 className="text-sm font-bold text-white">Anomaly context</h3>
                 <div className="flex flex-wrap items-center gap-2">
@@ -785,7 +785,7 @@ export function JobDetail() {
             <div className="grid gap-6 lg:grid-cols-12">
               <div className="space-y-6 lg:col-span-7">
                 <JobReportSummaryCard report={report} anomalyId={job.anomalyId} />
-                <div className="rounded-2xl border border-sky-500/20 bg-gradient-to-br from-sky-500/[0.06] to-surface-975 p-6 shadow-inner">
+                <div className="rounded-2xl border border-sky-500/20 bg-gradient-to-br from-sky-500/[0.06] to-black/[0.96] p-6 shadow-inner">
                   <h3 className="text-[10px] font-bold uppercase tracking-[0.14em] text-sky-400/90">
                     Confidence note
                   </h3>
@@ -795,12 +795,12 @@ export function JobDetail() {
                 </div>
               </div>
               <div className="space-y-6 lg:col-span-5">
-                <div className="rounded-2xl border border-white/[0.08] bg-surface-975/60 p-5 shadow-inner">
+                <div className="rounded-2xl border border-white/[0.08] bg-black/[0.94] p-5 shadow-inner">
                   <h3 className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
                     Job metadata
                   </h3>
                   <dl className="mt-4 space-y-3">
-                    <div className="flex items-start gap-2 rounded-xl border border-blue-500/[0.08] bg-surface-975/50 px-3 py-2.5">
+                    <div className="flex items-start gap-2 rounded-xl border border-blue-500/[0.08] bg-black/[0.94] px-3 py-2.5">
                       <CalendarClock className="mt-0.5 h-4 w-4 shrink-0 text-slate-600" />
                       <div>
                         <dt className="text-[10px] font-semibold uppercase tracking-wide text-slate-600">
@@ -811,7 +811,7 @@ export function JobDetail() {
                         </dd>
                       </div>
                     </div>
-                    <div className="flex items-start gap-2 rounded-xl border border-blue-500/[0.08] bg-surface-975/50 px-3 py-2.5">
+                    <div className="flex items-start gap-2 rounded-xl border border-blue-500/[0.08] bg-black/[0.94] px-3 py-2.5">
                       <GitBranch className="mt-0.5 h-4 w-4 shrink-0 text-slate-600" />
                       <div>
                         <dt className="text-[10px] font-semibold uppercase tracking-wide text-slate-600">
@@ -823,7 +823,7 @@ export function JobDetail() {
                       </div>
                     </div>
                     {job.triggeredByUserId ? (
-                      <div className="flex items-start gap-2 rounded-xl border border-blue-500/[0.08] bg-surface-975/50 px-3 py-2.5">
+                      <div className="flex items-start gap-2 rounded-xl border border-blue-500/[0.08] bg-black/[0.94] px-3 py-2.5">
                         <div>
                           <dt className="text-[10px] font-semibold uppercase tracking-wide text-slate-600">
                             Triggered by user
@@ -842,7 +842,7 @@ export function JobDetail() {
 
             <SimilarIncidentsPanel incidents={similarIncidents} />
 
-            <div className="rounded-2xl border border-dashed border-slate-700/60 bg-surface-975/40 p-6">
+            <div className="rounded-2xl border border-dashed border-slate-700/60 bg-black/[0.94] p-6">
               <h3 className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-600">
                 Limitations
               </h3>

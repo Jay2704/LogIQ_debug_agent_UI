@@ -17,7 +17,7 @@ const links = [
 
 export function QuickNav() {
   return (
-    <div className="flex gap-1 overflow-x-auto border-b border-white/[0.08] bg-surface-975/95 px-4 py-2 shadow-inner backdrop-blur-md md:hidden">
+    <div className="flex gap-1 overflow-x-auto border-b border-white/[0.08] bg-black/[0.94] px-4 py-2 shadow-inner backdrop-blur-md md:hidden">
       {links.map((l) => (
         <NavLink
           key={l.to}

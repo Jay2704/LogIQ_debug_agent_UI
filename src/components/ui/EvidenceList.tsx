@@ -11,7 +11,7 @@ export function EvidenceList({ items, className }: EvidenceListProps) {
   return (
     <div
       className={cn(
-        "rounded-card border border-sky-500/20 bg-gradient-to-b from-surface-900/90 to-surface-975 p-5 shadow-card",
+        "rounded-card border border-sky-500/20 bg-gradient-to-b from-black/[0.85] to-black/[0.96] p-5 shadow-card",
         className
       )}
     >
@@ -30,7 +30,7 @@ export function EvidenceList({ items, className }: EvidenceListProps) {
         </div>
       </div>
       {items.length === 0 ? (
-        <p className="mt-4 rounded-lg border border-dashed border-slate-700/60 bg-surface-975/50 px-4 py-6 text-center text-sm text-slate-500">
+        <p className="mt-4 rounded-lg border border-dashed border-slate-700/60 bg-black/[0.94] px-4 py-6 text-center text-sm text-slate-500">
           No evidence items attached yet. Complete the evidence step to populate
           this list.
         </p>
@@ -42,7 +42,7 @@ export function EvidenceList({ items, className }: EvidenceListProps) {
               className="rounded-xl border border-blue-500/[0.12] bg-[#060a12]/80 shadow-inner"
             >
               <div className="flex flex-wrap items-center gap-2 border-b border-white/[0.05] px-3 py-2 font-mono text-[10px] text-slate-500">
-                <span className="rounded bg-surface-900 px-1.5 py-0.5 text-sky-500/90">
+                <span className="rounded bg-black/[0.85] px-1.5 py-0.5 text-sky-500/90">
                   EVIDENCE_{String(index + 1).padStart(2, "0")}
                 </span>
                 <span className="text-slate-600">·</span>

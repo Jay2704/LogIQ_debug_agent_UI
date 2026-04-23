@@ -34,7 +34,7 @@ export function RootCauseHeuristicsWorkspace({
             {sampleFindings.map((f) => (
               <li
                 key={f.id}
-                className="flex items-start gap-2 rounded-lg border border-white/[0.06] bg-surface-960/60 px-3 py-2 text-sm text-slate-300"
+                className="flex items-start gap-2 rounded-lg border border-white/[0.06] bg-black/[0.92] px-3 py-2 text-sm text-slate-300"
               >
                 <Activity className="mt-0.5 h-4 w-4 shrink-0 text-sky-400/80" />
                 {f.label}
@@ -59,7 +59,7 @@ export function RootCauseHeuristicsWorkspace({
             {MOCK_HEURISTIC_CLUSTERS.map((c) => (
               <li
                 key={c.rank}
-                className="rounded-xl border border-white/[0.08] bg-surface-960/80 p-4"
+                className="rounded-xl border border-white/[0.08] bg-black/[0.92] p-4"
               >
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="flex items-center gap-2">

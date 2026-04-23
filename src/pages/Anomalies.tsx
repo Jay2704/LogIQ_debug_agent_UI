@@ -53,7 +53,7 @@ export function Anomalies() {
         {sorted.map((a) => (
           <div
             key={a.id}
-            className="group rounded-card border border-blue-500/[0.12] bg-gradient-to-br from-surface-850/85 via-surface-960 to-surface-975 p-5 shadow-card-premium transition hover:border-blue-500/25"
+            className="group rounded-card border border-cyber/[0.12] bg-black/[0.88] p-5 shadow-card-premium transition hover:border-cyber/[0.25]"
           >
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div className="flex flex-wrap items-center gap-2">

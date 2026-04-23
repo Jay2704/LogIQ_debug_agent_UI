@@ -40,33 +40,54 @@
     @apply text-[11px] font-bold uppercase tracking-[0.18em] text-cyan-400;
   }
   .ui-page-title {
-    @apply font-display text-2xl font-bold tracking-tight text-white sm:text-3xl;
+    @apply font-display text-2xl font-bold tracking-tight sm:text-3xl;
+    background: linear-gradient(to bottom, #f5f5f5, #a3a3a3);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
   .ui-page-desc {
     @apply mt-2 max-w-2xl text-sm leading-relaxed text-slate-500;
   }
   .ui-section-title {
-    @apply font-display text-xl font-bold tracking-tight text-white sm:text-2xl;
+    @apply font-display text-xl font-bold tracking-tight sm:text-2xl;
+    background: linear-gradient(to bottom, #f5f5f5, #a3a3a3);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
   .ui-section-desc {
     @apply mt-2 max-w-2xl text-sm leading-relaxed text-slate-500;
   }
 
-  /* NEXUS card — sharp, cyan-bordered, minimal */
+  /* Reusable heading gradient — apply to any heading */
+  .heading-gradient {
+    background: linear-gradient(to bottom, #f5f5f5, #a3a3a3);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Dark immersive page hero section */
+  .ui-page-hero {
+    @apply relative rounded-2xl overflow-hidden border border-cyber/[0.15] bg-black/[0.96] shadow-[0_0_80px_-20px_rgba(34,211,238,0.15)];
+  }
+
+  /* NEXUS card — sharp, cyber-bordered, near-black */
   .ui-card {
-    @apply rounded-card border border-cyber/[0.12] bg-surface-925/90 shadow-card;
+    @apply rounded-card border border-cyber/[0.12] bg-black/[0.8] shadow-card;
   }
   .ui-card-elevated {
-    @apply rounded-card border border-cyber/[0.2] bg-surface-900/80 shadow-card-premium;
+    @apply rounded-card border border-cyber/[0.2] bg-black/[0.88] shadow-card-premium;
   }
   .ui-empty-shell {
-    @apply rounded-card border border-dashed border-cyber/[0.15] bg-surface-975/50 shadow-inner backdrop-blur-sm;
+    @apply rounded-card border border-dashed border-cyber/[0.15] bg-black/[0.5] shadow-inner backdrop-blur-sm;
   }
   .ui-icon-btn {
     @apply inline-flex items-center justify-center rounded-lg p-2.5 text-slate-500 transition-colors duration-200 hover:bg-cyber/[0.08] hover:text-cyan-300;
   }
   .ui-table-shell {
-    @apply overflow-hidden rounded-card border border-cyber/[0.1] bg-surface-950 shadow-card;
+    @apply overflow-hidden rounded-card border border-cyber/[0.1] bg-black/[0.96] shadow-card;
   }
 
   /* NEXUS CTA — cyan primary */

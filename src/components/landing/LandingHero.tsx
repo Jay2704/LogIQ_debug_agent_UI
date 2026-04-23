@@ -43,8 +43,8 @@ export function LandingHero() {
           <a
             href="#features"
             className={cn(
-              "cta-shimmer-secondary inline-flex min-w-[10rem] items-center justify-center gap-2 rounded-xl border border-white/[0.12] bg-surface-900/50 px-6 py-3 text-sm font-semibold text-slate-100 backdrop-blur-sm transition",
-              "hover:border-sky-500/30 hover:bg-surface-900/75 hover:text-white",
+              "cta-shimmer-secondary inline-flex min-w-[10rem] items-center justify-center gap-2 rounded-xl border border-white/[0.12] bg-black/[0.82] px-6 py-3 text-sm font-semibold text-slate-100 backdrop-blur-sm transition",
+              "hover:border-sky-500/30 hover:bg-black/[0.82] hover:text-white",
               "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400/70"
             )}
           >

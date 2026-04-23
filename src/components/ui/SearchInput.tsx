@@ -34,8 +34,8 @@ export function SearchInput({
           ui.focusRing,
           "outline-none",
           variant === "panel"
-            ? `${ui.surfaceInput} hover:border-blue-500/25 hover:bg-surface-975/85 focus:border-sky-500/50 focus:bg-surface-975/90 focus:shadow-[inset_0_1px_2px_rgba(0,0,0,0.2),0_0_0_3px_rgba(56,189,248,0.12)]`
-            : `${ui.surfaceInput} hover:border-blue-500/20 hover:bg-surface-975/80 focus:border-sky-500/45 focus:bg-surface-975/90 focus:shadow-[0_0_0_3px_rgba(56,189,248,0.12)]`,
+            ? `${ui.surfaceInput} hover:border-blue-500/25 hover:bg-black/[0.94] focus:border-sky-500/50 focus:bg-black/[0.94] focus:shadow-[inset_0_1px_2px_rgba(0,0,0,0.2),0_0_0_3px_rgba(56,189,248,0.12)]`
+            : `${ui.surfaceInput} hover:border-blue-500/20 hover:bg-black/[0.94] focus:border-sky-500/45 focus:bg-black/[0.94] focus:shadow-[0_0_0_3px_rgba(56,189,248,0.12)]`,
           className
         )}
         {...props}

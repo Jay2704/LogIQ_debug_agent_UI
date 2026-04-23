@@ -122,7 +122,7 @@ export function CreateJobModal({
         aria-busy={submitting}
         className={cn(
           "relative z-10 w-full max-w-lg rounded-2xl border border-blue-500/20",
-          "bg-gradient-to-br from-surface-900/98 to-surface-975/98 p-6 shadow-[0_24px_80px_-12px_rgba(0,0,0,0.75)]",
+          "bg-gradient-to-br from-black/[0.85] to-black/[0.96] p-6 shadow-[0_24px_80px_-12px_rgba(0,0,0,0.75)]",
           "ring-1 ring-white/[0.06]"
         )}
       >
@@ -161,7 +161,7 @@ export function CreateJobModal({
             <input
               value={jobType}
               onChange={(e) => setJobType(e.target.value)}
-              className="mt-1.5 w-full rounded-xl border border-white/[0.08] bg-surface-975/80 px-3 py-2.5 font-mono text-sm text-slate-200 outline-none ring-0 placeholder:text-slate-600 focus:border-sky-500/40"
+              className="mt-1.5 w-full rounded-xl border border-white/[0.08] bg-black/[0.94] px-3 py-2.5 font-mono text-sm text-slate-200 outline-none ring-0 placeholder:text-slate-600 focus:border-sky-500/40"
               placeholder="e.g. debug_investigation"
               autoComplete="off"
             />
@@ -173,7 +173,7 @@ export function CreateJobModal({
             <input
               value={anomalyId}
               onChange={(e) => setAnomalyId(e.target.value)}
-              className="mt-1.5 w-full rounded-xl border border-white/[0.08] bg-surface-975/80 px-3 py-2.5 font-mono text-sm text-slate-200 outline-none focus:border-sky-500/40"
+              className="mt-1.5 w-full rounded-xl border border-white/[0.08] bg-black/[0.94] px-3 py-2.5 font-mono text-sm text-slate-200 outline-none focus:border-sky-500/40"
               placeholder="anomaly_…"
               autoComplete="off"
             />
@@ -185,7 +185,7 @@ export function CreateJobModal({
             <input
               value={runId}
               onChange={(e) => setRunId(e.target.value)}
-              className="mt-1.5 w-full rounded-xl border border-white/[0.08] bg-surface-975/80 px-3 py-2.5 font-mono text-sm text-slate-200 outline-none focus:border-sky-500/40"
+              className="mt-1.5 w-full rounded-xl border border-white/[0.08] bg-black/[0.94] px-3 py-2.5 font-mono text-sm text-slate-200 outline-none focus:border-sky-500/40"
               placeholder="run_…"
               autoComplete="off"
             />
@@ -195,7 +195,7 @@ export function CreateJobModal({
               Triggered by (current user)
             </label>
             {user?.userId && roleCaps.canCreateJob ? (
-              <div className="mt-1.5 rounded-xl border border-white/[0.08] bg-surface-975/80 px-3 py-2.5 text-sm text-slate-200">
+              <div className="mt-1.5 rounded-xl border border-white/[0.08] bg-black/[0.94] px-3 py-2.5 text-sm text-slate-200">
                 <p className="font-medium text-slate-100">
                   {userDisplayName(user) || user.email}
                 </p>
@@ -236,7 +236,7 @@ export function CreateJobModal({
             <select
               value={triggerSource}
               onChange={(e) => setTriggerSource(e.target.value)}
-              className="mt-1.5 w-full rounded-xl border border-white/[0.08] bg-surface-975/80 px-3 py-2.5 text-sm text-slate-200 outline-none focus:border-sky-500/40"
+              className="mt-1.5 w-full rounded-xl border border-white/[0.08] bg-black/[0.94] px-3 py-2.5 text-sm text-slate-200 outline-none focus:border-sky-500/40"
             >
               {TRIGGER_OPTIONS.map((o) => (
                 <option key={o.value} value={o.value}>
@@ -260,7 +260,7 @@ export function CreateJobModal({
             <button
               type="button"
               onClick={onClose}
-              className="rounded-xl border border-white/[0.08] bg-surface-975/80 px-5 py-2.5 text-sm font-semibold text-slate-300 transition hover:border-white/[0.14] hover:text-white"
+              className="rounded-xl border border-white/[0.08] bg-black/[0.94] px-5 py-2.5 text-sm font-semibold text-slate-300 transition hover:border-white/[0.14] hover:text-white"
             >
               Cancel
             </button>

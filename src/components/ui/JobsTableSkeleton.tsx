@@ -12,11 +12,11 @@ export function JobsTableSkeleton({
   return (
     <div
       className={cn(
-        "ui-table-shell overflow-hidden from-surface-850/50 shadow-card-premium",
+        "ui-table-shell overflow-hidden from-black/[0.75] shadow-card-premium",
         className
       )}
     >
-      <div className="border-b border-white/[0.08] bg-surface-975/95 px-4 py-3.5">
+      <div className="border-b border-white/[0.08] bg-black/[0.94] px-4 py-3.5">
         <div className="flex gap-4">
           {["w-[22%]", "w-[18%]", "w-[12%]", "w-[12%]", "w-[18%]", "w-[18%]"].map(
             (w, i) => (

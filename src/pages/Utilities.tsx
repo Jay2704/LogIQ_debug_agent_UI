@@ -63,7 +63,7 @@ export function Utilities() {
         </p>
       </div>
 
-      <div className="rounded-2xl border border-white/[0.08] bg-surface-975/50 p-4 shadow-inner sm:p-5">
+      <div className="rounded-2xl border border-white/[0.08] bg-black/[0.94] p-4 shadow-inner sm:p-5">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div className="min-w-0 flex-1 space-y-2">
             <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
@@ -87,7 +87,7 @@ export function Utilities() {
               onChange={(e) =>
                 setCategory(e.target.value as typeof ALL | UtilityCategory)
               }
-              className="rounded-xl border border-white/[0.08] bg-surface-975/80 px-3 py-2 text-sm text-slate-200 shadow-inner outline-none focus:border-sky-500/45 focus:ring-0"
+              className="rounded-xl border border-white/[0.08] bg-black/[0.94] px-3 py-2 text-sm text-slate-200 shadow-inner outline-none focus:border-sky-500/45 focus:ring-0"
             >
               <option value={ALL}>All categories</option>
               {UTILITY_CATEGORY_ORDER.map((c) => (
@@ -141,7 +141,7 @@ export function Utilities() {
         <p className="text-sm text-slate-500">
           Mock history — connect telemetry to populate from your workspace.
         </p>
-        <div className="overflow-hidden rounded-2xl border border-white/[0.08] bg-surface-975/60 shadow-inner">
+        <div className="overflow-hidden rounded-2xl border border-white/[0.08] bg-black/[0.94] shadow-inner">
           <table className="w-full min-w-[520px] text-left text-sm">
             <thead>
               <tr className="border-b border-white/[0.08] text-[10px] font-bold uppercase tracking-wide text-slate-500">
