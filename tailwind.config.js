@@ -79,6 +79,7 @@ export default {
         "scanline": "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(34,211,238,0.015) 2px, rgba(34,211,238,0.015) 4px)",
       },
       animation: {
+        "spotlight": "spotlight 2s ease .75s 1 forwards",
         "pulse-slow": "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
         "scan": "scan 8s linear infinite",
         "flicker": "flicker 0.15s infinite linear",
@@ -111,6 +112,10 @@ export default {
         "investigation-reveal": {
           "0%": { opacity: "0", transform: "translateY(12px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        spotlight: {
+          "0%": { opacity: "0", transform: "translate(-72%, -62%) scale(0.5)" },
+          "100%": { opacity: "1", transform: "translate(-50%, -40%) scale(1)" },
         },
       },
     },

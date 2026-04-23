@@ -30,6 +30,8 @@ import {
   Zap,
 } from "lucide-react";
 import { LogIQFullLogo } from "@/components/branding/LogIQLogos";
+import { SplineScene } from "@/components/ui/splite";
+import { Spotlight } from "@/components/ui/spotlight";
 import { ctaButtonGradient, ctaGlowBlueOnly } from "@/lib/ctaTheme";
 import { cn } from "@/lib/utils";
 
@@ -539,127 +541,109 @@ function HeroSection() {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <section id="top" className="relative overflow-hidden py-16 sm:py-24 lg:py-32">
-      {/* Ambient glows */}
-      <div className="pointer-events-none absolute inset-0" aria-hidden>
-        <div className="absolute left-1/2 top-0 h-[600px] w-[800px] -translate-x-1/2 rounded-full bg-cyber/[0.06] blur-[120px]" />
-        <div className="absolute left-0 top-1/3 h-[400px] w-[400px] -translate-x-1/2 rounded-full bg-nexus/[0.05] blur-[100px]" />
-        <div className="absolute right-0 bottom-0 h-[400px] w-[400px] translate-x-1/3 rounded-full bg-violet-500/[0.04] blur-[100px]" />
-      </div>
+    <section id="top" className="relative overflow-hidden py-8 sm:py-12 lg:py-16">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        {/* Main hero card — dark immersive container */}
+        <div className="relative w-full rounded-2xl bg-black/[0.96] overflow-hidden border border-cyber/[0.15] shadow-[0_0_80px_-20px_rgba(34,211,238,0.15)]">
+          <Spotlight className="-top-40 left-0 md:left-60 md:-top-20" fill="white" />
 
-      {/* Cyber grid overlay */}
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.25]"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg fill='none' stroke='rgba(34,211,238,0.08)' stroke-width='0.5'%3E%3Cpath d='M0 30h60M30 0v60'/%3E%3C/g%3E%3C/svg%3E")`,
-        }}
-        aria-hidden
-      />
-
-      <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-          {/* Left: copy */}
-          <div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
-            >
-              <span className="inline-flex items-center gap-2 rounded-full border border-cyber/30 bg-cyber/10 px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-cyan-300 ring-1 ring-cyber/20">
-                <span className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-nexus/70 opacity-75" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-nexus" />
+          <div className="flex flex-col lg:flex-row min-h-[560px]">
+            {/* Left: copy */}
+            <div className="flex-1 p-8 lg:p-14 relative z-10 flex flex-col justify-center">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
+              >
+                <span className="inline-flex items-center gap-2 rounded-full border border-cyber/30 bg-cyber/10 px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-cyan-300 ring-1 ring-cyber/20">
+                  <span className="relative flex h-2 w-2">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-nexus/70 opacity-75" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-nexus" />
+                  </span>
+                  AI-Powered Deterministic RCA
                 </span>
-                AI-Powered Deterministic RCA
-              </span>
-            </motion.div>
+              </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.1, ease: "easeOut" }}
-              className="mt-6"
-            >
-              <div className="overflow-hidden">
-                <AnimatePresence mode="wait">
-                  <motion.h1
-                    key={typeIdx}
-                    initial={{ y: 40, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    exit={{ y: -40, opacity: 0 }}
-                    transition={{ duration: 0.45, ease: "easeOut" }}
-                    className="font-display text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl lg:leading-[1.1]"
-                  >
-                    {headlines[typeIdx].split(" ").map((word, wi) =>
-                      word === "precision." || word === "seconds," || word === "certainty" ? (
-                        <span key={wi} className="text-gradient-cyber">{word} </span>
-                      ) : (
-                        <span key={wi}>{word} </span>
-                      )
-                    )}
-                  </motion.h1>
-                </AnimatePresence>
-              </div>
-              <p className="mt-5 text-base leading-relaxed text-slate-400 sm:text-lg">
-                Upload logs, trace anomalies, identify root cause, and generate evidence-backed
-                explanations in one intelligent debugging workspace.
-              </p>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.25 }}
-              className="mt-8 flex flex-col gap-3 sm:flex-row"
-            >
-              <PrimaryCta />
-              <SecondaryCta />
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="mt-8 flex flex-wrap gap-2"
-            >
-              {["Deterministic RCA", "Graph-based reasoning", "LLM explanations", "Role-aware"].map((pill) => (
-                <span
-                  key={pill}
-                  className="inline-flex items-center rounded-full border border-cyber/[0.12] bg-surface-925/80 px-3 py-1.5 text-[11px] font-medium text-slate-400"
-                >
-                  <span className="mr-1.5 h-1.5 w-1.5 rounded-full bg-cyber/60" />
-                  {pill}
-                </span>
-              ))}
-            </motion.div>
-          </div>
-
-          {/* Right: terminal demo */}
-          <motion.div
-            initial={{ opacity: 0, x: 32 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-          >
-            <TerminalDemo />
-
-            {/* Below terminal: quick stats */}
-            <div className="mt-4 grid grid-cols-3 gap-3">
-              {[
-                { icon: Activity, val: "94%", label: "Avg confidence" },
-                { icon: TrendingUp, val: "2m14s", label: "P50 triage" },
-                { icon: AlertTriangle, val: "340%", label: "Spike caught" },
-              ].map((s) => (
-                <div
-                  key={s.label}
-                  className="rounded-card border border-cyber/[0.1] bg-surface-925/60 p-3 text-center"
-                >
-                  <s.icon className="mx-auto h-4 w-4 text-cyber/70" strokeWidth={1.75} />
-                  <p className="mt-1.5 font-display text-lg font-bold text-white">{s.val}</p>
-                  <p className="text-[10px] text-slate-600">{s.label}</p>
+              <motion.div
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.1, ease: "easeOut" }}
+                className="mt-6"
+              >
+                <div className="overflow-hidden">
+                  <AnimatePresence mode="wait">
+                    <motion.h1
+                      key={typeIdx}
+                      initial={{ y: 40, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      exit={{ y: -40, opacity: 0 }}
+                      transition={{ duration: 0.45, ease: "easeOut" }}
+                      className="font-display text-4xl font-bold tracking-tight md:text-5xl lg:leading-[1.08] bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400"
+                    >
+                      {headlines[typeIdx]}
+                    </motion.h1>
+                  </AnimatePresence>
                 </div>
-              ))}
+                <p className="mt-5 text-base leading-relaxed text-neutral-300 sm:text-lg max-w-lg">
+                  Upload logs, trace anomalies, identify root cause, and generate evidence-backed
+                  explanations in one intelligent debugging workspace.
+                </p>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.25 }}
+                className="mt-8 flex flex-col gap-3 sm:flex-row"
+              >
+                <PrimaryCta />
+                <SecondaryCta />
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                className="mt-8 flex flex-wrap gap-2"
+              >
+                {["Deterministic RCA", "Graph-based reasoning", "LLM explanations", "Role-aware"].map((pill) => (
+                  <span
+                    key={pill}
+                    className="inline-flex items-center rounded-full border border-white/[0.1] bg-white/[0.04] px-3 py-1.5 text-[11px] font-medium text-neutral-400 backdrop-blur-sm"
+                  >
+                    <span className="mr-1.5 h-1.5 w-1.5 rounded-full bg-cyber/70" />
+                    {pill}
+                  </span>
+                ))}
+              </motion.div>
             </div>
-          </motion.div>
+
+            {/* Right: Spline 3D scene */}
+            <div className="flex-1 relative min-h-[320px] lg:min-h-0">
+              <SplineScene
+                scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+                className="w-full h-full"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Below hero card: quick stats strip */}
+        <div className="mt-4 grid grid-cols-3 gap-3">
+          {[
+            { icon: Activity, val: "94%", label: "Avg confidence" },
+            { icon: TrendingUp, val: "2m14s", label: "P50 triage" },
+            { icon: AlertTriangle, val: "340%", label: "Spike caught" },
+          ].map((s) => (
+            <div
+              key={s.label}
+              className="rounded-card border border-cyber/[0.1] bg-black/[0.6] p-3 text-center backdrop-blur-sm"
+            >
+              <s.icon className="mx-auto h-4 w-4 text-cyber/70" strokeWidth={1.75} />
+              <p className="mt-1.5 font-display text-lg font-bold text-white">{s.val}</p>
+              <p className="text-[10px] text-slate-500">{s.label}</p>
+            </div>
+          ))}
         </div>
       </div>
     </section>
@@ -788,37 +772,51 @@ function DemoSection() {
 // ── Final CTA section ──────────────────────────────────────────────────────
 function CtaSection() {
   return (
-    <section className="relative overflow-hidden border-t border-cyber/[0.08] py-20 sm:py-28">
-      <div className="pointer-events-none absolute inset-0" aria-hidden>
-        <div className="absolute left-1/2 bottom-0 h-[500px] w-[700px] -translate-x-1/2 translate-y-1/2 rounded-full bg-cyber/[0.06] blur-[100px]" />
-      </div>
-      <div className="relative mx-auto max-w-3xl px-4 text-center sm:px-6">
+    <section className="relative overflow-hidden border-t border-cyber/[0.08] py-16 sm:py-24">
+      <div className="mx-auto max-w-4xl px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
           transition={{ duration: 0.6 }}
         >
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-nexus/25 bg-nexus/10 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-nexus/90">
-            <Sparkles className="h-3 w-3" />
-            Production ready
-          </span>
-          <h2 className="mt-5 font-display text-2xl font-bold tracking-tight text-white sm:text-3xl lg:text-4xl">
-            Ship with confidence when <span className="text-gradient-cyber">production breaks</span>
-          </h2>
-          <p className="mt-4 text-base text-slate-400 sm:text-lg">
-            Join the debugging workflow that respects evidence, speed, and accountability — not vibes.
-          </p>
-          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
-            <PrimaryCta />
-            <SecondaryCta />
+          <div className="relative rounded-2xl bg-black/[0.96] overflow-hidden border border-cyber/[0.15] shadow-[0_0_80px_-20px_rgba(34,211,238,0.15)]">
+            <Spotlight className="-top-40 left-0 md:left-60 md:-top-20" fill="white" />
+
+            <div className="relative z-10 flex flex-col lg:flex-row min-h-[340px]">
+              {/* Left: text content */}
+              <div className="flex-1 p-10 lg:p-14 flex flex-col justify-center">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-nexus/30 bg-nexus/10 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-nexus/90 w-fit">
+                  <Sparkles className="h-3 w-3" />
+                  Production ready
+                </span>
+                <h2 className="mt-5 font-display text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400">
+                  Ship with confidence when production breaks
+                </h2>
+                <p className="mt-4 text-base text-neutral-300 max-w-lg">
+                  Join the debugging workflow that respects evidence, speed, and accountability — not vibes.
+                </p>
+                <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                  <PrimaryCta />
+                  <SecondaryCta />
+                </div>
+                <Link
+                  to="/login"
+                  className="mt-5 inline-flex items-center gap-1 text-sm font-medium text-cyber/80 transition hover:text-cyan-300 w-fit"
+                >
+                  Already have an account? <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+
+              {/* Right: Spline 3D */}
+              <div className="flex-1 relative hidden lg:block min-h-[340px]">
+                <SplineScene
+                  scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+                  className="w-full h-full"
+                />
+              </div>
+            </div>
           </div>
-          <Link
-            to="/login"
-            className="mt-5 inline-flex items-center gap-1 text-sm font-medium text-cyber/80 transition hover:text-cyan-300"
-          >
-            Already have an account? <ArrowRight className="h-4 w-4" />
-          </Link>
         </motion.div>
       </div>
     </section>

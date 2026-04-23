@@ -1,0 +1,128 @@
+2026-04-11T13:58:00.001Z INFO  api-gateway     Deployment complete service=checkout-svc version=v3.2.1 replicas=3 region=us-east-1
+2026-04-11T13:58:00.412Z INFO  checkout-svc    Service started version=v3.2.1 port=8080 db_pool_size=10 db_pool_max=20
+2026-04-11T13:58:00.891Z INFO  checkout-svc    DB pool initialized pool=checkout-primary connections=10 host=pg-primary.internal
+2026-04-11T13:58:01.204Z INFO  checkout-svc    Health check passed status=healthy db=ok cache=ok payments=ok
+
+# --- Normal traffic: 13:58 – 14:01 ---
+
+2026-04-11T13:58:12.010Z INFO  checkout-svc    Request received request_id=req_a001 user_id=usr_5522 path=/v2/checkout/initiate
+2026-04-11T13:58:12.198Z DEBUG checkout-svc    Cart loaded cart_id=cart_8801 items=3 subtotal=189.97 request_id=req_a001
+2026-04-11T13:58:12.344Z INFO  checkout-svc    Payment intent created provider=stripe intent_id=pi_3OxKv request_id=req_a001
+2026-04-11T13:58:12.701Z INFO  checkout-svc    Order confirmed order_id=ord_10041 request_id=req_a001 latency_ms=691
+
+2026-04-11T13:59:04.112Z INFO  checkout-svc    Request received request_id=req_a002 user_id=usr_6601 path=/v2/checkout/initiate
+2026-04-11T13:59:04.290Z DEBUG checkout-svc    Cart loaded cart_id=cart_9902 items=1 subtotal=49.99 request_id=req_a002
+2026-04-11T13:59:04.511Z INFO  checkout-svc    Payment intent created provider=stripe intent_id=pi_4PxLw request_id=req_a002
+2026-04-11T13:59:04.822Z INFO  checkout-svc    Order confirmed order_id=ord_10042 request_id=req_a002 latency_ms=710
+
+2026-04-11T14:00:00.000Z INFO  monitoring      SLO snapshot service=checkout-svc p50_ms=698 p99_ms=810 error_rate=0.00% rps=12
+2026-04-11T14:00:00.511Z INFO  checkout-svc    DB pool stats pool=checkout-primary active=2 idle=8 waiting=0
+
+# --- Traffic spike begins: 14:01 ---
+
+2026-04-11T14:01:15.001Z INFO  checkout-svc    Request received request_id=req_b001 user_id=usr_7701 path=/v2/checkout/initiate
+2026-04-11T14:01:15.003Z INFO  checkout-svc    Request received request_id=req_b002 user_id=usr_7702 path=/v2/checkout/initiate
+2026-04-11T14:01:15.006Z INFO  checkout-svc    Request received request_id=req_b003 user_id=usr_7703 path=/v2/checkout/initiate
+2026-04-11T14:01:15.009Z INFO  checkout-svc    Request received request_id=req_b004 user_id=usr_7704 path=/v2/checkout/initiate
+2026-04-11T14:01:15.012Z INFO  checkout-svc    Request received request_id=req_b005 user_id=usr_7705 path=/v2/checkout/initiate
+2026-04-11T14:01:15.411Z DEBUG checkout-svc    DB pool stats pool=checkout-primary active=10 idle=0 waiting=5
+2026-04-11T14:01:15.601Z WARN  checkout-svc    DB pool near saturation pool=checkout-primary active=10 idle=0 waiting=5 threshold=80%
+
+# --- Root cause: v3.2.1 missing connection release fix, pool drains ---
+
+2026-04-11T14:01:16.002Z ERROR checkout-svc    DB connection leak detected request_id=req_b001 handler=checkout_handler.py:L214 connection_held_ms=1001 expected_max_ms=500
+    File "src/handlers/checkout_handler.py", line 214, in process_checkout
+      result = await db.execute(LOCK_CART_QUERY, cart_id=cart_id)
+    asyncpg.exceptions.TooManyConnectionsError: sorry, too many clients already
+    NOTE: Connection was not released after cart lock acquisition (regression in v3.2.1)
+
+2026-04-11T14:01:16.201Z ERROR checkout-svc    DB connection leak detected request_id=req_b002 handler=checkout_handler.py:L214 connection_held_ms=1003 expected_max_ms=500
+    File "src/handlers/checkout_handler.py", line 214, in process_checkout
+      result = await db.execute(LOCK_CART_QUERY, cart_id=cart_id)
+    asyncpg.exceptions.TooManyConnectionsError: sorry, too many clients already
+
+2026-04-11T14:01:16.404Z ERROR checkout-svc    DB connection leak detected request_id=req_b003 handler=checkout_handler.py:L214 connection_held_ms=1002 expected_max_ms=500
+    File "src/handlers/checkout_handler.py", line 214, in process_checkout
+      result = await db.execute(LOCK_CART_QUERY, cart_id=cart_id)
+    asyncpg.exceptions.TooManyConnectionsError: sorry, too many clients already
+
+2026-04-11T14:01:17.001Z ERROR checkout-svc    DB pool exhausted pool=checkout-primary active=20 idle=0 waiting=12 pool_max=20
+2026-04-11T14:01:17.201Z WARN  checkout-svc    Queue building up waiting_requests=12 timeout_threshold=15
+
+# --- Cascade: inventory lock failures ---
+
+2026-04-11T14:01:18.001Z ERROR inventory-svc   Reserve failed sku=SKU-7821 reason=CHECKOUT_LOCK_TIMEOUT request_id=req_b001 wait_ms=2001
+    File "src/services/inventory_service.py", line 89, in reserve_stock
+      checkout_lock = await checkout_client.acquire_lock(cart_id)
+    TimeoutError: Checkout service did not respond within 2000ms — DB pool exhausted upstream
+
+2026-04-11T14:01:18.204Z ERROR inventory-svc   Reserve failed sku=SKU-9341 reason=CHECKOUT_LOCK_TIMEOUT request_id=req_b002 wait_ms=2003
+2026-04-11T14:01:18.511Z WARN  inventory-svc   Retry storm detected service=checkout-svc retries_in_flight=8 circuit_state=CLOSED
+
+# --- Cascade: payment service circuit breaking ---
+
+2026-04-11T14:01:19.001Z WARN  payments-svc    Upstream latency spike dependency=checkout-svc p99_ms=2190 threshold_ms=1500 request_id=req_b001
+2026-04-11T14:01:19.312Z ERROR payments-svc    Payment intent timed out provider=stripe intent_id=pi_5QyMx request_id=req_b001 timeout_ms=2000
+    stripe.error.Timeout: Request timed out waiting for checkout lock confirmation
+    Traceback:
+      File "src/payments/payment_orchestrator.py", line 301, in confirm_payment
+        lock_status = await checkout_client.confirm_lock(cart_id, intent_id)
+      File "src/payments/clients/checkout_client.py", line 55, in confirm_lock
+        raise TimeoutError(f"checkout-svc did not respond in {timeout_ms}ms")
+
+2026-04-11T14:01:19.901Z ERROR payments-svc    Payment intent timed out provider=stripe intent_id=pi_6RzNy request_id=req_b002 timeout_ms=2000
+2026-04-11T14:01:20.101Z ERROR payments-svc    Circuit breaker OPEN dependency=checkout-svc failure_rate=80% threshold=50% window_s=10
+2026-04-11T14:01:20.201Z WARN  payments-svc    All new checkout payment intents blocked circuit=OPEN fallback=none
+
+# --- 5xx rate spikes ---
+
+2026-04-11T14:01:20.501Z ERROR api-gateway     5xx spike service=checkout-svc rate_5xx=340% baseline_5xx=0.8% window_s=60
+2026-04-11T14:01:20.711Z ERROR api-gateway     5xx spike service=payments-svc rate_5xx=85% baseline_5xx=0.5% window_s=60
+2026-04-11T14:01:20.901Z ERROR api-gateway     5xx spike service=inventory-svc rate_5xx=62% baseline_5xx=0.3% window_s=60
+
+2026-04-11T14:01:21.001Z ERROR checkout-svc    Request failed request_id=req_b004 status=503 error=DB_POOL_EXHAUSTED latency_ms=3001
+2026-04-11T14:01:21.201Z ERROR checkout-svc    Request failed request_id=req_b005 status=503 error=DB_POOL_EXHAUSTED latency_ms=3201
+2026-04-11T14:01:21.401Z ERROR checkout-svc    Request failed request_id=req_b006 status=503 error=DB_POOL_EXHAUSTED latency_ms=3401
+2026-04-11T14:01:21.601Z ERROR checkout-svc    Request failed request_id=req_b007 status=503 error=DB_POOL_EXHAUSTED latency_ms=3601
+2026-04-11T14:01:21.801Z ERROR checkout-svc    Request failed request_id=req_b008 status=503 error=DB_POOL_EXHAUSTED latency_ms=3801
+
+# --- Monitoring fires alerts ---
+
+2026-04-11T14:01:22.001Z CRITICAL monitoring   ALERT FIRED alert=checkout_5xx_spike severity=P1 service=checkout-svc value=340% threshold=50%
+2026-04-11T14:01:22.041Z CRITICAL monitoring   ALERT FIRED alert=payment_circuit_open severity=P1 service=payments-svc circuit=checkout-svc
+2026-04-11T14:01:22.080Z CRITICAL monitoring   ALERT FIRED alert=inventory_reserve_failures severity=P2 service=inventory-svc failure_rate=62%
+2026-04-11T14:01:22.120Z INFO  monitoring      PagerDuty incident created incident_id=INC-20240411-001 oncall=platform-sre
+
+# --- SRE investigation begins ---
+
+2026-04-11T14:02:01.001Z INFO  monitoring      SLO snapshot service=checkout-svc p50_ms=3104 p99_ms=5210 error_rate=78.40% rps=38
+2026-04-11T14:02:01.101Z INFO  monitoring      SLO snapshot service=payments-svc p50_ms=2891 p99_ms=4980 error_rate=23.10% rps=38
+2026-04-11T14:02:01.201Z INFO  monitoring      SLO snapshot service=inventory-svc p50_ms=2211 p99_ms=4100 error_rate=18.50% rps=38
+
+2026-04-11T14:02:14.001Z DEBUG checkout-svc    DB pool stats pool=checkout-primary active=20 idle=0 waiting=18 leaked=20
+2026-04-11T14:02:14.501Z ERROR checkout-svc    Connection leak confirmed — all 20 pool connections held by handler=checkout_handler.py:L214 none released since=14:01:16Z
+
+# --- Deploy rollback triggered ---
+
+2026-04-11T14:03:00.001Z INFO  api-gateway     Rollback initiated service=checkout-svc from=v3.2.1 to=v3.2.0 triggered_by=oncall-sre
+2026-04-11T14:03:14.201Z INFO  checkout-svc    Graceful shutdown complete version=v3.2.1 open_connections_released=20
+2026-04-11T14:03:15.001Z INFO  checkout-svc    Service started version=v3.2.0 port=8080 db_pool_size=10 db_pool_max=20
+2026-04-11T14:03:15.411Z INFO  checkout-svc    DB pool initialized pool=checkout-primary connections=10 host=pg-primary.internal
+2026-04-11T14:03:15.801Z INFO  checkout-svc    Health check passed status=healthy db=ok cache=ok payments=ok
+
+# --- Recovery ---
+
+2026-04-11T14:03:20.101Z INFO  payments-svc    Circuit breaker CLOSED dependency=checkout-svc recovery=success
+2026-04-11T14:03:20.201Z INFO  inventory-svc   Reserve queue draining queue_depth=18 processing=true
+2026-04-11T14:03:25.001Z INFO  monitoring      SLO snapshot service=checkout-svc p50_ms=712 p99_ms=890 error_rate=1.20% rps=22
+2026-04-11T14:03:30.001Z INFO  monitoring      SLO snapshot service=checkout-svc p50_ms=701 p99_ms=821 error_rate=0.00% rps=15
+2026-04-11T14:03:30.401Z INFO  monitoring      ALERT RESOLVED alert=checkout_5xx_spike service=checkout-svc
+2026-04-11T14:03:30.501Z INFO  monitoring      ALERT RESOLVED alert=payment_circuit_open service=payments-svc
+2026-04-11T14:03:30.601Z INFO  monitoring      ALERT RESOLVED alert=inventory_reserve_failures service=inventory-svc
+
+# --- Post-incident summary ---
+# Root cause: checkout_handler.py:L214 — DB connection not released after cart lock in v3.2.1
+# Impact: 78% error rate on checkout, cascading to payments (+23%) and inventory (+18%)
+# Duration: 14:01:15 – 14:03:30 (135 seconds)
+# Resolution: rollback to v3.2.0
+# Anomaly ID: anomaly_001

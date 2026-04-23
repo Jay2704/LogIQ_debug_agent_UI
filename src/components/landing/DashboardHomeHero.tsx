@@ -15,8 +15,9 @@ import {
 import { Link } from "react-router-dom";
 import { api } from "@/api";
 import { LogIQFullLogo } from "@/components/branding/LogIQLogos";
-import { HeroAmbientGlow } from "@/components/landing/HeroAmbientGlow";
 import { ProductPreviewCard } from "@/components/landing/ProductPreviewCard";
+import { SplineScene } from "@/components/ui/splite";
+import { Spotlight } from "@/components/ui/spotlight";
 import { LogViewer } from "@/components/utilities/LogViewer";
 import { ctaButtonGradient, ctaGlowBlueOnly } from "@/lib/ctaTheme";
 import { parseUploadedLogFile, SUPPORTED_LOG_EXTENSIONS } from "@/lib/logFileUpload";
@@ -376,24 +377,43 @@ export function DashboardHomeHero() {
   }
 
   return (
-    <section className="hero-glow-panel relative overflow-hidden rounded-2xl border border-blue-500/15 bg-gradient-to-br from-surface-900/95 via-[#0a1020] to-surface-975 p-6 shadow-[0_0_0_1px_rgba(59,130,246,0.1),0_24px_64px_-32px_rgba(0,0,0,0.55)] sm:p-10">
-      <HeroAmbientGlow variant="dashboard" />
-
-      <div className="relative z-10 mx-auto max-w-3xl text-center">
-        <div className="flex justify-center py-2">
-          <LogIQFullLogo className="mx-auto max-h-[9rem] max-w-[min(880px,94vw)] object-contain sm:max-h-40 lg:max-h-48" />
+    <div className="space-y-4">
+      {/* ── Hero card — SplineScene + Spotlight ─────────────────────────── */}
+      <div className="relative w-full rounded-2xl bg-black/[0.96] overflow-hidden border border-cyber/[0.15] shadow-[0_0_80px_-20px_rgba(34,211,238,0.15)]">
+        <Spotlight className="-top-40 left-0 md:left-60 md:-top-20" fill="white" />
+        <div className="flex flex-col md:flex-row min-h-[360px]">
+          {/* Left: logo + headline */}
+          <div className="flex-1 p-8 lg:p-12 relative z-10 flex flex-col justify-center">
+            <div className="flex justify-start py-2">
+              <LogIQFullLogo className="max-h-[6rem] max-w-[260px] object-contain object-left sm:max-h-28" />
+            </div>
+            <span className="mt-5 inline-flex items-center gap-1.5 rounded-full border border-cyber/30 bg-cyber/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-cyan-300 ring-1 ring-cyber/20 w-fit">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-nexus/70 opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-nexus" />
+              </span>
+              AI-Agent · Deterministic RCA · Remediation
+            </span>
+            <h1 className="mt-4 text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl lg:leading-tight bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400">
+              Debug production issues in seconds, not hours
+            </h1>
+            <p className="mt-4 text-base leading-relaxed text-neutral-300 max-w-lg">
+              Upload logs, trace anomalies, and uncover root cause instantly — all in one intelligent
+              debugging workspace.
+            </p>
+          </div>
+          {/* Right: Spline 3D */}
+          <div className="flex-1 relative hidden md:block min-h-[360px]">
+            <SplineScene
+              scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+              className="w-full h-full"
+            />
+          </div>
         </div>
-        <span className="mt-10 inline-flex items-center rounded-full border border-sky-500/30 bg-sky-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-sky-200/95 ring-1 ring-sky-500/20">
-          AI-Agent powered Deterministic Root Cause Analysis and remediation
-        </span>
-        <h1 className="gradient-text mt-6 text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl lg:leading-tight">
-          Debug production issues in seconds, not hours
-        </h1>
-        <p className="mt-4 text-base leading-relaxed text-slate-400 sm:text-lg">
-          Upload logs, trace anomalies, and uncover root cause instantly — all in one intelligent
-          debugging workspace.
-        </p>
-        <div className="mt-8 rounded-2xl border border-sky-500/20 bg-surface-975/65 p-4 text-left shadow-[0_0_0_1px_rgba(56,189,248,0.08)] sm:p-5">
+      </div>
+
+      {/* ── Workflow panel ──────────────────────────────────────────────── */}
+      <div className="rounded-2xl border border-sky-500/20 bg-surface-975/65 p-4 text-left shadow-[0_0_0_1px_rgba(56,189,248,0.08)] sm:p-5">
           <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-sky-500/30 bg-sky-500/10 px-3 py-1 text-[11px] font-semibold text-sky-200/95">
             <span
               className={cn(
@@ -1028,11 +1048,10 @@ export function DashboardHomeHero() {
             <span className="relative z-10">Explore Features</span>
           </a>
         </div>
-      </div>
 
-      <div className="relative z-10 mx-auto mt-10 max-w-4xl">
+      <div className="mx-auto max-w-4xl mt-4">
         <ProductPreviewCard />
       </div>
-    </section>
+    </div>
   );
 }

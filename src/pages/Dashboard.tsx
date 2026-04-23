@@ -10,6 +10,7 @@ import {
   TrendingUp,
   Zap,
 } from "lucide-react";
+import { Spotlight } from "@/components/ui/spotlight";
 import { Link } from "react-router-dom";
 import { USE_HTTP_API } from "@/api/config";
 import { useCurrentUser } from "@/auth";
@@ -414,86 +415,89 @@ export function Dashboard() {
       )}
 
       {/* Secondary signals — mock / static */}
-      <section className="grid gap-6 lg:grid-cols-2">
-        <div className="rounded-card border border-amber-500/20 bg-gradient-to-br from-amber-500/[0.08] via-surface-925/98 to-surface-975 p-6 shadow-card-premium">
-          <div className="flex items-center gap-2">
-            <ShieldAlert className="h-5 w-5 text-amber-400" />
-            <h2 className="text-base font-bold text-white">Latest anomalies</h2>
+      <section className="relative rounded-2xl bg-black/[0.96] overflow-hidden border border-cyber/[0.15] shadow-[0_0_80px_-20px_rgba(34,211,238,0.12)]">
+        <Spotlight className="-top-40 left-0 md:left-60 md:-top-20" fill="white" />
+        <div className="relative z-10 grid gap-6 lg:grid-cols-2 p-6">
+          <div className="rounded-card border border-amber-500/20 bg-gradient-to-br from-amber-500/[0.08] via-surface-925/98 to-surface-975 p-6 shadow-card-premium">
+            <div className="flex items-center gap-2">
+              <ShieldAlert className="h-5 w-5 text-amber-400" />
+              <h2 className="text-base font-bold text-white">Latest anomalies</h2>
+            </div>
+            <p className="mt-2 text-xs text-slate-500">
+              Mock anomaly feed — live job workflows use the Jobs page.
+            </p>
+            <ul className="mt-5 space-y-2">
+              {recentAnomalies.map((a) => (
+                <li
+                  key={a.id}
+                  className="rounded-xl border border-white/[0.06] bg-surface-975/90 px-4 py-3"
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <span className="font-mono text-xs text-violet-300">{a.id}</span>
+                    <span className="text-[11px] text-slate-500 tabular-nums">
+                      {formatDateTime(a.detectedAt)}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-sm font-medium text-slate-200">
+                    {a.service}
+                  </p>
+                  <p className="mt-1 line-clamp-2 text-sm text-slate-500">
+                    {a.summary}
+                  </p>
+                </li>
+              ))}
+            </ul>
+            <Link
+              to="/anomalies"
+              className="mt-5 inline-block text-sm font-semibold text-sky-400 hover:text-sky-300"
+            >
+              Open anomaly feed →
+            </Link>
           </div>
-          <p className="mt-2 text-xs text-slate-500">
-            Mock anomaly feed — live job workflows use the Jobs page.
-          </p>
-          <ul className="mt-5 space-y-2">
-            {recentAnomalies.map((a) => (
-              <li
-                key={a.id}
-                className="rounded-xl border border-white/[0.06] bg-surface-975/90 px-4 py-3"
-              >
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <span className="font-mono text-xs text-violet-300">{a.id}</span>
-                  <span className="text-[11px] text-slate-500 tabular-nums">
-                    {formatDateTime(a.detectedAt)}
-                  </span>
-                </div>
-                <p className="mt-1 text-sm font-medium text-slate-200">
-                  {a.service}
-                </p>
-                <p className="mt-1 line-clamp-2 text-sm text-slate-500">
-                  {a.summary}
-                </p>
-              </li>
-            ))}
-          </ul>
-          <Link
-            to="/anomalies"
-            className="mt-5 inline-block text-sm font-semibold text-sky-400 hover:text-sky-300"
-          >
-            Open anomaly feed →
-          </Link>
-        </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div
-            className={cn(
-              "rounded-card border border-violet-500/25 p-5 shadow-glow-violet",
-              "bg-gradient-to-br from-violet-500/15 via-surface-925 to-surface-975"
-            )}
-          >
-            <Sparkles className="h-5 w-5 text-violet-400" />
-            <p className="mt-3 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
-              AI insight
-            </p>
-            <p className="mt-2 text-sm leading-relaxed text-slate-300">
-              checkout-service shows the highest fingerprint match rate vs
-              payment-gateway in the last 7 days — monitor confirm-path deploys.
-            </p>
-          </div>
-          <div className="rounded-card border border-white/[0.08] bg-surface-975/80 p-5 shadow-inner">
-            <Zap className="h-5 w-5 text-sky-400" />
-            <p className="mt-3 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
-              Determinism
-            </p>
-            <p className="mt-2 text-sm leading-relaxed text-slate-400">
-              82% of on-call replays matched the same ranked file path as LogIQ.
-            </p>
-          </div>
-          <div className="rounded-card border border-white/[0.08] bg-surface-975/80 p-5 shadow-inner">
-            <Timer className="h-5 w-5 text-amber-400" />
-            <p className="mt-3 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
-              Triage SLA
-            </p>
-            <p className="mt-2 text-sm leading-relaxed text-slate-400">
-              P50 first triage: 2m 14s · P95: 6m 02s (rolling 7d).
-            </p>
-          </div>
-          <div className="rounded-card border border-white/[0.08] bg-surface-975/80 p-5 shadow-inner">
-            <Activity className="h-5 w-5 text-emerald-400" />
-            <p className="mt-3 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
-              Coverage
-            </p>
-            <p className="mt-2 text-sm leading-relaxed text-slate-400">
-              APM + logs wired for tier-1 services; expand to tier-2 Q2.
-            </p>
+          <div className="grid grid-cols-2 gap-4">
+            <div
+              className={cn(
+                "rounded-card border border-violet-500/25 p-5 shadow-glow-violet",
+                "bg-gradient-to-br from-violet-500/15 via-surface-925 to-surface-975"
+              )}
+            >
+              <Sparkles className="h-5 w-5 text-violet-400" />
+              <p className="mt-3 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
+                AI insight
+              </p>
+              <p className="mt-2 text-sm leading-relaxed text-slate-300">
+                checkout-service shows the highest fingerprint match rate vs
+                payment-gateway in the last 7 days — monitor confirm-path deploys.
+              </p>
+            </div>
+            <div className="rounded-card border border-white/[0.08] bg-surface-975/80 p-5 shadow-inner">
+              <Zap className="h-5 w-5 text-sky-400" />
+              <p className="mt-3 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
+                Determinism
+              </p>
+              <p className="mt-2 text-sm leading-relaxed text-slate-400">
+                82% of on-call replays matched the same ranked file path as LogIQ.
+              </p>
+            </div>
+            <div className="rounded-card border border-white/[0.08] bg-surface-975/80 p-5 shadow-inner">
+              <Timer className="h-5 w-5 text-amber-400" />
+              <p className="mt-3 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
+                Triage SLA
+              </p>
+              <p className="mt-2 text-sm leading-relaxed text-slate-400">
+                P50 first triage: 2m 14s · P95: 6m 02s (rolling 7d).
+              </p>
+            </div>
+            <div className="rounded-card border border-white/[0.08] bg-surface-975/80 p-5 shadow-inner">
+              <Activity className="h-5 w-5 text-emerald-400" />
+              <p className="mt-3 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
+                Coverage
+              </p>
+              <p className="mt-2 text-sm leading-relaxed text-slate-400">
+                APM + logs wired for tier-1 services; expand to tier-2 Q2.
+              </p>
+            </div>
           </div>
         </div>
       </section>
