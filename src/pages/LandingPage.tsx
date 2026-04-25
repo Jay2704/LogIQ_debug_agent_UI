@@ -727,7 +727,7 @@ function CtaSection() {
 // ── Page root ──────────────────────────────────────────────────────────────
 export function LandingPage() {
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-black/[0.96] text-slate-200">
+    <div className="relative min-h-screen overflow-x-hidden text-slate-200">
       <LandingNav />
       <main>
         <HeroSection />

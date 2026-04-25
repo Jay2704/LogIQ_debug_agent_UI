@@ -27,7 +27,7 @@ export function AuthLayout({
   return (
     <div
       className={cn(
-        "relative min-h-screen overflow-x-hidden bg-[#040C18] text-slate-200",
+        "relative min-h-screen overflow-x-hidden text-slate-200",
         className
       )}
     >
