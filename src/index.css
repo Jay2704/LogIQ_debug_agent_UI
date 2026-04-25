@@ -8,6 +8,8 @@
   }
   body {
     @apply min-h-screen font-sans text-slate-200;
+    /* Smooth background transition on theme switch */
+    transition: background-color 250ms ease, color 250ms ease;
     background-color: #040C18;
     background-image:
       radial-gradient(
@@ -292,6 +294,219 @@
   0%, 100% { transform: translate3d(0, 0, 0); opacity: 0.28; }
   50%       { transform: translate3d(14px, -10px, 0); opacity: 0.45; }
 }
+
+/* ── Light mode overrides ────────────────────────────────────────────────── */
+/*
+ * Strategy: [data-theme="light"] selectors have specificity 0-2-x which beats
+ * Tailwind's single-class utilities (0-1-0). No !important needed for most rules.
+ * Structural selectors (element + attribute) use !important only where the
+ * Tailwind class wins because it appears later in the stylesheet.
+ */
+
+/* Body & ambient background */
+html[data-theme="light"] body {
+  background-color: #edf2fb;
+  color: #1e293b;
+  background-image:
+    radial-gradient(ellipse 100% 70% at 50% -10%, rgba(34,211,238,0.06), transparent 50%),
+    radial-gradient(ellipse 60% 50% at 100% 0%,   rgba(6,182,212,0.04), transparent 45%),
+    radial-gradient(ellipse 50% 40% at 0%   80%,  rgba(52,211,153,0.03), transparent 45%);
+}
+
+/* Dim the animated background canvas in light mode */
+html[data-theme="light"] [data-ethereal-bg] { opacity: 0.12; }
+
+/* ── Text ── */
+html[data-theme="light"] .text-white      { color: #0f172a; }
+html[data-theme="light"] .text-slate-100  { color: #0f172a; }
+html[data-theme="light"] .text-slate-200  { color: #1e293b; }
+html[data-theme="light"] .text-slate-300  { color: #334155; }
+html[data-theme="light"] .text-slate-400  { color: #475569; }
+html[data-theme="light"] .text-slate-500  { color: #64748b; }
+html[data-theme="light"] .text-slate-600  { color: #94a3b8; }
+html[data-theme="light"] .text-slate-700  { color: #cbd5e1; }
+html[data-theme="light"] .text-neutral-50  { color: #0f172a; }
+html[data-theme="light"] .text-neutral-300 { color: #334155; }
+html[data-theme="light"] .text-neutral-400 { color: #475569; }
+
+/* Cyber accent — darken for readability on light bg */
+html[data-theme="light"] .text-cyber       { color: #0891b2; }
+html[data-theme="light"] .text-cyber\/80   { color: rgba(8,145,178,0.85); }
+html[data-theme="light"] .text-cyber\/70   { color: rgba(8,145,178,0.75); }
+html[data-theme="light"] .text-cyan-300    { color: #0891b2; }
+html[data-theme="light"] .text-cyan-400    { color: #0891b2; }
+html[data-theme="light"] .text-sky-200\/95 { color: #0369a1; }
+
+/* Amber/warning text keeps its color — readable on light bg */
+
+/* ── Dark panel backgrounds → near-white surfaces ── */
+html[data-theme="light"] .bg-black\/\[0\.96\] { background-color: rgba(255,255,255,0.97); }
+html[data-theme="light"] .bg-black\/\[0\.94\] { background-color: rgba(255,255,255,0.95); }
+html[data-theme="light"] .bg-black\/\[0\.9\]  { background-color: rgba(255,255,255,0.93); }
+html[data-theme="light"] .bg-black\/\[0\.88\] { background-color: rgba(248,251,255,0.95); }
+html[data-theme="light"] .bg-black\/\[0\.85\] { background-color: rgba(248,251,255,0.95); }
+html[data-theme="light"] .bg-black\/\[0\.82\] { background-color: rgba(241,246,252,0.95); }
+html[data-theme="light"] .bg-black\/\[0\.8\]  { background-color: rgba(241,246,252,0.92); }
+html[data-theme="light"] .bg-black\/\[0\.7\]  { background-color: rgba(234,242,250,0.9); }
+html[data-theme="light"] .bg-black\/\[0\.6\]  { background-color: rgba(234,242,250,0.85); }
+html[data-theme="light"] .bg-black\/\[0\.5\]  { background-color: rgba(226,238,247,0.8); }
+html[data-theme="light"] .bg-black\/\[0\.4\]  { background-color: rgba(226,238,247,0.7); }
+
+/* Landing-specific backgrounds */
+html[data-theme="light"] .bg-\[\#080d18\]\/55 { background-color: rgba(255,255,255,0.88) !important; }
+html[data-theme="light"] .bg-\[\#080d18\]\/45 { background-color: rgba(255,255,255,0.82) !important; }
+
+/* Surface color utilities */
+html[data-theme="light"] .bg-surface-975  { background-color: #f0f5fc; }
+html[data-theme="light"] .bg-surface-960  { background-color: #e8f0f9; }
+html[data-theme="light"] .bg-surface-950  { background-color: #dce8f5; }
+html[data-theme="light"] .bg-surface-925  { background-color: #d0e0ef; }
+html[data-theme="light"] .bg-surface-900  { background-color: #c4d8ea; }
+html[data-theme="light"] .bg-surface-875  { background-color: #b8cfe4; }
+html[data-theme="light"] .bg-surface-850  { background-color: #acc7de; }
+html[data-theme="light"] .bg-surface-825  { background-color: #a0bed8; }
+html[data-theme="light"] .bg-surface-800  { background-color: #94b5d2; }
+
+/* White/transparent overlays that disappear on light bg */
+html[data-theme="light"] .bg-white\/\[0\.04\] { background-color: rgba(15,23,42,0.04); }
+html[data-theme="light"] .bg-white\/\[0\.06\] { background-color: rgba(15,23,42,0.05); }
+
+/* ── Borders ── */
+html[data-theme="light"] .border-cyber\/\[0\.06\] { border-color: rgba(8,145,178,0.18); }
+html[data-theme="light"] .border-cyber\/\[0\.08\] { border-color: rgba(8,145,178,0.2);  }
+html[data-theme="light"] .border-cyber\/\[0\.1\]  { border-color: rgba(8,145,178,0.22); }
+html[data-theme="light"] .border-cyber\/\[0\.12\] { border-color: rgba(8,145,178,0.24); }
+html[data-theme="light"] .border-cyber\/\[0\.15\] { border-color: rgba(8,145,178,0.28); }
+html[data-theme="light"] .border-cyber\/\[0\.18\] { border-color: rgba(8,145,178,0.32); }
+html[data-theme="light"] .border-cyber\/\[0\.2\]  { border-color: rgba(8,145,178,0.35); }
+html[data-theme="light"] .border-cyber\/\[0\.22\] { border-color: rgba(8,145,178,0.38); }
+html[data-theme="light"] .border-cyber\/\[0\.28\] { border-color: rgba(8,145,178,0.42); }
+html[data-theme="light"] .border-cyber\/30        { border-color: rgba(8,145,178,0.4);  }
+html[data-theme="light"] .border-cyber\/\[0\.3\]  { border-color: rgba(8,145,178,0.4);  }
+
+/* White borders invisible on light bg — swap to slate */
+html[data-theme="light"] .border-white\/\[0\.04\] { border-color: rgba(15,23,42,0.08); }
+html[data-theme="light"] .border-white\/\[0\.08\] { border-color: rgba(15,23,42,0.1);  }
+html[data-theme="light"] .border-white\/\[0\.12\] { border-color: rgba(15,23,42,0.14); }
+
+/* Sky / tech borders */
+html[data-theme="light"] .border-sky-500\/20 { border-color: rgba(14,165,233,0.3); }
+html[data-theme="light"] .border-sky-500\/30 { border-color: rgba(14,165,233,0.4); }
+
+/* ── Rings ── */
+html[data-theme="light"] .ring-cyber\/\[0\.06\] { --tw-ring-color: rgba(8,145,178,0.12); }
+html[data-theme="light"] .ring-cyber\/\[0\.12\] { --tw-ring-color: rgba(8,145,178,0.2);  }
+html[data-theme="light"] .ring-cyber\/20        { --tw-ring-color: rgba(8,145,178,0.28); }
+html[data-theme="light"] .ring-cyber\/30        { --tw-ring-color: rgba(8,145,178,0.38); }
+
+/* Focus ring offset colour */
+html[data-theme="light"] .ring-offset-surface-975     { --tw-ring-offset-color: #f0f5fc; }
+html[data-theme="light"] .ring-offset-surface-960     { --tw-ring-offset-color: #e8f0f9; }
+html[data-theme="light"] .ring-offset-\[\#080d18\]    { --tw-ring-offset-color: #f0f5fc; }
+
+/* ── Hover backgrounds ── */
+html[data-theme="light"] .hover\:bg-cyber\/\[0\.06\]:hover { background-color: rgba(8,145,178,0.07); }
+html[data-theme="light"] .hover\:bg-cyber\/\[0\.08\]:hover { background-color: rgba(8,145,178,0.09); }
+html[data-theme="light"] .hover\:bg-white\/\[0\.04\]:hover { background-color: rgba(15,23,42,0.04); }
+html[data-theme="light"] .hover\:bg-white\/\[0\.06\]:hover { background-color: rgba(15,23,42,0.05); }
+html[data-theme="light"] .hover\:bg-black\/\[0\.82\]:hover { background-color: rgba(241,246,252,0.97); }
+html[data-theme="light"] .hover\:bg-black\/\[0\.85\]:hover { background-color: rgba(248,251,255,0.98); }
+
+/* Hover text */
+html[data-theme="light"] .hover\:text-slate-200:hover { color: #1e293b; }
+html[data-theme="light"] .hover\:text-slate-300:hover { color: #334155; }
+html[data-theme="light"] .hover\:text-cyan-300:hover  { color: #0891b2; }
+
+/* Hover border */
+html[data-theme="light"] .hover\:border-cyber\/\[0\.2\]:hover  { border-color: rgba(8,145,178,0.35); }
+html[data-theme="light"] .hover\:border-cyber\/\[0\.28\]:hover { border-color: rgba(8,145,178,0.42); }
+html[data-theme="light"] .hover\:border-cyber\/\[0\.3\]:hover  { border-color: rgba(8,145,178,0.45); }
+html[data-theme="light"] .hover\:border-sky-500\/30:hover      { border-color: rgba(14,165,233,0.5); }
+
+/* ── Heading gradients ── */
+html[data-theme="light"] .ui-page-title,
+html[data-theme="light"] .ui-section-title,
+html[data-theme="light"] .heading-gradient {
+  background: linear-gradient(to bottom, #0f172a, #475569);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* bg-clip text (gradient headings) — keep the gradient colour, just darken */
+html[data-theme="light"] .bg-gradient-to-b.from-neutral-50 {
+  background-image: linear-gradient(to bottom, #0f172a, #475569) !important;
+}
+
+/* ── Nav active state ── */
+html[data-theme="light"] .bg-nav-active {
+  background: linear-gradient(135deg, rgba(8,145,178,0.1) 0%, rgba(6,182,212,0.07) 50%, rgba(241,246,252,0.8) 100%);
+}
+
+/* ── Input surfaces ── */
+html[data-theme="light"] .bg-surface-975\/70 { background-color: rgba(248,251,255,0.85); }
+
+/* ── Shadow adjustments for light surfaces ── */
+html[data-theme="light"] .shadow-\[0_4px_24px_-8px_rgba\(0\,0\,0\,0\.5\)\] {
+  box-shadow: 0 4px 24px -8px rgba(8,145,178,0.12);
+}
+html[data-theme="light"] .shadow-\[0_0_80px_-20px_rgba\(34\,211\,238\,0\.15\)\] {
+  box-shadow: 0 0 80px -20px rgba(8,145,178,0.18);
+}
+
+/* ── Dividers / separators ── */
+html[data-theme="light"] .bg-cyber\/\[0\.12\] { background-color: rgba(8,145,178,0.18); }
+html[data-theme="light"] .bg-cyber\/\[0\.1\]  { background-color: rgba(8,145,178,0.15); }
+
+/* ── CTA hover adjustments in light mode ── */
+@media (hover: hover) {
+  html[data-theme="light"] .cta-shimmer-secondary:hover {
+    border-color: rgba(8,145,178,0.3);
+    box-shadow: 0 0 0 1px rgba(8,145,178,0.1), 0 10px 32px -18px rgba(8,145,178,0.18);
+  }
+  html[data-theme="light"] .hero-glow-panel:hover {
+    border-color: rgba(8,145,178,0.25);
+    box-shadow: 0 0 0 1px rgba(8,145,178,0.1), 0 28px 72px -34px rgba(0,0,0,0.18), 0 0 44px -18px rgba(8,145,178,0.12);
+  }
+  html[data-theme="light"] .hero-glow-card:hover {
+    border-color: rgba(8,145,178,0.22);
+    box-shadow: 0 0 0 1px rgba(8,145,178,0.18), 0 26px 64px -26px rgba(0,0,0,0.15), 0 0 38px -12px rgba(8,145,178,0.14);
+  }
+}
+
+/* ── Scanline overlay — invisible but harmless on light bg ── */
+html[data-theme="light"] .nexus-card-scanline::before { display: none; }
+
+/* ── Auth compact nav label ── */
+html[data-theme="light"] nav .text-slate-400 { color: #475569; }
+
+/* ── Amber / warning surfaces (keep readable) ── */
+html[data-theme="light"] .border-amber-500\/25 { border-color: rgba(245,158,11,0.35); }
+html[data-theme="light"] .bg-amber-500\/\[0\.08\] { background-color: rgba(245,158,11,0.1); }
+html[data-theme="light"] .text-amber-100\/95 { color: #92400e; }
+html[data-theme="light"] .text-amber-50\/95 { color: #78350f; }
+
+/* ── Red / error surfaces ── */
+html[data-theme="light"] .border-red-500\/30 { border-color: rgba(239,68,68,0.38); }
+html[data-theme="light"] .bg-red-500\/10 { background-color: rgba(239,68,68,0.08); }
+html[data-theme="light"] .text-red-200 { color: #b91c1c; }
+
+/* ── Sky badge surfaces ── */
+html[data-theme="light"] .bg-sky-500\/10 { background-color: rgba(14,165,233,0.1); }
+html[data-theme="light"] .bg-cyber\/10 { background-color: rgba(8,145,178,0.1); }
+html[data-theme="light"] .text-sky-200\/95 { color: #0369a1; }
+
+/* ── Gradient text clip (page headings) ── */
+html[data-theme="light"] .gradient-text {
+  background: linear-gradient(90deg, #0891b2, #6366f1, #0891b2);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: none;
+}
+
+/* ── Log level colours stay vibrant (they work on both themes) ── */
 
 @media (prefers-reduced-motion: reduce) {
   .hero-ambient-orb,

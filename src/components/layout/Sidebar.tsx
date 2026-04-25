@@ -44,7 +44,7 @@ export function Sidebar() {
           to="/"
           className="flex min-w-0 items-center outline-none ring-offset-2 ring-offset-surface-975 transition hover:opacity-90 focus-visible:rounded-lg focus-visible:ring-2 focus-visible:ring-cyan-500/50"
         >
-          <LogIQFullLogo className="max-h-14 max-w-[200px] object-contain object-left" />
+          <LogIQFullLogo className="max-h-10 max-w-[175px]" />
         </Link>
 
         {/* Status dot */}

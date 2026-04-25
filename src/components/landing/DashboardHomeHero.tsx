@@ -385,7 +385,7 @@ export function DashboardHomeHero() {
           {/* Left: logo + headline */}
           <div className="flex-1 p-8 lg:p-12 relative z-10 flex flex-col justify-center">
             <div className="flex justify-start py-2">
-              <LogIQFullLogo className="max-h-[6rem] max-w-[260px] object-contain object-left sm:max-h-28" />
+              <LogIQFullLogo className="max-h-12 max-w-[220px] sm:max-h-14" />
             </div>
             <span className="mt-5 inline-flex items-center gap-1.5 rounded-full border border-cyber/30 bg-cyber/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-cyan-300 ring-1 ring-cyber/20 w-fit">
               <span className="relative flex h-2 w-2">

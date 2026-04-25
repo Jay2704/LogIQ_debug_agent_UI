@@ -3,6 +3,7 @@ import { LogOut, Terminal, UserRound } from "lucide-react";
 import { useCurrentUser } from "@/auth";
 import { LogIQIconMark } from "@/components/branding/LogIQLogos";
 import { ApiModeBadge } from "@/components/layout/ApiModeBadge";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { formatUserContextLine, userDisplayName } from "@/lib/userDisplay";
 import { cn } from "@/lib/utils";
 
@@ -47,9 +48,14 @@ export function Topbar() {
         </div>
       ) : null}
 
-      {/* Right: user section */}
+      {/* Right: controls + user section */}
       <div className="flex min-w-0 flex-1 items-center justify-end gap-2 sm:gap-3">
         {pathname !== "/" ? <ApiModeBadge /> : null}
+
+        {/* Theme toggle */}
+        <ThemeToggle />
+
+        <div className="h-5 w-px bg-cyber/[0.1]" aria-hidden />
 
         {user ? (
           <button

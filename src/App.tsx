@@ -24,19 +24,16 @@ import { DevIntegrationCheck } from "@/pages/DevIntegrationCheck";
 export default function App() {
   return (
     <>
-      <EtherealShadow
-        color="rgba(34, 211, 238, 0.18)"
-        animation={{ scale: 45, speed: 55 }}
-        noise={{ opacity: 0.25, scale: 1.2 }}
-        sizing="fill"
-        showTitle={false}
-        style={{
-          position: "fixed",
-          inset: 0,
-          zIndex: 0,
-          pointerEvents: "none",
-        }}
-      />
+      <div data-ethereal-bg aria-hidden style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none" }}>
+        <EtherealShadow
+          color="rgba(34, 211, 238, 0.18)"
+          animation={{ scale: 45, speed: 55 }}
+          noise={{ opacity: 0.25, scale: 1.2 }}
+          sizing="fill"
+          showTitle={false}
+          style={{ position: "absolute", inset: 0 }}
+        />
+      </div>
       <div className="relative" style={{ zIndex: 1 }}>
     <Routes>
       <Route path="/login" element={<Login />} />

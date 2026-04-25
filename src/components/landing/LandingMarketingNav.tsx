@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { LogIQFullLogo } from "@/components/branding/LogIQLogos";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { ctaButtonGradient, ctaGlowBlueOnly } from "@/lib/ctaTheme";
 import { cn } from "@/lib/utils";
 
@@ -35,6 +36,7 @@ export function LandingMarketingNav() {
         </nav>
 
         <div className="flex shrink-0 items-center gap-2.5 sm:gap-3">
+          <ThemeToggle />
           <Link
             to="/login"
             className="hidden rounded-lg px-3 py-2 text-sm font-semibold leading-tight text-slate-400 transition hover:bg-white/[0.04] hover:text-slate-200 sm:inline-block"

@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
 import { GitBranch, Network, Radar, Sparkles, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
-import { LogIQFullLogo } from "@/components/branding/LogIQLogos";
+import { LogIQFullLogo, LogIQIconMark } from "@/components/branding/LogIQLogos";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { cn } from "@/lib/utils";
 
 interface AuthLayoutProps {
@@ -31,6 +32,19 @@ export function AuthLayout({
         className
       )}
     >
+      {/* Compact sticky nav — icon mark links back to landing; toggle always accessible */}
+      <nav className="sticky top-0 z-40 flex items-center justify-between border-b border-white/[0.06] bg-black/[0.88] px-4 py-2.5 backdrop-blur-md sm:px-6">
+        <Link
+          to="/"
+          aria-label="Back to LogIQ home"
+          className="flex items-center gap-2.5 rounded-lg outline-none transition hover:opacity-80 focus-visible:ring-2 focus-visible:ring-sky-500/50"
+        >
+          <LogIQIconMark className="h-8 w-8" />
+          <span className="hidden text-sm font-semibold text-slate-400 sm:block">LogIQ</span>
+        </Link>
+        <ThemeToggle />
+      </nav>
+
       {/* Cyber ambient glows */}
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_120%_90%_at_50%_-20%,rgba(34,211,238,0.07),transparent_50%)]" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_100%_0%,rgba(34,211,238,0.04),transparent_45%)]" />
@@ -68,7 +82,7 @@ export function AuthLayout({
                 to="/"
                 className="inline-flex max-w-full items-center rounded-xl outline-none ring-offset-2 ring-offset-[#080d18] transition hover:opacity-90 focus-visible:ring-2 focus-visible:ring-sky-500/50"
               >
-                <LogIQFullLogo className="max-h-20 max-w-[min(380px,92%)] sm:max-h-24" />
+                <LogIQFullLogo className="max-h-14 max-w-[min(280px,92%)] sm:max-h-16" />
               </Link>
               <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">
                 AI debugging platform
@@ -127,7 +141,7 @@ export function AuthLayout({
                 to="/"
                 className="inline-flex min-w-0 flex-1 items-center rounded-lg text-slate-400 transition hover:opacity-90"
               >
-                <LogIQFullLogo className="max-h-16 max-w-[min(340px,88vw)] sm:max-h-18" />
+                <LogIQFullLogo className="max-h-10 max-w-[min(240px,88vw)]" />
               </Link>
             </div>
             <div className="flex flex-wrap gap-2">

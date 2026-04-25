@@ -29,6 +29,7 @@ import {
   Zap,
 } from "lucide-react";
 import { LogIQFullLogo } from "@/components/branding/LogIQLogos";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { SplineScene } from "@/components/ui/splite";
 import { Spotlight } from "@/components/ui/spotlight";
 import { ctaButtonGradient, ctaGlowBlueOnly } from "@/lib/ctaTheme";
@@ -414,6 +415,7 @@ function LandingNav() {
         </nav>
 
         <div className="flex items-center gap-2.5">
+          <ThemeToggle />
           <Link
             to="/login"
             className="hidden rounded-lg px-3 py-2 text-sm font-semibold text-slate-400 transition hover:text-slate-200 sm:inline-block"
