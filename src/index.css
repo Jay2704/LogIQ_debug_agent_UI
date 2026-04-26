@@ -166,6 +166,12 @@
   .hero-ambient-particle--delayed { animation-delay: -9s; }
   .hero-ambient-particle--slow { animation: heroParticleDrift 27s ease-in-out infinite; animation-delay: -14s; }
 
+  .hero-robot {
+    will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+
   /* Terminal blink cursor */
   .terminal-cursor {
     display: inline-block;

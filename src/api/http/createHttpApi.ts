@@ -23,6 +23,9 @@ import {
   serializeCreateUserBody,
 } from "./parseUserApi";
 
+const BASE_URL = "http://localhost:8000";
+const EXPLICIT_API_ORIGIN = BASE_URL.replace(/\/+$/, "");
+
 /**
  * “Hybrid” HTTP client: real `fetch` calls for backend-supported routes (jobs, RCA, debug-agent,
  * users), while anomalies, reports, insights, dashboard, and utilities delegate to the in-memory
@@ -156,7 +159,7 @@ function parseJiraSearchHitsJson(json: unknown): JiraTicketSearchHit[] {
 
 function parseJiraRcaResultJson(json: unknown): JiraRcaResult {
   if (!json || typeof json !== "object") {
-    throw new Error("[LogIQ API] POST /api/v1/jira/rca: invalid JSON payload");
+    throw new Error("[LogIQ API] POST /api/v1/jira/rca/run: invalid JSON payload");
   }
   const row = json as Record<string, unknown>;
   const evidenceSummary = Array.isArray(row.evidence_summary)
@@ -244,12 +247,14 @@ async function fetchNetwork(url: string, init?: RequestInit): Promise<Response> 
   }
 }
 
-export function createHttpApi(baseUrl: string): LogIQApi {
+export function createHttpApi(_baseUrl: string): LogIQApi {
+  const baseUrl = EXPLICIT_API_ORIGIN;
   const mocks = createMockApi();
 
   async function postAuthLogin(input: LoginInput): Promise<User> {
-    const url = joinApiUrl(baseUrl, "/api/v1/auth/login");
-    const res = await fetchNetwork(url, {
+    const url = `${baseUrl}/api/v1/auth/login`;
+    console.log("Login API URL:", `${baseUrl}/api/v1/auth/login`);
+    const res = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -460,20 +465,32 @@ export function createHttpApi(baseUrl: string): LogIQApi {
         return parseJiraTicketSummaryJson(json);
       },
       runRcaWithTicket: async ({ ticket, logContent }) => {
-        const url = joinApiUrl(baseUrl, "/api/v1/jira/rca");
-        const res = await fetchNetwork(url, {
+        const ticketKey = ticket.key;
+        const trimmedLogContent = logContent.trim();
+        if (!trimmedLogContent) {
+          throw new Error("[LogIQ API] runRcaWithTicket: log_content is empty");
+        }
+        const url = `${baseUrl}/api/v1/jira/rca/run`;
+        const payload = {
+          ticket_key: ticketKey,
+          ticket_summary: ticket.summary,
+          ticket_status: ticket.status,
+          ticket_priority: ticket.priority,
+          extracted_hints: ticket.extractedHints,
+          log_content: trimmedLogContent,
+        };
+        console.log("FINAL URL:", `${baseUrl}/api/v1/jira/rca/run`);
+        console.log("Payload length:", trimmedLogContent.length);
+        console.log("[LogIQ API] runRcaWithTicket request", {
+          finalUrl: `${baseUrl}/api/v1/jira/rca/run`,
+          payloadKeys: Object.keys(payload),
+        });
+        const res = await fetch(url, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            ticket_key: ticket.key,
-            ticket_summary: ticket.summary,
-            ticket_status: ticket.status,
-            ticket_priority: ticket.priority,
-            extracted_hints: ticket.extractedHints,
-            log_content: logContent,
-          }),
+          body: JSON.stringify(payload),
         });
-        if (!res.ok) await httpError(res, "POST /api/v1/jira/rca");
+        if (!res.ok) await httpError(res, "POST /api/v1/jira/rca/run");
         const json: unknown = await readJsonOrNull(res);
         return parseJiraRcaResultJson(json);
       },

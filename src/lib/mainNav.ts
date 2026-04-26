@@ -5,6 +5,7 @@ import {
   BadgeInfo,
   CircleHelp,
   FileStack,
+  GitBranchPlus,
   LayoutDashboard,
   ListTodo,
   Settings2,
@@ -50,6 +51,12 @@ export const MAIN_NAV_ITEMS: MainNavItem[] = [
     label: "Reports",
     icon: FileStack,
     description: "View generated summaries and incident reports",
+  },
+  {
+    to: "/rca-jira",
+    label: "RCA with JIRA",
+    icon: GitBranchPlus,
+    description: "Fetch ticket, upload logs, run RCA, and review history",
   },
   {
     to: "/utilities",

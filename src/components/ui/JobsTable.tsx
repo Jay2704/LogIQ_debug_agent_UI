@@ -127,7 +127,7 @@ export function JobsTable({ jobs, emptyMessage, footer }: JobsTableProps) {
                       "active:scale-[0.98]"
                     )}
                   >
-                    View details
+                    View Result
                     <ChevronRight
                       className="h-3.5 w-3.5 opacity-80 transition group-hover:translate-x-0.5"
                       strokeWidth={2.5}

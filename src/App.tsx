@@ -20,6 +20,7 @@ import { Signup } from "@/pages/Signup";
 import { Utilities } from "@/pages/Utilities";
 import { UtilityDetail } from "@/pages/UtilityDetail";
 import { DevIntegrationCheck } from "@/pages/DevIntegrationCheck";
+import { RCAWithJira } from "@/pages/RCAWithJira";
 
 export default function App() {
   return (
@@ -44,11 +45,14 @@ export default function App() {
       <Route path="/" element={<AuthenticatedAppShell />}>
         <Route element={<AppLayout />}>
           <Route index element={<Dashboard />} />
+          <Route path="dashboard" element={<Dashboard />} />
           <Route path="jobs" element={<Jobs />} />
           <Route path="jobs/:jobId" element={<JobDetail />} />
           <Route path="anomalies" element={<Anomalies />} />
           <Route path="insights" element={<Insights />} />
           <Route path="reports" element={<Reports />} />
+          <Route path="rca" element={<RCAWithJira />} />
+          <Route path="rca-jira" element={<RCAWithJira />} />
           <Route path="utilities" element={<Utilities />} />
           <Route path="utilities/:toolId" element={<UtilityDetail />} />
           <Route path="settings" element={<Settings />} />

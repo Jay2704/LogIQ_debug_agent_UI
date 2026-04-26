@@ -1,5 +1,5 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { LogOut, Terminal, UserRound } from "lucide-react";
+import { LogOut, Menu, Terminal, UserRound } from "lucide-react";
 import { useCurrentUser } from "@/auth";
 import { LogIQIconMark } from "@/components/branding/LogIQLogos";
 import { ApiModeBadge } from "@/components/layout/ApiModeBadge";
@@ -7,7 +7,11 @@ import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { formatUserContextLine, userDisplayName } from "@/lib/userDisplay";
 import { cn } from "@/lib/utils";
 
-export function Topbar() {
+interface TopbarProps {
+  onToggleSidebar: () => void;
+}
+
+export function Topbar({ onToggleSidebar }: TopbarProps) {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const { user, clearCurrentUser } = useCurrentUser();
@@ -21,8 +25,17 @@ export function Topbar() {
       )}
     >
       {/* Left: brand + nav (on dashboard home) */}
+      <button
+        type="button"
+        onClick={onToggleSidebar}
+        aria-label="Toggle sidebar"
+        className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-cyber/[0.18] text-slate-300 transition hover:bg-cyber/[0.08] hover:text-white"
+      >
+        <Menu className="h-4 w-4" />
+      </button>
+
       {showCompactBrand ? (
-        <div className="mr-auto flex items-center gap-5 sm:gap-6">
+        <div className="mr-auto flex items-center gap-4 sm:gap-5">
           <Link
             to="/"
             className="flex shrink-0 items-center rounded-lg outline-none ring-offset-2 ring-offset-surface-975 transition hover:opacity-90 focus-visible:ring-2 focus-visible:ring-cyan-500/50"

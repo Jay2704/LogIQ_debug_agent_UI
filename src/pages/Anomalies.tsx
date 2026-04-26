@@ -1,26 +1,23 @@
-import { Link } from "react-router-dom";
-import { ArrowUpRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import {
   AnomalyStatusBadge,
   SeverityBadge,
 } from "@/components/ui/StatusBadge";
 import { PageLoading } from "@/components/ui/PageLoading";
 import { useAnomaliesData } from "@/api/hooks";
-import { getJobRouteId } from "@/lib/jobRoute";
 import { formatDateTime } from "@/lib/utils";
-
-function anomalyJobLink(
-  anomalyId: string,
-  jobs: { id: string; jobId?: string; anomalyId: string }[]
-) {
-  const job = jobs.find((j) => j.anomalyId === anomalyId);
-  return job
-    ? `/jobs/${encodeURIComponent(getJobRouteId(job))}`
-    : "/jobs";
-}
 
 export function Anomalies() {
   const { anomalies, jobs, loading, error } = useAnomaliesData();
+  const navigate = useNavigate();
+
+  const handleRunRCA = (anomaly: { id: string; service: string }) => {
+    navigate(
+      `/rca?anomaly_id=${encodeURIComponent(anomaly.id)}&service=${encodeURIComponent(
+        anomaly.service
+      )}`
+    );
+  };
 
   if (loading || !anomalies || !jobs) {
     return <PageLoading message="Loading anomalies…" />;
@@ -44,13 +41,13 @@ export function Anomalies() {
       <div>
         <h1 className="ui-page-title">Anomalies</h1>
         <p className="ui-page-desc">
-          Severity-ranked signals with investigation status. Open RCA details
-          from the linked debug job.
+          Severity-ranked signals with investigation status. Trigger RCA directly
+          from each anomaly.
         </p>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        {sorted.map((a) => (
+        {sorted.slice(0, 1).map((a) => (
           <div
             key={a.id}
             className="group rounded-card border border-cyber/[0.12] bg-black/[0.88] p-5 shadow-card-premium transition hover:border-cyber/[0.25]"
@@ -73,13 +70,13 @@ export function Anomalies() {
             </p>
             <div className="mt-4 flex items-center justify-between border-t border-white/[0.06] pt-4">
               <span className="text-xs text-slate-500">{a.signalType}</span>
-              <Link
-                to={anomalyJobLink(a.id, jobs)}
-                className="inline-flex items-center gap-1 text-xs font-semibold text-sky-400 transition hover:text-sky-300"
+              <button
+                type="button"
+                onClick={() => handleRunRCA(a)}
+                className="inline-flex items-center gap-1 rounded-lg border border-sky-500/30 bg-sky-500/10 px-2.5 py-1.5 text-xs font-semibold text-sky-300 transition hover:border-sky-400/55 hover:bg-sky-500/20 hover:text-white"
               >
-                Open RCA details
-                <ArrowUpRight className="h-3.5 w-3.5" />
-              </Link>
+                Run RCA
+              </button>
             </div>
           </div>
         ))}

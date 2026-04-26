@@ -9,6 +9,7 @@ const links = [
   { to: "/anomalies", label: "Anomalies" },
   { to: "/insights", label: "Insights" },
   { to: "/reports", label: "Reports" },
+  { to: "/rca-jira", label: "RCA with JIRA" },
   { to: "/utilities", label: "Utilities" },
   { to: "/about", label: "About Us" },
   { to: "/faq", label: "FAQs" },

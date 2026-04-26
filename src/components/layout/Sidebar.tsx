@@ -10,7 +10,7 @@ const navGroups = [
   {
     label: "Workspace",
     items: MAIN_NAV_ITEMS.filter((i) =>
-      ["/", "/jobs", "/anomalies", "/insights", "/reports"].includes(i.to)
+      ["/", "/jobs", "/anomalies", "/insights", "/reports", "/rca-jira"].includes(i.to)
     ),
   },
   {
@@ -25,9 +25,20 @@ const navGroups = [
   },
 ];
 
-export function Sidebar() {
+interface SidebarProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export function Sidebar({ isOpen, onClose }: SidebarProps) {
   return (
-    <aside className="fixed left-0 top-0 z-40 hidden h-screen w-[240px] flex-col border-r border-cyber/[0.08] bg-black/[0.96] backdrop-blur-2xl md:flex">
+    <aside
+      className={cn(
+        "fixed left-0 top-0 z-50 flex h-screen w-[240px] flex-col border-r border-cyber/[0.08] bg-black/[0.96] backdrop-blur-2xl transition-transform duration-300 ease-out",
+        isOpen ? "translate-x-0" : "-translate-x-full"
+      )}
+      aria-hidden={!isOpen}
+    >
       {/* Scanline overlay */}
       <div
         className="pointer-events-none absolute inset-0 z-0 opacity-[0.4]"
@@ -42,6 +53,7 @@ export function Sidebar() {
       <div className="relative flex min-h-[4.5rem] items-center border-b border-cyber/[0.08] px-4 py-3">
         <Link
           to="/"
+          onClick={onClose}
           className="flex min-w-0 items-center outline-none ring-offset-2 ring-offset-surface-975 transition hover:opacity-90 focus-visible:rounded-lg focus-visible:ring-2 focus-visible:ring-cyan-500/50"
         >
           <LogIQFullLogo className="max-h-10 max-w-[175px]" />
@@ -80,6 +92,7 @@ export function Sidebar() {
                 <NavLink
                   key={item.to}
                   to={item.to}
+                  onClick={onClose}
                   end={item.end}
                   className={({ isActive }) =>
                     cn(
@@ -151,6 +164,7 @@ export function Sidebar() {
           ) : null}
           <Link
             to="/login"
+            onClick={onClose}
             className="mt-2 block text-[11px] text-cyber/70 transition hover:text-cyan-300"
           >
             › Login (demo)

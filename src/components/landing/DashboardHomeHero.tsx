@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 import {
   AlertTriangle,
   ChevronRight,
@@ -102,7 +103,17 @@ function mapRcaError(message: string): string {
 /**
  * Marketing-style hero for the authenticated home dashboard (no duplicate app chrome — Topbar remains).
  */
-export function DashboardHomeHero() {
+interface DashboardHomeHeroProps {
+  showHero?: boolean;
+  showWorkflow?: boolean;
+  showPreviewCard?: boolean;
+}
+
+export function DashboardHomeHero({
+  showHero = true,
+  showWorkflow = true,
+  showPreviewCard = true,
+}: DashboardHomeHeroProps) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const investigationResultsRef = useRef<HTMLDivElement | null>(null);
   const scrollRestoredInvestigationRef = useRef(false);
@@ -379,40 +390,60 @@ export function DashboardHomeHero() {
   return (
     <div className="space-y-4">
       {/* ── Hero card — SplineScene + Spotlight ─────────────────────────── */}
-      <div className="relative w-full rounded-2xl bg-black/[0.96] overflow-hidden border border-cyber/[0.15] shadow-[0_0_80px_-20px_rgba(34,211,238,0.15)]">
-        <Spotlight className="-top-40 left-0 md:left-60 md:-top-20" fill="white" />
-        <div className="flex flex-col md:flex-row min-h-[360px]">
-          {/* Left: logo + headline */}
-          <div className="flex-1 p-8 lg:p-12 relative z-10 flex flex-col justify-center">
-            <div className="flex justify-start py-2">
-              <LogIQFullLogo className="max-h-12 max-w-[220px] sm:max-h-14" />
-            </div>
-            <span className="mt-5 inline-flex items-center gap-1.5 rounded-full border border-cyber/30 bg-cyber/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-cyan-300 ring-1 ring-cyber/20 w-fit">
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-nexus/70 opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-nexus" />
+      {showHero ? (
+        <div className="relative w-full overflow-hidden rounded-2xl border border-cyber/[0.15] bg-black/[0.96] shadow-[0_0_80px_-20px_rgba(34,211,238,0.15)]">
+          <Spotlight className="-top-40 left-0 md:left-60 md:-top-20" fill="white" />
+          <div className="flex min-h-[360px] flex-col md:flex-row">
+            {/* Left: logo + headline */}
+            <div className="relative z-10 flex flex-1 flex-col justify-center p-8 lg:p-12">
+              <div className="flex justify-start py-2">
+                <LogIQFullLogo className="max-h-12 max-w-[220px] sm:max-h-14" />
+              </div>
+              <span className="mt-5 inline-flex w-fit items-center gap-1.5 rounded-full border border-cyber/30 bg-cyber/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-cyan-300 ring-1 ring-cyber/20">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-nexus/70 opacity-75" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-nexus" />
+                </span>
+                AI-Agent · Deterministic RCA · Remediation
               </span>
-              AI-Agent · Deterministic RCA · Remediation
-            </span>
-            <h1 className="mt-4 text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl lg:leading-tight bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400">
-              Debug production issues in seconds, not hours
-            </h1>
-            <p className="mt-4 text-base leading-relaxed text-neutral-300 max-w-lg">
-              Upload logs, trace anomalies, and uncover root cause instantly — all in one intelligent
-              debugging workspace.
-            </p>
-          </div>
-          {/* Right: Spline 3D */}
-          <div className="flex-1 relative hidden md:block min-h-[360px]">
-            <SplineScene
-              scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
-              className="w-full h-full"
-            />
+              <h1 className="mt-4 bg-gradient-to-b from-neutral-50 to-neutral-400 bg-clip-text text-2xl font-bold tracking-tight text-transparent sm:text-3xl lg:text-4xl lg:leading-tight">
+                Debug production issues in seconds, not hours
+              </h1>
+              <p className="mt-4 max-w-lg text-base leading-relaxed text-neutral-300">
+                Upload logs, trace anomalies, and uncover root cause instantly — all in one intelligent
+                debugging workspace.
+              </p>
+            </div>
+            {/* Right: Spline 3D */}
+            <motion.div
+              className="hero-robot relative hidden min-h-[360px] flex-1 md:block"
+              animate={{
+                y: [0, -12, 0],
+                rotate: [0, 0.5, 0],
+                scale: [1, 1.015, 1],
+                x: [0, 2, -2, 0],
+              }}
+              transition={{
+                duration: 8,
+                ease: "easeInOut",
+                repeat: Infinity,
+              }}
+              whileHover={{
+                scale: 1.03,
+                transition: { duration: 0.3 },
+              }}
+            >
+              <SplineScene
+                scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+                className="h-full w-full"
+              />
+            </motion.div>
           </div>
         </div>
-      </div>
+      ) : null}
 
       {/* ── Workflow panel ──────────────────────────────────────────────── */}
+      {showWorkflow ? (
       <div className="rounded-2xl border border-sky-500/20 bg-black/[0.94] p-4 text-left shadow-[0_0_0_1px_rgba(56,189,248,0.08)] sm:p-5">
           <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-sky-500/30 bg-sky-500/10 px-3 py-1 text-[11px] font-semibold text-sky-200/95">
             <span
@@ -1024,6 +1055,7 @@ export function DashboardHomeHero() {
             )}
           </div>
         </div>
+      ) : null}
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
           <Link
             to="/jobs"
@@ -1049,9 +1081,11 @@ export function DashboardHomeHero() {
           </a>
         </div>
 
-      <div className="mx-auto max-w-4xl mt-4">
-        <ProductPreviewCard />
-      </div>
+      {showPreviewCard ? (
+        <div className="mx-auto mt-4 max-w-4xl">
+          <ProductPreviewCard />
+        </div>
+      ) : null}
     </div>
   );
 }
