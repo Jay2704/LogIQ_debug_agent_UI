@@ -4,7 +4,6 @@ import type { Variants } from "framer-motion";
 import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
 import { QuickNav } from "./QuickNav";
-import { cn } from "@/lib/utils";
 
 const pageVariants: Variants = {
   initial: { opacity: 0, y: 10 },
@@ -16,16 +15,10 @@ const pageTransition = { duration: 0.35, ease: "easeOut" as const };
 
 export function AppLayout() {
   const { pathname } = useLocation();
-  const hideSidebarOnDashboard = pathname === "/";
 
   return (
-    <div
-      className={cn(
-        "min-h-screen",
-        !hideSidebarOnDashboard && "md:pl-[240px]"
-      )}
-    >
-      {!hideSidebarOnDashboard ? <Sidebar /> : null}
+    <div className="min-h-screen md:pl-[240px]">
+      <Sidebar />
       <div className="flex min-h-screen flex-col">
         <Topbar />
         <QuickNav />

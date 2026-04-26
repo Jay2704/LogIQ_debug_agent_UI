@@ -15,18 +15,12 @@ import {
   CheckCircle2,
   Cpu,
   FileSearch,
-  GitBranch,
-  Headphones,
   Layers,
-  ListTree,
   Network,
   Radar,
-  Shield,
   Sparkles,
-  Terminal,
   TrendingUp,
   Workflow,
-  Zap,
 } from "lucide-react";
 import { LogIQFullLogo } from "@/components/branding/LogIQLogos";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
@@ -336,15 +330,6 @@ function StatsSection() {
   );
 }
 
-// ── Roles strip ────────────────────────────────────────────────────────────
-const roles = [
-  { label: "Developer", icon: Cpu, desc: "Code anchors & deploy context" },
-  { label: "Tester", icon: Layers, desc: "Repro & regression trails" },
-  { label: "Support Eng.", icon: Headphones, desc: "Customer-impacting incidents" },
-  { label: "SRE", icon: Zap, desc: "Production reliability & SLOs" },
-  { label: "Viewer", icon: Shield, desc: "Read-only dashboards & RCA" },
-] as const;
-
 // ── CTA components ─────────────────────────────────────────────────────────
 function PrimaryCta({ className }: { className?: string }) {
   return (
@@ -385,7 +370,6 @@ function SecondaryCta({ className }: { className?: string }) {
 const navLinks = [
   { href: "#features", label: "Features" },
   { href: "#how-it-works", label: "How it works" },
-  { href: "#demo", label: "Demo" },
   { href: "#contact", label: "Contact" },
 ] as const;
 
@@ -553,125 +537,6 @@ function HeroSection() {
   );
 }
 
-// ── Demo section ───────────────────────────────────────────────────────────
-function DemoSection() {
-  return (
-    <section
-      id="demo"
-      className="border-t border-cyber/[0.08] bg-gradient-to-b from-black/[0.94] to-transparent py-16 sm:py-24"
-    >
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.5 }}
-        >
-          <p className="ui-section-eyebrow">In product</p>
-          <h2 className="ui-section-title mt-2">Investigation workspace</h2>
-          <p className="ui-section-desc">
-            RCA summaries, evidence lists, and AI explanations — all in one surface.
-          </p>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="mt-10 overflow-hidden rounded-card border border-cyber/[0.14] bg-black/[0.9] shadow-glow-cyber"
-        >
-          {/* Tab bar */}
-          <div className="flex flex-wrap items-center gap-2 border-b border-cyber/[0.08] bg-black/[0.94] px-4 py-2.5">
-            {["RCA Summary", "Evidence", "AI Explanation"].map((tab, idx) => (
-              <button
-                key={tab}
-                type="button"
-                className={cn(
-                  "cursor-pointer rounded-lg px-3 py-1.5 text-xs font-semibold transition",
-                  idx === 0
-                    ? "bg-cyber/[0.12] text-cyan-300 ring-1 ring-cyber/25"
-                    : "text-slate-500 hover:bg-white/[0.04] hover:text-slate-300"
-                )}
-              >
-                {tab}
-              </button>
-            ))}
-            <div className="ml-auto flex items-center gap-2 font-mono text-[10px] text-slate-600">
-              <Terminal className="h-3.5 w-3.5" />
-              job · dbg_inv_7f2a
-            </div>
-          </div>
-
-          {/* Content grid */}
-          <div className="grid gap-0 lg:grid-cols-12">
-            <div className="border-b border-cyber/[0.06] p-5 lg:col-span-5 lg:border-b-0 lg:border-r">
-              <p className="font-mono text-[10px] font-bold uppercase tracking-[0.15em] text-slate-600">
-                Top hypothesis
-              </p>
-              <p className="mt-3 text-sm leading-relaxed text-slate-200">
-                Deployment{" "}
-                <span className="font-mono text-cyber/90">checkout-svc@v2.4.1</span>{" "}
-                correlated with error rate and p99 latency in the cart path.
-              </p>
-              <ul className="mt-4 space-y-2 text-xs text-slate-400">
-                <li className="flex gap-2">
-                  <ListTree className="mt-0.5 h-3.5 w-3.5 shrink-0 text-nexus/80" />
-                  Trace: checkout → payment edge timeout cluster
-                </li>
-                <li className="flex gap-2">
-                  <GitBranch className="mt-0.5 h-3.5 w-3.5 shrink-0 text-violet-400/80" />
-                  Diff touches validation in{" "}
-                  <span className="font-mono">CartValidator</span>
-                </li>
-              </ul>
-            </div>
-            <div className="border-b border-cyber/[0.06] p-5 lg:col-span-4 lg:border-b-0 lg:border-r">
-              <p className="font-mono text-[10px] font-bold uppercase tracking-[0.15em] text-slate-600">
-                Evidence
-              </p>
-              <div className="mt-3 space-y-2">
-                {[
-                  { k: "Metric", v: "5xx rate +340% vs baseline" },
-                  { k: "Deploy", v: "v2.4.1 @ 14:02 UTC" },
-                  { k: "Anchor", v: "src/cart/validate.ts:L128" },
-                ].map((row) => (
-                  <div
-                    key={row.k}
-                    className="flex justify-between gap-3 rounded-lg border border-cyber/[0.06] bg-black/[0.94] px-2.5 py-2 text-[11px]"
-                  >
-                    <span className="text-slate-500">{row.k}</span>
-                    <span className="truncate text-right font-mono text-slate-300">{row.v}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="p-5 lg:col-span-3">
-              <p className="font-mono text-[10px] font-bold uppercase tracking-[0.15em] text-slate-600">
-                Remediation
-              </p>
-              <ul className="mt-3 space-y-2.5">
-                {[
-                  "Rollback or hotfix validation path",
-                  "Notify #incident-441",
-                  "Open PR with guardrail test",
-                ].map((line, idx) => (
-                  <li key={line} className="flex items-start gap-2 text-xs text-slate-400">
-                    <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded border border-cyber/[0.15] bg-black/[0.88] text-[10px] text-cyber/70">
-                      {idx + 1}
-                    </span>
-                    {line}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
 // ── Final CTA section ──────────────────────────────────────────────────────
 function CtaSection() {
   return (
@@ -736,45 +601,6 @@ export function LandingPage() {
         <StatsSection />
         <FeaturesSection />
         <HowItWorksSection />
-        <DemoSection />
-
-        {/* Roles */}
-        <section className="py-16 sm:py-20">
-          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-60px" }}
-              transition={{ duration: 0.5 }}
-            >
-              <p className="ui-section-eyebrow">Teams</p>
-              <h2 className="ui-section-title mt-2">Role-aware collaboration</h2>
-              <p className="ui-section-desc">
-                Same workspace — tuned views for how each role triages and ships fixes.
-              </p>
-            </motion.div>
-            <motion.div
-              variants={containerVariants}
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true, margin: "-60px" }}
-              className="mt-10 flex flex-wrap justify-center gap-3 sm:gap-4"
-            >
-              {roles.map(({ label, icon: Icon, desc }) => (
-                <motion.div
-                  key={label}
-                  variants={cardVariants}
-                  className="nexus-card-scanline flex min-w-[10rem] max-w-[14rem] flex-1 cursor-default flex-col rounded-card border border-cyber/[0.1] bg-black/[0.84] px-4 py-4 text-center transition hover:border-cyber/[0.25] hover:bg-black/[0.84]"
-                >
-                  <Icon className="mx-auto h-5 w-5 text-cyber/80" strokeWidth={1.75} />
-                  <p className="mt-2 font-display text-sm font-semibold text-white">{label}</p>
-                  <p className="mt-1 text-[11px] leading-snug text-slate-500">{desc}</p>
-                </motion.div>
-              ))}
-            </motion.div>
-          </div>
-        </section>
-
         <CtaSection />
 
         <footer
