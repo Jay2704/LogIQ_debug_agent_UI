@@ -329,8 +329,8 @@ html[data-theme="light"] .text-slate-200  { color: #1e293b; }
 html[data-theme="light"] .text-slate-300  { color: #334155; }
 html[data-theme="light"] .text-slate-400  { color: #475569; }
 html[data-theme="light"] .text-slate-500  { color: #64748b; }
-html[data-theme="light"] .text-slate-600  { color: #94a3b8; }
-html[data-theme="light"] .text-slate-700  { color: #cbd5e1; }
+html[data-theme="light"] .text-slate-600  { color: #64748b; }  /* was #94a3b8 (2.6:1) — #64748b = 4.8:1 AA ✓ */
+html[data-theme="light"] .text-slate-700  { color: #94a3b8; }  /* decorative labels; lightened but more legible */
 html[data-theme="light"] .text-neutral-50  { color: #0f172a; }
 html[data-theme="light"] .text-neutral-300 { color: #334155; }
 html[data-theme="light"] .text-neutral-400 { color: #475569; }
@@ -482,6 +482,131 @@ html[data-theme="light"] .bg-cyber\/\[0\.1\]  { background-color: rgba(8,145,178
 
 /* ── Scanline overlay — invisible but harmless on light bg ── */
 html[data-theme="light"] .nexus-card-scanline::before { display: none; }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   GRADIENT STOP OVERRIDES
+   bg-black/* overrides don't affect from-/via-/to- gradient utilities.
+   These rules light-adapt every dark card that uses bg-gradient-to-*
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+/* from- stops */
+html[data-theme="light"] .from-black\/\[0\.96\] { --tw-gradient-from: rgba(255,255,255,0.97) var(--tw-gradient-from-position); }
+html[data-theme="light"] .from-black\/\[0\.94\] { --tw-gradient-from: rgba(255,255,255,0.95) var(--tw-gradient-from-position); }
+html[data-theme="light"] .from-black\/\[0\.92\] { --tw-gradient-from: rgba(255,255,255,0.93) var(--tw-gradient-from-position); }
+html[data-theme="light"] .from-black\/\[0\.9\]  { --tw-gradient-from: rgba(248,251,255,0.98) var(--tw-gradient-from-position); }
+html[data-theme="light"] .from-black\/\[0\.88\] { --tw-gradient-from: rgba(248,251,255,0.95) var(--tw-gradient-from-position); }
+html[data-theme="light"] .from-black\/\[0\.85\] { --tw-gradient-from: rgba(248,251,255,0.95) var(--tw-gradient-from-position); }
+html[data-theme="light"] .from-black\/\[0\.84\] { --tw-gradient-from: rgba(248,251,255,0.94) var(--tw-gradient-from-position); }
+html[data-theme="light"] .from-black\/\[0\.82\] { --tw-gradient-from: rgba(241,246,252,0.95) var(--tw-gradient-from-position); }
+html[data-theme="light"] .from-black\/\[0\.8\]  { --tw-gradient-from: rgba(241,246,252,0.92) var(--tw-gradient-from-position); }
+html[data-theme="light"] .from-black\/\[0\.75\] { --tw-gradient-from: rgba(234,242,250,0.90) var(--tw-gradient-from-position); }
+html[data-theme="light"] .from-black\/\[0\.7\]  { --tw-gradient-from: rgba(234,242,250,0.90) var(--tw-gradient-from-position); }
+
+/* to- stops */
+html[data-theme="light"] .to-black\/\[0\.96\]   { --tw-gradient-to: rgba(255,255,255,0.97) var(--tw-gradient-to-position); }
+html[data-theme="light"] .to-black\/\[0\.94\]   { --tw-gradient-to: rgba(255,255,255,0.95) var(--tw-gradient-to-position); }
+html[data-theme="light"] .to-black\/\[0\.92\]   { --tw-gradient-to: rgba(255,255,255,0.93) var(--tw-gradient-to-position); }
+html[data-theme="light"] .to-black\/\[0\.9\]    { --tw-gradient-to: rgba(248,251,255,0.98) var(--tw-gradient-to-position); }
+html[data-theme="light"] .to-black\/\[0\.88\]   { --tw-gradient-to: rgba(248,251,255,0.95) var(--tw-gradient-to-position); }
+html[data-theme="light"] .to-black\/\[0\.85\]   { --tw-gradient-to: rgba(248,251,255,0.95) var(--tw-gradient-to-position); }
+html[data-theme="light"] .to-black\/\[0\.82\]   { --tw-gradient-to: rgba(241,246,252,0.95) var(--tw-gradient-to-position); }
+html[data-theme="light"] .to-black\/\[0\.8\]    { --tw-gradient-to: rgba(241,246,252,0.92) var(--tw-gradient-to-position); }
+html[data-theme="light"] .to-black\/\[0\.75\]   { --tw-gradient-to: rgba(234,242,250,0.90) var(--tw-gradient-to-position); }
+html[data-theme="light"] .to-\[\#060a12\]       { --tw-gradient-to: rgba(248,251,255,0.97) var(--tw-gradient-to-position); }
+html[data-theme="light"] .to-\[\#060a12\]\/90   { --tw-gradient-to: rgba(248,251,255,0.92) var(--tw-gradient-to-position); }
+
+/* via- stops (must override --tw-gradient-stops; the color is inlined, not a variable ref) */
+html[data-theme="light"] .via-black\/\[0\.96\]  { --tw-gradient-stops: var(--tw-gradient-from), rgba(255,255,255,0.97), var(--tw-gradient-to, rgba(255,255,255,0)); }
+html[data-theme="light"] .via-black\/\[0\.94\]  { --tw-gradient-stops: var(--tw-gradient-from), rgba(255,255,255,0.95), var(--tw-gradient-to, rgba(255,255,255,0)); }
+html[data-theme="light"] .via-black\/\[0\.92\]  { --tw-gradient-stops: var(--tw-gradient-from), rgba(255,255,255,0.93), var(--tw-gradient-to, rgba(255,255,255,0)); }
+html[data-theme="light"] .via-black\/\[0\.9\]   { --tw-gradient-stops: var(--tw-gradient-from), rgba(248,251,255,0.98), var(--tw-gradient-to, rgba(248,251,255,0)); }
+html[data-theme="light"] .via-black\/\[0\.88\]  { --tw-gradient-stops: var(--tw-gradient-from), rgba(248,251,255,0.95), var(--tw-gradient-to, rgba(248,251,255,0)); }
+html[data-theme="light"] .via-black\/\[0\.84\]  { --tw-gradient-stops: var(--tw-gradient-from), rgba(248,251,255,0.94), var(--tw-gradient-to, rgba(248,251,255,0)); }
+html[data-theme="light"] .via-\[\#0a1020\]      { --tw-gradient-stops: var(--tw-gradient-from), rgba(240,245,252,0.95), var(--tw-gradient-to, rgba(240,245,252,0)); }
+html[data-theme="light"] .via-\[\#0a0f1c\]      { --tw-gradient-stops: var(--tw-gradient-from), rgba(240,245,252,0.95), var(--tw-gradient-to, rgba(240,245,252,0)); }
+
+/* ── Dark hex / slate backgrounds ── */
+html[data-theme="light"] .bg-\[\#060a12\]      { background-color: rgba(241,246,252,0.95); }
+html[data-theme="light"] .bg-\[\#060a12\]\/80  { background-color: rgba(241,246,252,0.90); }
+html[data-theme="light"] .bg-\[\#060a12\]\/90  { background-color: rgba(241,246,252,0.92); }
+html[data-theme="light"] .bg-slate-950\/40     { background-color: rgba(248,251,255,0.95); }
+html[data-theme="light"] .bg-slate-950\/55     { background-color: rgba(248,251,255,0.95); }
+html[data-theme="light"] .bg-slate-950\/60     { background-color: rgba(248,251,255,0.95); }
+
+/* ── Missing white border overrides (border-white/ without these are near-invisible) ── */
+html[data-theme="light"] .border-white\/\[0\.05\]  { border-color: rgba(15,23,42,0.07); }
+html[data-theme="light"] .border-white\/\[0\.06\]  { border-color: rgba(15,23,42,0.09); }
+html[data-theme="light"] .border-white\/\[0\.07\]  { border-color: rgba(15,23,42,0.10); }
+html[data-theme="light"] .border-white\/\[0\.1\]   { border-color: rgba(15,23,42,0.12); }
+html[data-theme="light"] .border-white\/\[0\.14\]  { border-color: rgba(15,23,42,0.16); }
+html[data-theme="light"] .border-white\/\[0\.16\]  { border-color: rgba(15,23,42,0.18); }
+html[data-theme="light"] .border-white\/\[0\.2\]   { border-color: rgba(15,23,42,0.22); }
+/* Colored borders that are too faint on light backgrounds */
+html[data-theme="light"] .border-sky-500\/\[0\.12\]  { border-color: rgba(14,165,233,0.30); }
+html[data-theme="light"] .border-blue-500\/\[0\.12\] { border-color: rgba(59,130,246,0.28); }
+html[data-theme="light"] .border-blue-500\/\[0\.1\]  { border-color: rgba(59,130,246,0.25); }
+html[data-theme="light"] .border-blue-500\/15        { border-color: rgba(59,130,246,0.32); }
+html[data-theme="light"] .border-cyan-500\/15        { border-color: rgba(6,182,212,0.30);  }
+html[data-theme="light"] .border-indigo-500\/20      { border-color: rgba(99,102,241,0.32); }
+html[data-theme="light"] .border-slate-600\/50       { border-color: rgba(100,116,139,0.35); }
+html[data-theme="light"] .border-slate-700\/60       { border-color: rgba(100,116,139,0.35); }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   ACCENT TEXT — WCAG AA replacements for light surfaces
+   Dark mode accent colours (sky-300, violet-300, emerald-300, etc.)
+   fail contrast on near-white card backgrounds.  Values chosen to
+   achieve ≥ 4.5:1 against white (#ffffff).
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+/* sky-300 / sky-400 → sky-700 (#0369a1, 5.9:1 on white) */
+html[data-theme="light"] .text-sky-300        { color: #0369a1; }
+html[data-theme="light"] .text-sky-300\/95    { color: rgba(3,105,161,0.95); }
+html[data-theme="light"] .text-sky-300\/90    { color: rgba(3,105,161,0.90); }
+html[data-theme="light"] .text-sky-300\/85    { color: rgba(3,105,161,0.90); }
+html[data-theme="light"] .text-sky-300\/80    { color: rgba(3,105,161,0.88); }
+html[data-theme="light"] .text-sky-400        { color: #0369a1; }
+html[data-theme="light"] .text-sky-400\/95    { color: rgba(3,105,161,0.95); }
+html[data-theme="light"] .text-sky-400\/90    { color: rgba(3,105,161,0.90); }
+html[data-theme="light"] .text-sky-400\/85    { color: rgba(3,105,161,0.88); }
+html[data-theme="light"] .text-sky-400\/80    { color: rgba(3,105,161,0.85); }
+
+/* violet-300 / violet-400 → violet-700 (#6d28d9, 5.6:1 on white) */
+html[data-theme="light"] .text-violet-300        { color: #6d28d9; }
+html[data-theme="light"] .text-violet-300\/95    { color: rgba(109,40,217,0.95); }
+html[data-theme="light"] .text-violet-300\/90    { color: rgba(109,40,217,0.90); }
+html[data-theme="light"] .text-violet-300\/80    { color: rgba(109,40,217,0.88); }
+html[data-theme="light"] .text-violet-400        { color: #7c3aed; }
+html[data-theme="light"] .text-violet-400\/80    { color: rgba(124,58,237,0.85); }
+
+/* emerald-300 / emerald-400 → emerald-700 (#047857, 5.6:1 on white) */
+html[data-theme="light"] .text-emerald-300        { color: #047857; }
+html[data-theme="light"] .text-emerald-300\/95    { color: rgba(4,120,87,0.95); }
+html[data-theme="light"] .text-emerald-300\/90    { color: rgba(4,120,87,0.90); }
+html[data-theme="light"] .text-emerald-300\/80    { color: rgba(4,120,87,0.88); }
+html[data-theme="light"] .text-emerald-400        { color: #047857; }
+html[data-theme="light"] .text-emerald-400\/90    { color: rgba(4,120,87,0.90); }
+html[data-theme="light"] .text-emerald-400\/85    { color: rgba(4,120,87,0.88); }
+
+/* amber-300 / amber-400 → amber-800 (#92400e, 5.3:1 on white) */
+html[data-theme="light"] .text-amber-300        { color: #92400e; }
+html[data-theme="light"] .text-amber-300\/80    { color: rgba(146,64,14,0.85); }
+html[data-theme="light"] .text-amber-400        { color: #92400e; }
+html[data-theme="light"] .text-amber-400\/90    { color: rgba(146,64,14,0.92); }
+html[data-theme="light"] .text-amber-400\/85    { color: rgba(146,64,14,0.88); }
+html[data-theme="light"] .text-amber-400\/80    { color: rgba(146,64,14,0.85); }
+
+/* rose-400 → rose-700 (#be123c, 5.6:1 on white) */
+html[data-theme="light"] .text-rose-400       { color: #be123c; }
+html[data-theme="light"] .text-rose-400\/80   { color: rgba(190,18,60,0.85); }
+
+/* nexus (emerald-400, #34D399) → emerald-700 (#047857, same as emerald overrides above) */
+html[data-theme="light"] .text-nexus          { color: #047857; }
+html[data-theme="light"] .text-nexus\/90      { color: rgba(4,120,87,0.92); }
+html[data-theme="light"] .text-nexus\/80      { color: rgba(4,120,87,0.85); }
+html[data-theme="light"] .text-nexus\/70      { color: rgba(4,120,87,0.75); }
+
+/* cyber — add missing opacity variant */
+html[data-theme="light"] .text-cyber\/90      { color: rgba(8,145,178,0.92); }
 
 /* ── Auth compact nav label ── */
 html[data-theme="light"] nav .text-slate-400 { color: #475569; }
