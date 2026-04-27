@@ -16,7 +16,6 @@ import { api } from "@/api";
 import { ProductPreviewCard } from "@/components/landing/ProductPreviewCard";
 import { SplineScene } from "@/components/ui/splite";
 import { Spotlight } from "@/components/ui/spotlight";
-import { LogViewer } from "@/components/utilities/LogViewer";
 import { ctaButtonGradient, ctaGlowBlueOnly } from "@/lib/ctaTheme";
 import { parseUploadedLogFile, SUPPORTED_LOG_EXTENSIONS } from "@/lib/logFileUpload";
 import {
@@ -99,6 +98,7 @@ export function DashboardHomeHero({
   const [confirmedLogInput, setConfirmedLogInput] = useState(false);
   const [rcaLoading, setRcaLoading] = useState(false);
   const [rcaError, setRcaError] = useState<string | null>(null);
+  const [rcaExplanationToast, setRcaExplanationToast] = useState<string | null>(null);
   /** Soft info banner (weak RCA, restored session, etc.) — not a hard failure */
   const [workflowInfo, setWorkflowInfo] = useState<string | null>(null);
   const [rcaResult, setRcaResult] = useState<JiraRcaResult | null>(null);
@@ -106,7 +106,6 @@ export function DashboardHomeHero({
 
   const canRunRca = Boolean(ticket && confirmedLogInput && logContent.trim());
   const canUploadLogs = Boolean(ticket);
-  const previewLines = logLines.slice(0, 18);
   const confidencePct =
     typeof rcaResult?.confidence === "number"
       ? Math.round(Math.max(0, Math.min(1, rcaResult.confidence)) * 100)
@@ -258,21 +257,23 @@ export function DashboardHomeHero({
 
     setRcaLoading(true);
     setRcaError(null);
+    setRcaExplanationToast(null);
     setWorkflowInfo(null);
     try {
-      const res = await api.jira.runRcaWithTicket({
+      const result = await api.jira.runRcaWithTicket({
         ticket,
         logContent,
       });
-      setRcaResult(res);
-      const nextRecent = addRecentInvestigation(ticket, res, {
+      console.log("RCA RESULT:", result);
+      setRcaResult(result);
+      const nextRecent = addRecentInvestigation(ticket, result, {
         fileName: logName,
         lineCount: logLines.length,
       });
       setRecentInvestigations(nextRecent);
       const weak =
-        !res.rootCause.trim() ||
-        /not returned|no strong candidate/i.test(res.rootCause);
+        !(result.primary_root_cause ?? "").trim() ||
+        /not returned|no strong candidate/i.test(result.primary_root_cause ?? "");
       if (weak) {
         setWorkflowInfo(
           "We don’t have a strong single root cause from this run. Review the signals below or try a larger log sample."
@@ -283,6 +284,7 @@ export function DashboardHomeHero({
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
       setRcaError(mapRcaError(msg));
+      setRcaExplanationToast("RCA explanation failed");
       setRcaResult(null);
       setWorkflowInfo(null);
     } finally {
@@ -317,10 +319,13 @@ export function DashboardHomeHero({
     setTicketError(null);
     setLogError(null);
     setRcaError(null);
+    setRcaExplanationToast(null);
     setWorkflowInfo(
       "Restored from this device. Upload the log file again if you want to run a new analysis."
     );
   }
+
+  const explanation = rcaResult?.explanation?.trim() ?? "";
 
   return (
     <div className="space-y-4">
@@ -542,10 +547,10 @@ export function DashboardHomeHero({
               <span className="rounded-full border border-white/[0.16] bg-white/[0.03] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-300">
                 Step 2-3
               </span>
-              <p className="text-sm font-semibold text-white">Upload and preview logs</p>
+              <p className="text-sm font-semibold text-white">Upload logs</p>
             </div>
             <p className="mt-2 text-xs text-slate-500">
-              Use a .log, .txt, or .csv file. Check the preview, then confirm before running RCA.
+              Use a .log, .txt, or .csv file, then confirm before running RCA.
             </p>
             <input
               ref={fileInputRef}
@@ -582,36 +587,24 @@ export function DashboardHomeHero({
                 No logs uploaded yet. Upload a file to continue the investigation workflow.
               </p>
             ) : null}
+            {ticket && logContent.trim() && logName ? (
+              <p className="mt-2 text-xs text-emerald-300/90">Log file uploaded successfully</p>
+            ) : null}
             {logError ? (
               <p className="mt-2 inline-flex rounded-lg border border-red-500/25 bg-red-500/[0.08] px-3 py-2 text-xs text-red-200">
                 {logError}
               </p>
             ) : null}
-            {previewLines.length > 0 ? (
-              <>
-                <div className="mt-3">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
-                    Preview (first lines)
-                  </p>
-                  <div className="mt-2">
-                    <LogViewer
-                      entries={previewLines.map((line, index) => ({
-                        lineNumber: index + 1,
-                        line,
-                      }))}
-                    />
-                  </div>
-                </div>
-                <label className="mt-3 inline-flex cursor-pointer items-center gap-2 text-xs text-slate-300">
-                  <input
-                    type="checkbox"
-                    checked={confirmedLogInput}
-                    onChange={(e) => setConfirmedLogInput(e.target.checked)}
-                    className="h-4 w-4 rounded border-white/20 bg-black/[0.85]"
-                  />
-                  Confirm this log file as RCA input
-                </label>
-              </>
+            {logContent.trim() ? (
+              <label className="mt-3 inline-flex cursor-pointer items-center gap-2 text-xs text-slate-300">
+                <input
+                  type="checkbox"
+                  checked={confirmedLogInput}
+                  onChange={(e) => setConfirmedLogInput(e.target.checked)}
+                  className="h-4 w-4 rounded border-white/20 bg-black/[0.85]"
+                />
+                Confirm this log file as RCA input
+              </label>
             ) : null}
           </div>
 
@@ -774,13 +767,15 @@ export function DashboardHomeHero({
               </div>
               <div className="mt-3 rounded-lg border border-white/[0.08] bg-black/[0.82] p-3">
                 <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
-                  Explanation
+                  AI Explanation
                 </p>
-                {rcaResult.explanation ? (
-                  <p className="mt-1 text-xs leading-relaxed text-slate-300">{rcaResult.explanation}</p>
+                {explanation ? (
+                  <p className="mt-1 whitespace-pre-wrap text-xs leading-relaxed text-slate-300">
+                    {explanation}
+                  </p>
                 ) : (
                   <p className="mt-1 text-xs text-slate-500">
-                    No extra explanation for this run. Treat the root cause above as the main output.
+                    LLM explanation unavailable.
                   </p>
                 )}
               </div>
@@ -803,6 +798,11 @@ export function DashboardHomeHero({
                   </p>
                 )}
               </div>
+            </div>
+          ) : null}
+          {rcaExplanationToast ? (
+            <div className="mt-3 rounded-lg border border-amber-500/25 bg-amber-500/[0.08] px-3 py-2 text-xs text-amber-100/95">
+              {rcaExplanationToast}
             </div>
           ) : null}
 

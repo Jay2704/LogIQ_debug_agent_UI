@@ -19,6 +19,7 @@ export interface JiraTicketSearchHit {
 }
 
 export interface JiraRcaResult {
+  primary_root_cause?: string;
   rootCause: string;
   confidence?: number;
   evidenceSummary: string[];

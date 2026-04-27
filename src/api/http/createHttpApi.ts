@@ -437,28 +437,55 @@ export function createHttpApi(_baseUrl: string): LogIQApi {
           finalUrl: `${baseUrl}/api/v1/jira/rca/run`,
           payloadKeys: Object.keys(payload),
         });
-        const response = await fetch(url, {
+        const finalUrl = url;
+        const options: RequestInit = {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
-        });
-        if (!response.ok) await httpError(response, "POST /api/v1/jira/rca/run");
-        const data = (await response.json()) as Record<string, unknown>;
-        console.log("RCA RESULT:", data);
-
-        const evidence = Array.isArray(data.evidence)
-          ? data.evidence.filter((x): x is string => typeof x === "string")
-          : [];
-
-        return {
-          rootCause:
-            typeof data.primary_root_cause === "string" ? data.primary_root_cause : "",
-          confidence: typeof data.confidence === "number" ? data.confidence : undefined,
-          evidenceSummary: evidence,
-          extractedLogSignals: [],
-          explanation: typeof data.explanation === "string" ? data.explanation : undefined,
-          remediationSuggestions: [],
         };
+
+        try {
+          const response = await fetch(finalUrl, options);
+
+          const rawText = await response.text();
+          console.log("RAW BACKEND RESPONSE:", rawText);
+
+          if (!response.ok) {
+            throw new Error(rawText);
+          }
+
+          const data = JSON.parse(rawText) as Record<string, unknown>;
+          console.log("RCA API RESPONSE:", data);
+
+          const evidence = Array.isArray(data.evidence)
+            ? data.evidence.filter((x): x is string => typeof x === "string")
+            : [];
+
+          return {
+            primary_root_cause:
+              typeof data.primary_root_cause === "string"
+                ? data.primary_root_cause
+                : typeof data.root_cause === "string"
+                  ? data.root_cause
+                  : "",
+            rootCause:
+              typeof data.root_cause === "string"
+                ? data.root_cause
+                : typeof data.primary_root_cause === "string"
+                  ? data.primary_root_cause
+                  : "",
+            confidence: typeof data.confidence === "number" ? data.confidence : undefined,
+            evidenceSummary: evidence,
+            extractedLogSignals: [],
+            explanation: typeof data.explanation === "string" ? data.explanation : undefined,
+            remediationSuggestions: [],
+          };
+        } catch (err) {
+          console.error("FULL RCA ERROR:", err);
+          const message = err instanceof Error ? err.message : String(err);
+          alert("RCA failed: " + message);
+          throw err;
+        }
       },
     },
     auth: {
