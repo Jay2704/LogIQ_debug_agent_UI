@@ -3,13 +3,11 @@ import { motion } from "framer-motion";
 import {
   AlertTriangle,
   ChevronRight,
-  Clock3,
   CheckCircle2,
   FileText,
   History,
   Loader2,
   PlayCircle,
-  Search,
   SearchCheck,
   Upload,
 } from "lucide-react";
@@ -29,7 +27,7 @@ import {
   type RecentInvestigationEntry,
 } from "@/lib/recentInvestigations";
 import { cn, formatDateTime, formatRelativeShort } from "@/lib/utils";
-import type { JiraRcaResult, JiraTicketSearchHit, JiraTicketSummary } from "@/types";
+import type { JiraRcaResult, JiraTicketSummary } from "@/types";
 
 const TICKET_KEY_PATTERN = /^[A-Z][A-Z0-9]+-\d+$/;
 
@@ -53,32 +51,6 @@ function mapTicketError(message: string): string {
     return "JIRA is temporarily unavailable. Please try again in a moment.";
   }
   return safe || "Couldn’t load this ticket. Please try again.";
-}
-
-function mapSearchError(message: string): string {
-  const safe = message.trim();
-  const lower = safe.toLowerCase();
-  if (lower.includes("network error (no response)")) {
-    return "We couldn’t reach the server. Check your connection and try again.";
-  }
-  const status = safe.match(/\b(\d{3})\b/)?.[1];
-  if (status === "400") {
-    return "Enter a longer search term or try an exact ticket key below.";
-  }
-  if (status === "401" || status === "403") {
-    return "JIRA search isn’t available with the current setup. Ask your admin to check JIRA access.";
-  }
-  if (status === "500" || status === "502" || status === "503") {
-    return "JIRA search is temporarily unavailable. Please try again in a moment.";
-  }
-  return safe || "Search couldn’t complete. Please try again.";
-}
-
-function formatSearchHitUpdated(iso?: string): string {
-  if (!iso?.trim()) return "—";
-  const t = Date.parse(iso);
-  if (Number.isNaN(t)) return "—";
-  return formatDateTime(iso);
 }
 
 function mapRcaError(message: string): string {
@@ -118,11 +90,6 @@ export function DashboardHomeHero({
   const investigationResultsRef = useRef<HTMLDivElement | null>(null);
   const scrollRestoredInvestigationRef = useRef(false);
   const [ticketKey, setTicketKey] = useState("");
-  const [ticketSearchQuery, setTicketSearchQuery] = useState("");
-  const [searchLoading, setSearchLoading] = useState(false);
-  const [searchError, setSearchError] = useState<string | null>(null);
-  /** `null` = no search yet; array = last search result (may be empty). */
-  const [searchResults, setSearchResults] = useState<JiraTicketSearchHit[] | null>(null);
   const [ticketLoading, setTicketLoading] = useState(false);
   const [ticketError, setTicketError] = useState<string | null>(null);
   const [ticket, setTicket] = useState<JiraTicketSummary | null>(null);
@@ -153,8 +120,6 @@ export function DashboardHomeHero({
   const hasStrongCandidate = Boolean(rcaResult && !isWeakRca);
   const workflowStageLabel = ticketLoading
     ? "Fetching ticket…"
-    : searchLoading
-      ? "Searching tickets…"
     : rcaLoading
       ? "Running RCA…"
       : rcaResult
@@ -172,12 +137,10 @@ export function DashboardHomeHero({
             : "Start here";
   const nextActionHint = ticketLoading
     ? "Loading ticket details from JIRA…"
-    : searchLoading
-      ? "Looking for matching JIRA issues…"
     : ticketError
       ? "Fix the issue above, then fetch the ticket again."
       : !ticket
-        ? "Search by key or summary, or enter an exact key and choose Fetch ticket."
+        ? "Enter JIRA ticket key to start investigation."
         : !logContent.trim()
           ? "Upload a log file (.log, .txt, or .csv)."
           : !confirmedLogInput
@@ -219,8 +182,6 @@ export function DashboardHomeHero({
       setRcaResult(null);
       setRcaError(null);
       setWorkflowInfo(null);
-      setSearchResults(null);
-      setSearchError(null);
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
       setTicket(null);
@@ -238,31 +199,6 @@ export function DashboardHomeHero({
       return;
     }
     await loadTicketByKey(normalized);
-  }
-
-  async function handleSearchTickets() {
-    const q = ticketSearchQuery.trim();
-    if (q.length < 2) {
-      setSearchError("Type at least 2 characters to search.");
-      setSearchResults(null);
-      return;
-    }
-    setSearchLoading(true);
-    setSearchError(null);
-    try {
-      const hits = await api.jira.searchTickets(q);
-      setSearchResults(hits);
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : String(e);
-      setSearchResults(null);
-      setSearchError(mapSearchError(msg));
-    } finally {
-      setSearchLoading(false);
-    }
-  }
-
-  function selectSearchHit(hit: JiraTicketSearchHit) {
-    void loadTicketByKey(hit.key.trim().toUpperCase());
   }
 
   const onPickFile = () => fileInputRef.current?.click();
@@ -449,7 +385,7 @@ export function DashboardHomeHero({
             <span
               className={cn(
                 "h-2 w-2 rounded-full",
-                ticketLoading || searchLoading
+                ticketLoading
                   ? "animate-pulse bg-sky-400"
                   : rcaLoading
                     ? "animate-pulse bg-amber-300"
@@ -471,7 +407,7 @@ export function DashboardHomeHero({
                 k: "01",
                 label: "Fetch ticket",
                 done: Boolean(ticket),
-                active: ticketLoading || searchLoading,
+                active: ticketLoading,
               },
               { k: "02", label: "Upload logs", done: Boolean(logContent.trim()), active: false },
               {
@@ -507,110 +443,9 @@ export function DashboardHomeHero({
             </p>
           </div>
           <p className="mt-2 text-xs text-slate-500 sm:text-sm">
-            Search by key or summary, or enter an exact key — then add logs and run RCA.
+            Enter JIRA ticket key to start investigation.
           </p>
-          <div className="mt-4 flex flex-col gap-3 sm:flex-row">
-            <label className="sr-only" htmlFor="jira-ticket-search">
-              Search JIRA tickets
-            </label>
-            <input
-              id="jira-ticket-search"
-              value={ticketSearchQuery}
-              onChange={(e) => {
-                setTicketSearchQuery(e.target.value);
-                if (searchError) setSearchError(null);
-              }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  void handleSearchTickets();
-                }
-              }}
-              placeholder="Key or words from summary"
-              autoComplete="off"
-              className="w-full rounded-xl border border-white/[0.12] bg-black/[0.82] px-3.5 py-2.5 text-sm font-medium text-slate-100 outline-none transition placeholder:text-slate-600 focus:border-sky-400/55 focus:ring-2 focus:ring-sky-500/25"
-            />
-            <button
-              type="button"
-              onClick={() => void handleSearchTickets()}
-              disabled={searchLoading || ticketLoading || !ticketSearchQuery.trim()}
-              title={!ticketSearchQuery.trim() ? "Enter a search term first" : undefined}
-              className={cn(
-                "inline-flex min-w-[10.5rem] items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-70",
-                ctaButtonGradient,
-                ctaGlowBlueOnly,
-                "ring-1 ring-blue-400/35"
-              )}
-            >
-              {searchLoading ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Search className="h-4 w-4" />
-              )}
-              {searchLoading ? "Searching…" : "Search"}
-            </button>
-          </div>
-          {searchLoading ? (
-            <p className="mt-3 inline-flex items-center gap-2 text-xs text-sky-300/90">
-              <Loader2 className="h-3.5 w-3.5 animate-spin shrink-0" aria-hidden />
-              Searching JIRA…
-            </p>
-          ) : null}
-          {searchError ? (
-            <div
-              className="mt-3 inline-flex items-start gap-2 rounded-lg border border-red-500/25 bg-red-500/[0.08] px-3 py-2 text-xs text-red-100/90"
-              role="alert"
-            >
-              <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-red-300" />
-              <span>{searchError}</span>
-            </div>
-          ) : null}
-          {searchResults !== null && !searchLoading ? (
-            <div className="mt-3 rounded-xl border border-white/[0.08] bg-black/[0.82] p-2 text-left ring-1 ring-white/[0.04]">
-              {searchResults.length === 0 ? (
-                <p className="px-2 py-2 text-xs text-slate-500">
-                  No tickets matched. Try another term or use an exact key below.
-                </p>
-              ) : (
-                <ul className="max-h-52 space-y-1 overflow-y-auto pr-0.5">
-                  {searchResults.map((hit) => (
-                    <li key={hit.key}>
-                      <button
-                        type="button"
-                        onClick={() => selectSearchHit(hit)}
-                        disabled={ticketLoading}
-                        className="w-full rounded-lg border border-transparent px-2 py-2 text-left transition hover:border-sky-500/25 hover:bg-black/[0.82] disabled:cursor-not-allowed disabled:opacity-60"
-                      >
-                        <div className="flex flex-wrap items-center justify-between gap-2">
-                          <span className="font-mono text-xs font-semibold text-sky-300">
-                            {hit.key}
-                          </span>
-                          <span className="rounded-full border border-white/[0.1] bg-white/[0.03] px-2 py-0.5 text-[10px] font-semibold text-slate-300">
-                            {hit.status}
-                          </span>
-                        </div>
-                        <p className="mt-1 line-clamp-2 text-xs text-slate-200">{hit.summary}</p>
-                        <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-0.5 text-[10px] text-slate-500">
-                          <span>
-                            Priority:{" "}
-                            <span className="font-medium text-slate-400">{hit.priority}</span>
-                          </span>
-                          <span className="inline-flex items-center gap-1">
-                            <Clock3 className="h-3 w-3 shrink-0 opacity-70" aria-hidden />
-                            Updated {formatSearchHitUpdated(hit.updatedAt)}
-                          </span>
-                        </div>
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          ) : null}
-          <p className="mt-5 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
-            Or fetch by exact key
-          </p>
-          <div className="mt-2 flex flex-col gap-3 sm:flex-row">
+          <div className="mt-6 flex max-w-3xl flex-col gap-3 sm:flex-row">
             <label className="sr-only" htmlFor="jira-ticket-key">
               JIRA ticket key
             </label>
@@ -624,7 +459,7 @@ export function DashboardHomeHero({
             <button
               type="button"
               onClick={() => void handleFetchTicket()}
-              disabled={ticketLoading || searchLoading || !ticketKey.trim()}
+              disabled={ticketLoading || !ticketKey.trim()}
               title={!ticketKey.trim() ? "Enter a ticket key first" : undefined}
               className={cn(
                 "inline-flex min-w-[10.5rem] items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-70",

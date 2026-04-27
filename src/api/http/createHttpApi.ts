@@ -3,7 +3,6 @@ import { createMockApi } from "@/api/mock/mockApi";
 import type {
   CreateJobInput,
   CreateUserInput,
-  JiraRcaResult,
   JiraTicketSearchHit,
   JiraTicketSummary,
   LoginInput,
@@ -155,53 +154,6 @@ function parseJiraSearchHitsJson(json: unknown): JiraTicketSearchHit[] {
         ? ((json as Record<string, unknown>).tickets as unknown[])
         : [];
   return raw.map(parseJiraSearchHitRow).filter((x): x is JiraTicketSearchHit => x !== null);
-}
-
-function parseJiraRcaResultJson(json: unknown): JiraRcaResult {
-  if (!json || typeof json !== "object") {
-    throw new Error("[LogIQ API] POST /api/v1/jira/rca/run: invalid JSON payload");
-  }
-  const row = json as Record<string, unknown>;
-  const evidenceSummary = Array.isArray(row.evidence_summary)
-    ? row.evidence_summary.filter((x): x is string => typeof x === "string")
-    : [];
-  const extractedLogSignals = Array.isArray(row.extracted_log_signals)
-    ? row.extracted_log_signals.filter((x): x is string => typeof x === "string")
-    : [];
-  const remediationSuggestions = Array.isArray(row.remediation_suggestions)
-    ? row.remediation_suggestions.filter((x): x is string => typeof x === "string")
-    : Array.isArray(row.remediation)
-      ? row.remediation.filter((x): x is string => typeof x === "string")
-      : [];
-  const confidenceRaw =
-    typeof row.confidence === "number"
-      ? row.confidence
-      : typeof row.confidence_score === "number"
-        ? row.confidence_score
-        : undefined;
-  return {
-    rootCause:
-      typeof row.root_cause === "string"
-        ? row.root_cause
-        : typeof row.rootCause === "string"
-          ? row.rootCause
-          : "Root cause not returned by backend.",
-    evidenceSummary,
-    extractedLogSignals,
-    confidence:
-      typeof confidenceRaw === "number"
-        ? confidenceRaw > 1
-          ? Math.max(0, Math.min(1, confidenceRaw / 100))
-          : Math.max(0, Math.min(1, confidenceRaw))
-        : undefined,
-    explanation:
-      typeof row.explanation === "string"
-        ? row.explanation
-        : typeof row.summary === "string"
-          ? row.summary
-          : undefined,
-    remediationSuggestions,
-  };
 }
 
 /**
@@ -485,14 +437,28 @@ export function createHttpApi(_baseUrl: string): LogIQApi {
           finalUrl: `${baseUrl}/api/v1/jira/rca/run`,
           payloadKeys: Object.keys(payload),
         });
-        const res = await fetch(url, {
+        const response = await fetch(url, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         });
-        if (!res.ok) await httpError(res, "POST /api/v1/jira/rca/run");
-        const json: unknown = await readJsonOrNull(res);
-        return parseJiraRcaResultJson(json);
+        if (!response.ok) await httpError(response, "POST /api/v1/jira/rca/run");
+        const data = (await response.json()) as Record<string, unknown>;
+        console.log("RCA RESULT:", data);
+
+        const evidence = Array.isArray(data.evidence)
+          ? data.evidence.filter((x): x is string => typeof x === "string")
+          : [];
+
+        return {
+          rootCause:
+            typeof data.primary_root_cause === "string" ? data.primary_root_cause : "",
+          confidence: typeof data.confidence === "number" ? data.confidence : undefined,
+          evidenceSummary: evidence,
+          extractedLogSignals: [],
+          explanation: typeof data.explanation === "string" ? data.explanation : undefined,
+          remediationSuggestions: [],
+        };
       },
     },
     auth: {
