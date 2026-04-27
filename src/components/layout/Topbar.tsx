@@ -1,7 +1,7 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { LogOut, Menu, Terminal, UserRound } from "lucide-react";
 import { useCurrentUser } from "@/auth";
-import { LogIQIconMark } from "@/components/branding/LogIQLogos";
+import { LogIQFullLogo } from "@/components/branding/LogIQLogos";
 import { ApiModeBadge } from "@/components/layout/ApiModeBadge";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { formatUserContextLine, userDisplayName } from "@/lib/userDisplay";
@@ -34,32 +34,34 @@ export function Topbar({ onToggleSidebar }: TopbarProps) {
         <Menu className="h-4 w-4" />
       </button>
 
-      {showCompactBrand ? (
-        <div className="mr-auto flex items-center gap-4 sm:gap-5">
-          <Link
-            to="/"
-            className="flex shrink-0 items-center rounded-lg outline-none ring-offset-2 ring-offset-surface-975 transition hover:opacity-90 focus-visible:ring-2 focus-visible:ring-cyan-500/50"
-            aria-label="LogIQ home"
-          >
-            <LogIQIconMark className="h-9 w-9 sm:h-10 sm:w-10" />
-          </Link>
-          <div className="h-5 w-px bg-cyber/[0.12]" aria-hidden />
-          <nav className="flex items-center gap-1">
-            <Link
-              to="/about"
-              className="rounded-lg px-2.5 py-1.5 text-sm font-medium text-slate-500 transition hover:text-slate-200 hover:bg-cyber/[0.06]"
-            >
-              About Us
-            </Link>
-            <Link
-              to="/faq"
-              className="rounded-lg px-2.5 py-1.5 text-sm font-medium text-slate-500 transition hover:text-slate-200 hover:bg-cyber/[0.06]"
-            >
-              FAQs
-            </Link>
-          </nav>
-        </div>
-      ) : null}
+      <div className="mr-auto flex items-center gap-4 sm:gap-5">
+        <Link
+          to="/"
+          className="flex shrink-0 items-center rounded-lg outline-none ring-offset-2 ring-offset-surface-975 transition hover:opacity-90 focus-visible:ring-2 focus-visible:ring-cyan-500/50"
+          aria-label="LogIQ home"
+        >
+          <LogIQFullLogo className="h-8 w-auto sm:h-9" />
+        </Link>
+        {showCompactBrand && (
+          <>
+            <div className="h-5 w-px bg-cyber/[0.12]" aria-hidden />
+            <nav className="flex items-center gap-1">
+              <Link
+                to="/about"
+                className="rounded-lg px-2.5 py-1.5 text-sm font-medium text-slate-500 transition hover:text-slate-200 hover:bg-cyber/[0.06]"
+              >
+                About Us
+              </Link>
+              <Link
+                to="/faq"
+                className="rounded-lg px-2.5 py-1.5 text-sm font-medium text-slate-500 transition hover:text-slate-200 hover:bg-cyber/[0.06]"
+              >
+                FAQs
+              </Link>
+            </nav>
+          </>
+        )}
+      </div>
 
       {/* Right: controls + user section */}
       <div className="flex min-w-0 flex-1 items-center justify-end gap-2 sm:gap-3">

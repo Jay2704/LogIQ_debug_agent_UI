@@ -13,7 +13,6 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { api } from "@/api";
-import { LogIQFullLogo } from "@/components/branding/LogIQLogos";
 import { ProductPreviewCard } from "@/components/landing/ProductPreviewCard";
 import { SplineScene } from "@/components/ui/splite";
 import { Spotlight } from "@/components/ui/spotlight";
@@ -330,12 +329,9 @@ export function DashboardHomeHero({
         <div className="relative w-full overflow-hidden rounded-2xl border border-cyber/[0.15] bg-black/[0.96] shadow-[0_0_80px_-20px_rgba(34,211,238,0.15)]">
           <Spotlight className="-top-40 left-0 md:left-60 md:-top-20" fill="white" />
           <div className="flex min-h-[360px] flex-col md:flex-row">
-            {/* Left: logo + headline */}
+            {/* Left: headline */}
             <div className="relative z-10 flex flex-1 flex-col justify-center p-8 lg:p-12">
-              <div className="flex justify-start py-2">
-                <LogIQFullLogo className="max-h-12 max-w-[220px] sm:max-h-14" />
-              </div>
-              <span className="mt-5 inline-flex w-fit items-center gap-1.5 rounded-full border border-cyber/30 bg-cyber/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-cyan-300 ring-1 ring-cyber/20">
+              <span className="inline-flex w-fit items-center gap-1.5 rounded-full border border-cyber/30 bg-cyber/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-cyan-300 ring-1 ring-cyber/20">
                 <span className="relative flex h-2 w-2">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-nexus/70 opacity-75" />
                   <span className="relative inline-flex h-2 w-2 rounded-full bg-nexus" />

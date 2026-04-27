@@ -15,9 +15,13 @@ import {
   CheckCircle2,
   Cpu,
   FileSearch,
+  Github,
   Layers,
+  Loader2,
+  Mail,
   Network,
   Radar,
+  Send,
   Sparkles,
   TrendingUp,
   Workflow,
@@ -537,55 +541,253 @@ function HeroSection() {
   );
 }
 
-// ── Final CTA section ──────────────────────────────────────────────────────
-function CtaSection() {
+// ── Contact section ────────────────────────────────────────────────────────
+const TOPIC_OPTIONS = [
+  "General Inquiry",
+  "Technical Support",
+  "Bug Report",
+  "Feature Request",
+  "Partnership",
+  "Other",
+] as const;
+
+function ContactSection() {
+  const [form, setForm] = useState({ name: "", email: "", topic: "", message: "" });
+  const [touched, setTouched] = useState({ name: false, email: false, topic: false, message: false });
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  const errors = {
+    name: form.name.trim() ? null : "Name is required.",
+    email: !form.email.trim()
+      ? "Email is required."
+      : /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)
+        ? null
+        : "Enter a valid email address.",
+    topic: form.topic ? null : "Please select a topic.",
+    message: form.message.trim().length >= 10 ? null : "Message must be at least 10 characters.",
+  };
+
+  const isValid = Object.values(errors).every((e) => e === null);
+
+  function inputCls(key: keyof typeof errors) {
+    return cn(
+      "w-full rounded-xl border bg-black/[0.82] px-4 py-3 text-sm text-slate-100 outline-none transition placeholder:text-slate-600",
+      touched[key] && errors[key]
+        ? "border-red-500/40 focus:border-red-400/60 focus:ring-2 focus:ring-red-500/20"
+        : "border-white/[0.1] focus:border-cyber/50 focus:ring-2 focus:ring-cyber/20"
+    );
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setTouched({ name: true, email: true, topic: true, message: true });
+    if (!isValid) return;
+    setSubmitting(true);
+    await new Promise((r) => setTimeout(r, 1200));
+    setSubmitting(false);
+    setSubmitted(true);
+  }
+
   return (
-    <section className="relative overflow-hidden border-t border-cyber/[0.08] py-16 sm:py-24">
-      <div className="mx-auto max-w-4xl px-4 sm:px-6">
+    <section id="contact" className="scroll-mt-20 border-t border-cyber/[0.08] py-16 sm:py-24">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.5 }}
         >
-          <div className="relative rounded-2xl bg-black/[0.96] overflow-hidden border border-cyber/[0.15] shadow-[0_0_80px_-20px_rgba(34,211,238,0.15)]">
-            <Spotlight className="-top-40 left-0 md:left-60 md:-top-20" fill="white" />
-
-            <div className="relative z-10 flex flex-col lg:flex-row min-h-[340px]">
-              {/* Left: text content */}
-              <div className="flex-1 p-10 lg:p-14 flex flex-col justify-center">
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-nexus/30 bg-nexus/10 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-nexus/90 w-fit">
-                  <Sparkles className="h-3 w-3" />
-                  Production ready
-                </span>
-                <h2 className="mt-5 font-display text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400">
-                  Ship with confidence when production breaks
-                </h2>
-                <p className="mt-4 text-base text-neutral-300 max-w-lg">
-                  Join the debugging workflow that respects evidence, speed, and accountability — not vibes.
-                </p>
-                <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                  <PrimaryCta />
-                  <SecondaryCta />
-                </div>
-                <Link
-                  to="/login"
-                  className="mt-5 inline-flex items-center gap-1 text-sm font-medium text-cyber/80 transition hover:text-cyan-300 w-fit"
-                >
-                  Already have an account? <ArrowRight className="h-4 w-4" />
-                </Link>
-              </div>
-
-              {/* Right: Spline 3D */}
-              <div className="flex-1 relative hidden lg:block min-h-[340px]">
-                <SplineScene
-                  scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
-                  className="w-full h-full"
-                />
-              </div>
-            </div>
-          </div>
+          <p className="ui-section-eyebrow">Contact</p>
+          <h2 className="ui-section-title mt-2">Get in touch</h2>
+          <p className="ui-section-desc">
+            Questions, feedback, or partnership inquiries — we'd love to hear from you.
+          </p>
         </motion.div>
+
+        <div className="mt-12 grid gap-10 lg:grid-cols-5 lg:gap-16">
+          {/* ── Form ── */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="lg:col-span-3"
+          >
+            {submitted ? (
+              <div className="flex flex-col items-center justify-center rounded-2xl border border-emerald-500/25 bg-emerald-500/[0.05] px-8 py-16 text-center">
+                <CheckCircle2 className="h-12 w-12 text-emerald-400" strokeWidth={1.5} />
+                <h3 className="mt-4 font-display text-xl font-bold text-white">Message sent!</h3>
+                <p className="mt-2 max-w-sm text-sm leading-relaxed text-slate-400">
+                  Thanks for reaching out. We'll get back to you within one business day.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSubmitted(false);
+                    setForm({ name: "", email: "", topic: "", message: "" });
+                    setTouched({ name: false, email: false, topic: false, message: false });
+                  }}
+                  className="mt-6 text-sm font-medium text-cyber/80 transition hover:text-cyan-300"
+                >
+                  Send another message
+                </button>
+              </div>
+            ) : (
+              <form
+                onSubmit={(e) => void handleSubmit(e)}
+                noValidate
+                className="rounded-2xl border border-cyber/[0.12] bg-black/[0.94] p-6 sm:p-8"
+              >
+                <div className="grid gap-5 sm:grid-cols-2">
+                  <div>
+                    <label htmlFor="contact-name" className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                      Name
+                    </label>
+                    <input
+                      id="contact-name"
+                      type="text"
+                      placeholder="Jane Smith"
+                      autoComplete="name"
+                      value={form.name}
+                      onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+                      onBlur={() => setTouched((t) => ({ ...t, name: true }))}
+                      className={inputCls("name")}
+                    />
+                    {touched.name && errors.name ? (
+                      <p className="mt-1.5 text-xs text-red-400">{errors.name}</p>
+                    ) : null}
+                  </div>
+                  <div>
+                    <label htmlFor="contact-email" className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                      Email
+                    </label>
+                    <input
+                      id="contact-email"
+                      type="email"
+                      placeholder="jane@company.com"
+                      autoComplete="email"
+                      value={form.email}
+                      onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+                      onBlur={() => setTouched((t) => ({ ...t, email: true }))}
+                      className={inputCls("email")}
+                    />
+                    {touched.email && errors.email ? (
+                      <p className="mt-1.5 text-xs text-red-400">{errors.email}</p>
+                    ) : null}
+                  </div>
+                </div>
+
+                <div className="mt-5">
+                  <label htmlFor="contact-topic" className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                    Topic
+                  </label>
+                  <select
+                    id="contact-topic"
+                    value={form.topic}
+                    onChange={(e) => setForm((f) => ({ ...f, topic: e.target.value }))}
+                    onBlur={() => setTouched((t) => ({ ...t, topic: true }))}
+                    className={cn(inputCls("topic"), "cursor-pointer")}
+                  >
+                    <option value="">Select a topic…</option>
+                    {TOPIC_OPTIONS.map((opt) => (
+                      <option key={opt} value={opt} className="bg-[#0a0f1e] text-slate-100">
+                        {opt}
+                      </option>
+                    ))}
+                  </select>
+                  {touched.topic && errors.topic ? (
+                    <p className="mt-1.5 text-xs text-red-400">{errors.topic}</p>
+                  ) : null}
+                </div>
+
+                <div className="mt-5">
+                  <label htmlFor="contact-message" className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                    Message
+                  </label>
+                  <textarea
+                    id="contact-message"
+                    rows={5}
+                    placeholder="Tell us what's on your mind…"
+                    value={form.message}
+                    onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
+                    onBlur={() => setTouched((t) => ({ ...t, message: true }))}
+                    className={cn(inputCls("message"), "resize-none")}
+                  />
+                  {touched.message && errors.message ? (
+                    <p className="mt-1.5 text-xs text-red-400">{errors.message}</p>
+                  ) : null}
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className={cn(
+                    "mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-70",
+                    ctaButtonGradient,
+                    ctaGlowBlueOnly,
+                    "ring-1 ring-blue-400/35"
+                  )}
+                >
+                  {submitting ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Send className="h-4 w-4" />
+                  )}
+                  {submitting ? "Sending…" : "Send message"}
+                </button>
+              </form>
+            )}
+          </motion.div>
+
+          {/* ── Contact info ── */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="flex flex-col gap-5 lg:col-span-2"
+          >
+            <p className="text-[11px] font-bold uppercase tracking-wider text-slate-600">
+              Other ways to reach us
+            </p>
+
+            <a
+              href="mailto:support@logiq.ai"
+              className="flex items-start gap-4 rounded-xl border border-cyber/[0.12] bg-black/[0.88] p-5 transition hover:border-cyber/[0.25] hover:bg-black/[0.94]"
+            >
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-cyber/10 ring-1 ring-cyber/20">
+                <Mail className="h-5 w-5 text-cyber" strokeWidth={1.75} />
+              </span>
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-slate-200">Email support</p>
+                <p className="mt-0.5 truncate font-mono text-xs text-cyber/70">assist.logiqdesk@outlook.com</p>
+              </div>
+            </a>
+
+            <a
+              href="https://github.com/Jay2704"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-start gap-4 rounded-xl border border-white/[0.08] bg-black/[0.88] p-5 transition hover:border-white/[0.15] hover:bg-black/[0.94]"
+            >
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white/[0.05] ring-1 ring-white/10">
+                <Github className="h-5 w-5 text-slate-300" strokeWidth={1.75} />
+              </span>
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-slate-200">GitHub</p>
+                <p className="mt-0.5 font-mono text-xs text-slate-500">github.com/logiq-ai</p>
+              </div>
+            </a>
+
+            <div className="rounded-xl border border-white/[0.06] bg-black/[0.6] p-5">
+              <p className="text-sm font-semibold text-slate-300">Response time</p>
+              <p className="mt-1.5 text-sm leading-relaxed text-slate-500">
+                We typically respond to all inquiries within one business day.
+              </p>
+            </div>
+          </motion.div>
+        </div>
       </div>
     </section>
   );
@@ -601,13 +803,19 @@ export function LandingPage() {
         <StatsSection />
         <FeaturesSection />
         <HowItWorksSection />
-        <CtaSection />
+        <ContactSection />
 
-        <footer
-          id="contact"
-          className="scroll-mt-16 border-t border-cyber/[0.06] py-8 text-center font-mono text-xs text-slate-700"
-        >
-          © {new Date().getFullYear()} LogIQ · Debug engine
+        <footer className="border-t border-cyber/[0.06] py-8">
+          <div className="mx-auto flex max-w-6xl flex-col items-center gap-3 px-4 sm:flex-row sm:justify-between sm:px-6 lg:px-8">
+            <p className="font-mono text-xs text-slate-700">
+              © {new Date().getFullYear()} LogIQ. All rights reserved.
+            </p>
+            <div className="flex items-center gap-5 font-mono text-xs text-slate-700">
+              <a href="#" className="transition hover:text-slate-400">Privacy</a>
+              <a href="#" className="transition hover:text-slate-400">Terms</a>
+              <a href="#contact" className="transition hover:text-slate-400">Contact</a>
+            </div>
+          </div>
         </footer>
       </main>
     </div>
