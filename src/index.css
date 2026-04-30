@@ -301,6 +301,10 @@
   50%       { transform: translate3d(14px, -10px, 0); opacity: 0.45; }
 }
 
+/* ── Logo wordmark fill — theme-aware ──────────────────────────────────── */
+.logiq-wordmark { fill: #ffffff; }
+html[data-theme="light"] .logiq-wordmark { fill: #0f172a; }
+
 /* ── Light mode overrides ────────────────────────────────────────────────── */
 /*
  * Strategy: [data-theme="light"] selectors have specificity 0-2-x which beats
