@@ -1,4 +1,4 @@
-import React, { useRef, useId, useEffect, CSSProperties } from 'react';
+import { useRef, useId, useEffect, type CSSProperties } from 'react';
 import { animate, useMotionValue, AnimationPlaybackControls } from 'framer-motion';
 
 interface ResponsiveImage {
