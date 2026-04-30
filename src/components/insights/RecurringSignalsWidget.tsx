@@ -14,7 +14,7 @@ export function RecurringSignalsWidget({
   return (
     <div
       className={cn(
-        "flex h-full flex-col rounded-2xl border border-amber-500/20 bg-gradient-to-b from-amber-500/[0.06] via-surface-960 to-surface-975 p-5 shadow-[0_1px_0_0_rgba(255,255,255,0.04)_inset,0_20px_50px_-28px_rgba(0,0,0,0.5)]",
+        "flex h-full flex-col rounded-2xl border border-amber-500/20 bg-gradient-to-b from-amber-500/[0.06] via-black/[0.92] to-black/[0.96] p-5 shadow-[0_1px_0_0_rgba(255,255,255,0.04)_inset,0_20px_50px_-28px_rgba(0,0,0,0.5)]",
         className
       )}
     >
@@ -34,7 +34,7 @@ export function RecurringSignalsWidget({
         {signals.map((s) => (
           <li
             key={s.id}
-            className="rounded-xl border border-white/[0.06] bg-surface-975/80 p-3 transition hover:border-amber-500/25 hover:bg-surface-975"
+            className="rounded-xl border border-white/[0.06] bg-black/[0.94] p-3 transition hover:border-amber-500/25 hover:bg-black/[0.96]"
           >
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0 flex-1">

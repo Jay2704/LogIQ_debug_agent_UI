@@ -58,7 +58,7 @@ export function InvestigationProgressBanner({
                       active &&
                         "border-sky-400/45 bg-sky-500/20 text-sky-100 shadow-[0_0_12px_-4px_rgba(56,189,248,0.45)]",
                       done && !active && "border-emerald-500/25 bg-emerald-500/[0.08] text-emerald-200/90",
-                      !active && !done && "border-white/[0.08] bg-surface-950/60 text-slate-600"
+                      !active && !done && "border-white/[0.08] bg-black/[0.88] text-slate-600"
                     )}
                   >
                     <span
@@ -89,7 +89,7 @@ export function InvestigationProgressBanner({
           {label}
         </p>
       </div>
-      <div className="h-1 w-full overflow-hidden bg-surface-950/80">
+      <div className="h-1 w-full overflow-hidden bg-black/[0.88]">
         <div className="h-full w-[40%] animate-investigation-shimmer-bar bg-gradient-to-r from-transparent via-sky-400/70 to-transparent" />
       </div>
     </div>

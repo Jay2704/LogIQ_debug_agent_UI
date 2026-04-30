@@ -18,7 +18,7 @@ export function JobReportSummaryCard({
   return (
     <div
       className={cn(
-        "rounded-card border border-indigo-500/25 bg-gradient-to-br from-indigo-500/[0.08] via-surface-960 to-surface-975 p-5 shadow-card-premium",
+        "rounded-card border border-indigo-500/25 bg-gradient-to-br from-indigo-500/[0.08] via-black/[0.92] to-black/[0.96] p-5 shadow-card-premium",
         className
       )}
     >
@@ -38,7 +38,7 @@ export function JobReportSummaryCard({
       </div>
 
       {!report ? (
-        <p className="mt-4 rounded-lg border border-dashed border-slate-700/60 bg-surface-900/50 px-3 py-4 text-sm text-slate-500">
+        <p className="mt-4 rounded-lg border border-dashed border-slate-700/60 bg-black/[0.82] px-3 py-4 text-sm text-slate-500">
           No report artifact linked to this anomaly in the mock workspace yet.
         </p>
       ) : (

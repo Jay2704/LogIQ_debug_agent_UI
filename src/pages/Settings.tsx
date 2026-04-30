@@ -51,7 +51,7 @@ export function Settings() {
 
       <div className="ui-card p-5 shadow-card">
         <div className="flex gap-4">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-surface-800 text-slate-400">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-black/[0.7] text-slate-400">
             <UserRound className="h-5 w-5" strokeWidth={1.75} />
           </div>
           <div className="min-w-0 flex-1">
@@ -113,7 +113,7 @@ export function Settings() {
         {sections.map((s) => (
           <div key={s.title} className="ui-card p-5 shadow-card">
             <div className="flex gap-4">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-surface-800 text-slate-400">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-black/[0.7] text-slate-400">
                 <s.icon className="h-5 w-5" strokeWidth={1.75} />
               </div>
               <div>

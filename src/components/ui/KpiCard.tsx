@@ -14,21 +14,21 @@ const variantStyles: Record<
   string
 > = {
   default:
-    "border-white/[0.08] from-surface-825/90 via-surface-925 to-surface-960 shadow-card",
+    "border-white/[0.08] from-black/[0.96] via-black/[0.88] to-black/[0.8] shadow-card",
   blue:
-    "border-blue-500/25 from-blue-500/[0.12] via-surface-900/95 to-surface-960 shadow-glow-blue",
+    "border-blue-500/25 from-blue-500/[0.12] via-black/[0.9] to-black/[0.85] shadow-glow-blue",
   violet:
-    "border-violet-500/25 from-violet-500/[0.12] via-surface-900/95 to-surface-960 shadow-glow-violet",
+    "border-violet-500/25 from-violet-500/[0.12] via-black/[0.9] to-black/[0.85] shadow-glow-violet",
   green:
-    "border-emerald-500/20 from-emerald-500/[0.1] via-surface-900/95 to-surface-960 shadow-[0_0_40px_-16px_rgba(16,185,129,0.2)]",
+    "border-emerald-500/20 from-emerald-500/[0.1] via-black/[0.9] to-black/[0.85] shadow-[0_0_40px_-16px_rgba(16,185,129,0.2)]",
   amber:
-    "border-amber-500/25 from-amber-500/[0.1] via-surface-900/95 to-surface-960 shadow-[0_0_40px_-16px_rgba(245,158,11,0.2)]",
+    "border-amber-500/25 from-amber-500/[0.1] via-black/[0.9] to-black/[0.85] shadow-[0_0_40px_-16px_rgba(245,158,11,0.2)]",
   red:
-    "border-red-500/20 from-red-500/[0.08] via-surface-900/95 to-surface-960 shadow-[0_0_40px_-16px_rgba(239,68,68,0.15)]",
+    "border-red-500/20 from-red-500/[0.08] via-black/[0.9] to-black/[0.85] shadow-[0_0_40px_-16px_rgba(239,68,68,0.15)]",
 };
 
 const iconWrap: Record<NonNullable<KpiCardProps["variant"]>, string> = {
-  default: "bg-surface-800/90 text-slate-300 ring-1 ring-white/[0.06]",
+  default: "bg-white/[0.06] text-slate-300 ring-1 ring-white/[0.06]",
   blue: "bg-blue-500/20 text-sky-300 ring-1 ring-blue-400/25",
   violet: "bg-violet-500/20 text-violet-300 ring-1 ring-violet-400/25",
   green: "bg-emerald-500/20 text-emerald-300 ring-1 ring-emerald-400/25",

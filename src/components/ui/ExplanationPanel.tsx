@@ -175,8 +175,8 @@ export function ExplanationPanel({
       className={cn(
         "rounded-2xl border border-dashed shadow-inner ring-1 ring-inset ring-white/[0.04]",
         variant === "emphasis"
-          ? "border-amber-500/35 bg-gradient-to-br from-amber-500/[0.08] via-surface-925/95 to-surface-975 p-6 sm:p-8"
-          : "border-slate-600/50 bg-surface-975/50 p-5",
+          ? "border-amber-500/35 bg-gradient-to-br from-amber-500/[0.08] via-black/[0.84] to-black/[0.96] p-6 sm:p-8"
+          : "border-slate-600/50 bg-black/[0.94] p-5",
         className
       )}
     >
@@ -264,7 +264,7 @@ function AssistiveEmptyState({
   hasStructuredShell: boolean;
 }) {
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-dashed border-amber-500/25 bg-gradient-to-br from-amber-500/[0.06] via-surface-950/80 to-surface-975 px-5 py-8 text-center shadow-inner ring-1 ring-inset ring-amber-500/10">
+    <div className="relative overflow-hidden rounded-2xl border border-dashed border-amber-500/25 bg-gradient-to-br from-amber-500/[0.06] via-black/[0.88] to-black/[0.96] px-5 py-8 text-center shadow-inner ring-1 ring-inset ring-amber-500/10">
       <div className="pointer-events-none absolute -right-16 -top-10 h-32 w-32 rounded-full bg-amber-500/10 blur-2xl" />
       <div className="relative mx-auto flex h-12 w-12 items-center justify-center rounded-2xl border border-amber-500/20 bg-amber-500/[0.08]">
         <TextQuote className="h-6 w-6 text-amber-300/80" strokeWidth={1.5} />
@@ -379,7 +379,7 @@ function StructuredAssistiveBody({ data }: { data: RcaAssistiveExplanation }) {
   if (!hasContent) {
     return (
       <div className="space-y-4">
-        <div className="rounded-xl border border-slate-700/50 bg-surface-950/50 px-4 py-5 text-center">
+        <div className="rounded-xl border border-slate-700/50 bg-black/[0.88] px-4 py-5 text-center">
           <p className="text-sm text-slate-400">
             No explanation, remediation, or summary fields in this response — often normal
             during warmup, empty JSON, or when the assistive service returns a shell
@@ -416,7 +416,7 @@ function StructuredAssistiveBody({ data }: { data: RcaAssistiveExplanation }) {
           />
           <div className="space-y-6">
             {data.explanationSummary?.trim() ? (
-              <div className="rounded-xl border border-white/[0.08] bg-surface-900/60 p-4 shadow-inner ring-1 ring-inset ring-white/[0.04]">
+              <div className="rounded-xl border border-white/[0.08] bg-black/[0.82] p-4 shadow-inner ring-1 ring-inset ring-white/[0.04]">
                 <SectionHeader icon={AlignLeft} tone="neutral">
                   Explanation summary
                 </SectionHeader>
@@ -435,7 +435,7 @@ function StructuredAssistiveBody({ data }: { data: RcaAssistiveExplanation }) {
                   {data.evidenceHighlights.map((h, i) => (
                     <li
                       key={i}
-                      className="flex gap-3 rounded-lg border border-sky-500/10 bg-surface-950/40 px-3 py-3 text-[15px] leading-relaxed text-slate-200"
+                      className="flex gap-3 rounded-lg border border-sky-500/10 bg-black/[0.88] px-3 py-3 text-[15px] leading-relaxed text-slate-200"
                     >
                       <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-sky-500/20 bg-sky-500/[0.08] font-mono text-[10px] font-bold tabular-nums text-sky-300">
                         {i + 1}
@@ -503,7 +503,7 @@ function StructuredAssistiveBody({ data }: { data: RcaAssistiveExplanation }) {
                   {data.remediationSteps.map((step, i) => (
                     <li
                       key={i}
-                      className="flex gap-3 rounded-lg border border-emerald-500/10 bg-surface-950/45 px-3 py-3 text-[15px] leading-relaxed text-slate-200"
+                      className="flex gap-3 rounded-lg border border-emerald-500/10 bg-black/[0.88] px-3 py-3 text-[15px] leading-relaxed text-slate-200"
                     >
                       <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-emerald-500/25 bg-emerald-500/[0.1] font-mono text-[10px] font-bold tabular-nums text-emerald-300">
                         {i + 1}

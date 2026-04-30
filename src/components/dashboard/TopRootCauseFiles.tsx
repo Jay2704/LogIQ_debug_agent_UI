@@ -26,7 +26,7 @@ export function TopRootCauseFiles({
   return (
     <div
       className={cn(
-        "flex h-full flex-col rounded-card border border-indigo-500/20 bg-gradient-to-b from-surface-900/95 to-surface-975 p-5 shadow-inner",
+        "flex h-full flex-col rounded-card border border-indigo-500/20 bg-gradient-to-b from-black/[0.85] to-black/[0.96] p-5 shadow-inner",
         className
       )}
     >
@@ -58,7 +58,7 @@ export function TopRootCauseFiles({
                 </span>
               </div>
             </div>
-            <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-surface-900">
+            <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-black/[0.85]">
               <div
                 className="h-full rounded-full bg-gradient-to-r from-indigo-500/80 to-violet-500/70"
                 style={{ width: `${Math.min(100, (row.hits / maxHits) * 100)}%` }}

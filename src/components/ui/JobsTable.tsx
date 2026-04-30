@@ -40,7 +40,7 @@ export function JobsTable({ jobs, emptyMessage, footer }: JobsTableProps) {
       <div className="overflow-x-auto">
         <table className="w-full min-w-[880px] text-left text-sm">
           <thead>
-            <tr className="border-b border-white/[0.08] bg-surface-975/[0.97] text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
+            <tr className="border-b border-white/[0.08] bg-black/[0.96] text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
               <th scope="col" className="px-5 py-3.5 pl-6 font-semibold">
                 Job ID
               </th>
@@ -102,7 +102,7 @@ export function JobsTable({ jobs, emptyMessage, footer }: JobsTableProps) {
                   <StatusBadge status={job.status} variant="workflow" />
                 </td>
                 <td className="px-4 py-3.5 align-middle">
-                  <span className="inline-flex items-center rounded-md border border-white/[0.06] bg-surface-975/80 px-2 py-0.5 text-[12px] font-medium text-slate-400 group-hover:border-blue-500/20 group-hover:text-slate-300">
+                  <span className="inline-flex items-center rounded-md border border-white/[0.06] bg-black/[0.94] px-2 py-0.5 text-[12px] font-medium text-slate-400 group-hover:border-blue-500/20 group-hover:text-slate-300">
                     {triggerLabels[job.trigger]}
                   </span>
                 </td>
@@ -127,7 +127,7 @@ export function JobsTable({ jobs, emptyMessage, footer }: JobsTableProps) {
                       "active:scale-[0.98]"
                     )}
                   >
-                    View details
+                    View Result
                     <ChevronRight
                       className="h-3.5 w-3.5 opacity-80 transition group-hover:translate-x-0.5"
                       strokeWidth={2.5}

@@ -23,7 +23,7 @@ export function ReportArtifactCard({
   return (
     <div
       className={cn(
-        "group rounded-card border border-indigo-500/20 bg-gradient-to-br from-surface-850/90 via-surface-960 to-surface-975 p-5 shadow-card-premium transition hover:border-indigo-500/35",
+        "group rounded-card border border-indigo-500/20 bg-gradient-to-br from-black/[0.75] via-black/[0.92] to-black/[0.96] p-5 shadow-card-premium transition hover:border-indigo-500/35",
         className
       )}
     >
@@ -53,7 +53,7 @@ export function ReportArtifactCard({
               <button
                 key={fmt}
                 type="button"
-                className="inline-flex items-center gap-1.5 rounded-lg border border-blue-500/15 bg-surface-900/80 px-2.5 py-1 text-xs font-medium text-slate-200 transition hover:border-sky-500/40 hover:text-sky-300"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-blue-500/15 bg-black/[0.82] px-2.5 py-1 text-xs font-medium text-slate-200 transition hover:border-sky-500/40 hover:text-sky-300"
               >
                 <Icon className="h-3.5 w-3.5" />
                 {fmt.toUpperCase()}

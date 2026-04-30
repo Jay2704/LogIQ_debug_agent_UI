@@ -73,7 +73,7 @@ export function Insights() {
 
   return (
     <div className="space-y-10">
-      <div className="relative overflow-hidden rounded-2xl border border-blue-500/20 bg-gradient-to-br from-surface-900/95 via-[#0c1428] to-surface-975 p-6 sm:p-8">
+      <div className="relative overflow-hidden rounded-2xl border border-cyber/[0.15] bg-black/[0.96] p-6 sm:p-8">
         <div className="pointer-events-none absolute -right-20 top-0 h-48 w-48 rounded-full bg-indigo-500/10 blur-3xl" />
         <div className="relative">
           <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-sky-500/90">

@@ -18,7 +18,7 @@ export function UtilityPanel({
   return (
     <div
       className={cn(
-        "rounded-xl border border-white/[0.08] bg-surface-975/70 p-4 shadow-inner sm:p-5",
+        "rounded-xl border border-white/[0.08] bg-black/[0.94] p-4 shadow-inner sm:p-5",
         className
       )}
     >
@@ -49,7 +49,7 @@ export function UtilityToolLayout({ tool, sidebar, children }: UtilityToolLayout
         Utilities
       </Link>
 
-      <header className="rounded-2xl border border-white/[0.1] bg-gradient-to-br from-surface-900/95 to-surface-975 p-6 shadow-card sm:p-8">
+      <header className="rounded-2xl border border-white/[0.1] bg-gradient-to-br from-black/[0.85] to-black/[0.96] p-6 shadow-card sm:p-8">
         <div className="flex flex-wrap items-start gap-4">
           <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-sky-500/15 ring-1 ring-sky-500/30">
             <Icon className="h-7 w-7 text-sky-300" strokeWidth={1.75} />

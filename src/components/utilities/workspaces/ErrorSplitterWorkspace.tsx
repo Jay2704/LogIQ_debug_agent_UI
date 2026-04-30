@@ -58,7 +58,7 @@ export function ErrorSplitterWorkspace({ logLines, hasUploadedLog }: UtilityWork
               {nonErrorLines.map((line, i) => (
                 <li
                   key={i}
-                  className="rounded-lg border border-white/[0.06] bg-surface-960/60 px-2.5 py-1.5 font-mono text-[10px] leading-relaxed text-slate-400"
+                  className="rounded-lg border border-white/[0.06] bg-black/[0.92] px-2.5 py-1.5 font-mono text-[10px] leading-relaxed text-slate-400"
                 >
                   {line}
                 </li>

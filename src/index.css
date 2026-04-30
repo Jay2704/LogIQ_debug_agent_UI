@@ -8,25 +8,29 @@
   }
   body {
     @apply min-h-screen font-sans text-slate-200;
-    background-color: #0a0f1a;
+    /* Smooth background transition on theme switch */
+    transition: background-color 250ms ease, color 250ms ease;
+    background-color: #040C18;
     background-image:
       radial-gradient(
-        ellipse 120% 90% at 50% -25%,
-        rgba(59, 130, 246, 0.14),
-        transparent 55%
-      ),
-      radial-gradient(
-        ellipse 70% 50% at 100% 0%,
-        rgba(139, 92, 246, 0.1),
+        ellipse 100% 70% at 50% -10%,
+        rgba(34, 211, 238, 0.07),
         transparent 50%
       ),
       radial-gradient(
-        ellipse 60% 45% at 0% 80%,
-        rgba(14, 116, 144, 0.06),
-        transparent 50%
+        ellipse 60% 50% at 100% 0%,
+        rgba(6, 182, 212, 0.05),
+        transparent 45%
       ),
-      linear-gradient(180deg, #0f172a 0%, #0a0f1a 38%, #070b14 100%);
+      radial-gradient(
+        ellipse 50% 40% at 0% 80%,
+        rgba(52, 211, 153, 0.04),
+        transparent 45%
+      );
     background-attachment: fixed;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', 'DM Sans', system-ui, sans-serif;
   }
 }
 
@@ -35,50 +39,66 @@
     @apply space-y-2;
   }
   .ui-section-eyebrow {
-    @apply text-[11px] font-bold uppercase tracking-[0.18em] text-blue-400;
+    @apply text-[11px] font-bold uppercase tracking-[0.18em] text-cyan-400;
   }
   .ui-page-title {
-    @apply text-2xl font-bold tracking-tight text-white sm:text-3xl;
+    @apply font-display text-2xl font-bold tracking-tight sm:text-3xl;
+    background: linear-gradient(to bottom, #f5f5f5, #a3a3a3);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
   .ui-page-desc {
     @apply mt-2 max-w-2xl text-sm leading-relaxed text-slate-500;
   }
   .ui-section-title {
-    @apply text-xl font-bold tracking-tight text-white sm:text-2xl;
+    @apply font-display text-xl font-bold tracking-tight sm:text-2xl;
+    background: linear-gradient(to bottom, #f5f5f5, #a3a3a3);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
   .ui-section-desc {
     @apply mt-2 max-w-2xl text-sm leading-relaxed text-slate-500;
   }
-  .ui-card {
-    @apply rounded-card border border-white/[0.08] bg-gradient-to-br from-surface-850/90 via-surface-925/95 to-surface-960 shadow-card;
-  }
-  .ui-card-elevated {
-    @apply rounded-card border border-indigo-500/20 bg-gradient-to-br from-surface-825/80 via-surface-950 to-surface-975 shadow-card-premium;
-  }
-  .ui-empty-shell {
-    @apply rounded-2xl border border-dashed border-white/[0.12] bg-surface-975/50 shadow-inner backdrop-blur-sm;
-  }
-  .ui-icon-btn {
-    @apply inline-flex items-center justify-center rounded-lg p-2.5 text-slate-500 transition-colors duration-200 hover:bg-white/[0.06] hover:text-slate-100;
-  }
-  .ui-table-shell {
-    @apply overflow-hidden rounded-2xl border border-white/[0.1] bg-gradient-to-b from-surface-850/75 via-surface-960 to-surface-975 shadow-card;
+
+  /* Reusable heading gradient — apply to any heading */
+  .heading-gradient {
+    background: linear-gradient(to bottom, #f5f5f5, #a3a3a3);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
 
-  /**
-   * Hero CTAs — premium hover shimmer (primary / secondary).
-   * Text must be wrapped in <span class="relative z-10"> for readability.
-   */
+  /* Dark immersive page hero section */
+  .ui-page-hero {
+    @apply relative rounded-2xl overflow-hidden border border-cyber/[0.15] bg-black/[0.96] shadow-[0_0_80px_-20px_rgba(34,211,238,0.15)];
+  }
+
+  /* NEXUS card — sharp, cyber-bordered, near-black */
+  .ui-card {
+    @apply rounded-card border border-cyber/[0.12] bg-black/[0.8] shadow-card;
+  }
+  .ui-card-elevated {
+    @apply rounded-card border border-cyber/[0.2] bg-black/[0.88] shadow-card-premium;
+  }
+  .ui-empty-shell {
+    @apply rounded-card border border-dashed border-cyber/[0.15] bg-black/[0.5] shadow-inner backdrop-blur-sm;
+  }
+  .ui-icon-btn {
+    @apply inline-flex items-center justify-center rounded-lg p-2.5 text-slate-500 transition-colors duration-200 hover:bg-cyber/[0.08] hover:text-cyan-300;
+  }
+  .ui-table-shell {
+    @apply overflow-hidden rounded-card border border-cyber/[0.1] bg-black/[0.96] shadow-card;
+  }
+
+  /* NEXUS CTA — cyan primary */
   .cta-shimmer-primary {
     position: relative;
     isolation: isolate;
     overflow: hidden;
-    transition:
-      transform 0.35s ease,
-      box-shadow 0.45s ease,
-      filter 0.35s ease;
+    transition: transform 0.3s ease, box-shadow 0.4s ease;
   }
-
   .cta-shimmer-primary::after {
     content: "";
     position: absolute;
@@ -89,12 +109,12 @@
       105deg,
       transparent 0%,
       transparent 38%,
-      rgba(255, 255, 255, 0.2) 50%,
+      rgba(255, 255, 255, 0.18) 50%,
       transparent 62%,
       transparent 100%
     );
     transform: translateX(-130%);
-    transition: transform 0.7s ease;
+    transition: transform 0.65s ease;
     pointer-events: none;
   }
 
@@ -102,14 +122,8 @@
     position: relative;
     isolation: isolate;
     overflow: hidden;
-    transition:
-      transform 0.3s ease,
-      border-color 0.35s ease,
-      box-shadow 0.4s ease,
-      background-color 0.3s ease,
-      color 0.25s ease;
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.35s ease;
   }
-
   .cta-shimmer-secondary::after {
     content: "";
     position: absolute;
@@ -120,99 +134,108 @@
       105deg,
       transparent 0%,
       transparent 42%,
-      rgba(147, 197, 253, 0.1) 50%,
+      rgba(103, 232, 249, 0.08) 50%,
       transparent 58%,
       transparent 100%
     );
     transform: translateX(-115%);
-    transition: transform 0.75s ease;
+    transition: transform 0.7s ease;
     pointer-events: none;
   }
 
-  /** Dashboard hero panel — soft ambient edge + lift on hover */
+  /* Dashboard hero */
   .hero-glow-panel {
-    transition:
-      transform 0.28s ease,
-      box-shadow 0.32s ease,
-      border-color 0.28s ease;
+    transition: transform 0.28s ease, box-shadow 0.32s ease, border-color 0.28s ease;
   }
-
-  /** Product preview / glass cards in hero — subtle glow + lift */
   .hero-glow-card {
-    transition:
-      transform 0.28s ease,
-      box-shadow 0.32s ease,
-      border-color 0.28s ease;
+    transition: transform 0.28s ease, box-shadow 0.32s ease, border-color 0.28s ease;
   }
-
-  /** Ambient orbs behind hero — low visual weight, GPU-friendly motion */
   .hero-ambient-orb {
     will-change: transform;
     opacity: 0.55;
   }
-
   @media (min-width: 640px) {
-    .hero-ambient-orb {
-      opacity: 0.65;
-    }
+    .hero-ambient-orb { opacity: 0.65; }
   }
 
-  .hero-ambient-orb-1 {
-    animation: heroOrbDrift1 17s ease-in-out infinite;
+  .hero-ambient-orb-1 { animation: heroOrbDrift1 17s ease-in-out infinite; }
+  .hero-ambient-orb-2 { animation: heroOrbDrift2 19s ease-in-out infinite; animation-delay: -4s; }
+  .hero-ambient-orb-3 { animation: heroOrbDrift3 15s ease-in-out infinite; animation-delay: -7s; }
+  .hero-ambient-orb-4 { animation: heroOrbDrift4 14s ease-in-out infinite; animation-delay: -3s; }
+  .hero-ambient-particle { animation: heroParticleDrift 22s ease-in-out infinite; opacity: 0.4; }
+  .hero-ambient-particle--delayed { animation-delay: -9s; }
+  .hero-ambient-particle--slow { animation: heroParticleDrift 27s ease-in-out infinite; animation-delay: -14s; }
+
+  .hero-robot {
+    will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
   }
 
-  .hero-ambient-orb-2 {
-    animation: heroOrbDrift2 19s ease-in-out infinite;
-    animation-delay: -4s;
+  /* Terminal blink cursor */
+  .terminal-cursor {
+    display: inline-block;
+    width: 8px;
+    height: 1.1em;
+    background: #22D3EE;
+    vertical-align: text-bottom;
+    margin-left: 2px;
+    animation: blink-cursor 1s step-end infinite;
   }
 
-  .hero-ambient-orb-3 {
-    animation: heroOrbDrift3 15s ease-in-out infinite;
-    animation-delay: -7s;
+  /* Cyber scan line overlay on card hover */
+  .nexus-card-scanline {
+    position: relative;
+    overflow: hidden;
+  }
+  .nexus-card-scanline::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 100%;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 3px,
+      rgba(34, 211, 238, 0.012) 3px,
+      rgba(34, 211, 238, 0.012) 4px
+    );
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .nexus-card-scanline:hover::before {
+    opacity: 1;
   }
 
-  .hero-ambient-orb-4 {
-    animation: heroOrbDrift4 14s ease-in-out infinite;
-    animation-delay: -3s;
-  }
-
-  .hero-ambient-particle {
-    animation: heroParticleDrift 22s ease-in-out infinite;
-    opacity: 0.4;
-  }
-
-  .hero-ambient-particle--delayed {
-    animation-delay: -9s;
-  }
-
-  .hero-ambient-particle--slow {
-    animation: heroParticleDrift 27s ease-in-out infinite;
-    animation-delay: -14s;
+  /* Nexus active nav */
+  .nexus-nav-active {
+    background: linear-gradient(135deg, rgba(34,211,238,0.14) 0%, rgba(6,182,212,0.08) 50%, rgba(15,23,42,0.35) 100%);
+    box-shadow: inset 0 0 0 1px rgba(34,211,238,0.2), inset 0 1px 0 0 rgba(255,255,255,0.05);
   }
 }
 
 @layer utilities {
-  .log-error {
-    color: #ef4444;
-    font-weight: 600;
-  }
-  .log-warn {
-    color: #f59e0b;
-    font-weight: 600;
-  }
-  .log-info {
-    color: #22c55e;
-    font-weight: 600;
-  }
-  .log-debug {
-    color: #3b82f6;
-    font-weight: 600;
-  }
+  .log-error  { color: #F43F5E; font-weight: 600; }
+  .log-warn   { color: #F59E0B; font-weight: 600; }
+  .log-info   { color: #22D3EE; font-weight: 600; }
+  .log-debug  { color: #34D399; font-weight: 600; }
+
   .animate-investigation-reveal {
     animation: investigation-reveal 0.55s ease-out forwards;
   }
   .animate-investigation-shimmer-bar {
     animation: investigation-shimmer 1.4s ease-in-out infinite;
+  }
+
+  .text-gradient-cyber {
+    background: linear-gradient(90deg, #22D3EE, #67E8F9, #34D399, #22D3EE);
+    background-size: 200% auto;
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: gradientMove 6s ease-in-out infinite;
   }
   .text-gradient-blue {
     @apply bg-gradient-to-r from-sky-400 to-cyan-300 bg-clip-text text-transparent;
@@ -221,104 +244,404 @@
     @apply bg-gradient-to-r from-violet-400 to-fuchsia-300 bg-clip-text text-transparent;
   }
 
-  /** Animated hero headline — blue → purple → cyan, subtle drift + soft glow */
+  /* legacy gradient-text class — now cyber */
   .gradient-text {
-    background: linear-gradient(90deg, #3b82f6, #8b5cf6, #06b6d4, #3b82f6);
+    background: linear-gradient(90deg, #22D3EE, #67E8F9, #34D399, #22D3EE);
     background-size: 200% auto;
     color: transparent;
     -webkit-background-clip: text;
     background-clip: text;
-    animation: gradientMove 8s ease-in-out infinite;
-    filter: drop-shadow(0 0 14px rgba(99, 102, 241, 0.28));
+    animation: gradientMove 7s ease-in-out infinite;
+    filter: drop-shadow(0 0 12px rgba(34,211,238,0.22));
+  }
+
+  .font-display {
+    font-family: 'Space Grotesk', 'DM Sans', system-ui, sans-serif;
   }
 }
+
+/* ── Keyframes ─────────────────────────────────────── */
 
 @keyframes investigation-reveal {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
-
 @keyframes investigation-shimmer {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(350%);
-  }
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(350%); }
 }
-
 @keyframes gradientMove {
-  0% {
-    background-position: 0% center;
-  }
-  50% {
-    background-position: 100% center;
-  }
-  100% {
-    background-position: 0% center;
-  }
+  0%   { background-position: 0% center; }
+  50%  { background-position: 100% center; }
+  100% { background-position: 0% center; }
 }
-
+@keyframes blink-cursor {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
 @keyframes heroOrbDrift1 {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  50% {
-    transform: translate3d(5%, -6%, 0) scale(1.06);
-  }
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50%       { transform: translate3d(5%, -6%, 0) scale(1.06); }
 }
-
 @keyframes heroOrbDrift2 {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) scale(1.02);
-  }
-  50% {
-    transform: translate3d(-7%, 5%, 0) scale(0.94);
-  }
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1.02); }
+  50%       { transform: translate3d(-7%, 5%, 0) scale(0.94); }
 }
-
 @keyframes heroOrbDrift3 {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  33% {
-    transform: translate3d(6%, 4%, 0) scale(1.05);
-  }
-  66% {
-    transform: translate3d(-4%, -5%, 0) scale(0.96);
-  }
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  33%       { transform: translate3d(6%, 4%, 0) scale(1.05); }
+  66%       { transform: translate3d(-4%, -5%, 0) scale(0.96); }
 }
-
 @keyframes heroOrbDrift4 {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) scale(1);
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50%       { transform: translate3d(4%, 7%, 0) scale(1.07); }
+}
+@keyframes heroParticleDrift {
+  0%, 100% { transform: translate3d(0, 0, 0); opacity: 0.28; }
+  50%       { transform: translate3d(14px, -10px, 0); opacity: 0.45; }
+}
+
+/* ── Logo wordmark fill — theme-aware ──────────────────────────────────── */
+.logiq-wordmark { fill: #ffffff; }
+html[data-theme="light"] .logiq-wordmark { fill: #0f172a; }
+
+/* ── Light mode overrides ────────────────────────────────────────────────── */
+/*
+ * Strategy: [data-theme="light"] selectors have specificity 0-2-x which beats
+ * Tailwind's single-class utilities (0-1-0). No !important needed for most rules.
+ * Structural selectors (element + attribute) use !important only where the
+ * Tailwind class wins because it appears later in the stylesheet.
+ */
+
+/* Body & ambient background */
+html[data-theme="light"] body {
+  background-color: #edf2fb;
+  color: #1e293b;
+  background-image:
+    radial-gradient(ellipse 100% 70% at 50% -10%, rgba(34,211,238,0.06), transparent 50%),
+    radial-gradient(ellipse 60% 50% at 100% 0%,   rgba(6,182,212,0.04), transparent 45%),
+    radial-gradient(ellipse 50% 40% at 0%   80%,  rgba(52,211,153,0.03), transparent 45%);
+}
+
+/* Dim the animated background canvas in light mode */
+html[data-theme="light"] [data-ethereal-bg] { opacity: 0.12; }
+
+/* ── Text ── */
+html[data-theme="light"] .text-white      { color: #0f172a; }
+html[data-theme="light"] .text-slate-100  { color: #0f172a; }
+html[data-theme="light"] .text-slate-200  { color: #1e293b; }
+html[data-theme="light"] .text-slate-300  { color: #334155; }
+html[data-theme="light"] .text-slate-400  { color: #475569; }
+html[data-theme="light"] .text-slate-500  { color: #64748b; }
+html[data-theme="light"] .text-slate-600  { color: #64748b; }  /* was #94a3b8 (2.6:1) — #64748b = 4.8:1 AA ✓ */
+html[data-theme="light"] .text-slate-700  { color: #94a3b8; }  /* decorative labels; lightened but more legible */
+html[data-theme="light"] .text-neutral-50  { color: #0f172a; }
+html[data-theme="light"] .text-neutral-300 { color: #334155; }
+html[data-theme="light"] .text-neutral-400 { color: #475569; }
+
+/* Cyber accent — darken for readability on light bg */
+html[data-theme="light"] .text-cyber       { color: #0891b2; }
+html[data-theme="light"] .text-cyber\/80   { color: rgba(8,145,178,0.85); }
+html[data-theme="light"] .text-cyber\/70   { color: rgba(8,145,178,0.75); }
+html[data-theme="light"] .text-cyan-300    { color: #0891b2; }
+html[data-theme="light"] .text-cyan-400    { color: #0891b2; }
+html[data-theme="light"] .text-sky-200\/95 { color: #0369a1; }
+
+/* Amber/warning text keeps its color — readable on light bg */
+
+/* ── Dark panel backgrounds → near-white surfaces ── */
+html[data-theme="light"] .bg-black\/\[0\.96\] { background-color: rgba(255,255,255,0.97); }
+html[data-theme="light"] .bg-black\/\[0\.94\] { background-color: rgba(255,255,255,0.95); }
+html[data-theme="light"] .bg-black\/\[0\.9\]  { background-color: rgba(255,255,255,0.93); }
+html[data-theme="light"] .bg-black\/\[0\.88\] { background-color: rgba(248,251,255,0.95); }
+html[data-theme="light"] .bg-black\/\[0\.85\] { background-color: rgba(248,251,255,0.95); }
+html[data-theme="light"] .bg-black\/\[0\.82\] { background-color: rgba(241,246,252,0.95); }
+html[data-theme="light"] .bg-black\/\[0\.8\]  { background-color: rgba(241,246,252,0.92); }
+html[data-theme="light"] .bg-black\/\[0\.7\]  { background-color: rgba(234,242,250,0.9); }
+html[data-theme="light"] .bg-black\/\[0\.6\]  { background-color: rgba(234,242,250,0.85); }
+html[data-theme="light"] .bg-black\/\[0\.5\]  { background-color: rgba(226,238,247,0.8); }
+html[data-theme="light"] .bg-black\/\[0\.4\]  { background-color: rgba(226,238,247,0.7); }
+
+/* Landing-specific backgrounds */
+html[data-theme="light"] .bg-\[\#080d18\]\/55 { background-color: rgba(255,255,255,0.88) !important; }
+html[data-theme="light"] .bg-\[\#080d18\]\/45 { background-color: rgba(255,255,255,0.82) !important; }
+
+/* Surface color utilities */
+html[data-theme="light"] .bg-surface-975  { background-color: #f0f5fc; }
+html[data-theme="light"] .bg-surface-960  { background-color: #e8f0f9; }
+html[data-theme="light"] .bg-surface-950  { background-color: #dce8f5; }
+html[data-theme="light"] .bg-surface-925  { background-color: #d0e0ef; }
+html[data-theme="light"] .bg-surface-900  { background-color: #c4d8ea; }
+html[data-theme="light"] .bg-surface-875  { background-color: #b8cfe4; }
+html[data-theme="light"] .bg-surface-850  { background-color: #acc7de; }
+html[data-theme="light"] .bg-surface-825  { background-color: #a0bed8; }
+html[data-theme="light"] .bg-surface-800  { background-color: #94b5d2; }
+
+/* White/transparent overlays that disappear on light bg */
+html[data-theme="light"] .bg-white\/\[0\.04\] { background-color: rgba(15,23,42,0.04); }
+html[data-theme="light"] .bg-white\/\[0\.06\] { background-color: rgba(15,23,42,0.05); }
+
+/* ── Borders ── */
+html[data-theme="light"] .border-cyber\/\[0\.06\] { border-color: rgba(8,145,178,0.18); }
+html[data-theme="light"] .border-cyber\/\[0\.08\] { border-color: rgba(8,145,178,0.2);  }
+html[data-theme="light"] .border-cyber\/\[0\.1\]  { border-color: rgba(8,145,178,0.22); }
+html[data-theme="light"] .border-cyber\/\[0\.12\] { border-color: rgba(8,145,178,0.24); }
+html[data-theme="light"] .border-cyber\/\[0\.15\] { border-color: rgba(8,145,178,0.28); }
+html[data-theme="light"] .border-cyber\/\[0\.18\] { border-color: rgba(8,145,178,0.32); }
+html[data-theme="light"] .border-cyber\/\[0\.2\]  { border-color: rgba(8,145,178,0.35); }
+html[data-theme="light"] .border-cyber\/\[0\.22\] { border-color: rgba(8,145,178,0.38); }
+html[data-theme="light"] .border-cyber\/\[0\.28\] { border-color: rgba(8,145,178,0.42); }
+html[data-theme="light"] .border-cyber\/30        { border-color: rgba(8,145,178,0.4);  }
+html[data-theme="light"] .border-cyber\/\[0\.3\]  { border-color: rgba(8,145,178,0.4);  }
+
+/* White borders invisible on light bg — swap to slate */
+html[data-theme="light"] .border-white\/\[0\.04\] { border-color: rgba(15,23,42,0.08); }
+html[data-theme="light"] .border-white\/\[0\.08\] { border-color: rgba(15,23,42,0.1);  }
+html[data-theme="light"] .border-white\/\[0\.12\] { border-color: rgba(15,23,42,0.14); }
+
+/* Sky / tech borders */
+html[data-theme="light"] .border-sky-500\/20 { border-color: rgba(14,165,233,0.3); }
+html[data-theme="light"] .border-sky-500\/30 { border-color: rgba(14,165,233,0.4); }
+
+/* ── Rings ── */
+html[data-theme="light"] .ring-cyber\/\[0\.06\] { --tw-ring-color: rgba(8,145,178,0.12); }
+html[data-theme="light"] .ring-cyber\/\[0\.12\] { --tw-ring-color: rgba(8,145,178,0.2);  }
+html[data-theme="light"] .ring-cyber\/20        { --tw-ring-color: rgba(8,145,178,0.28); }
+html[data-theme="light"] .ring-cyber\/30        { --tw-ring-color: rgba(8,145,178,0.38); }
+
+/* Focus ring offset colour */
+html[data-theme="light"] .ring-offset-surface-975     { --tw-ring-offset-color: #f0f5fc; }
+html[data-theme="light"] .ring-offset-surface-960     { --tw-ring-offset-color: #e8f0f9; }
+html[data-theme="light"] .ring-offset-\[\#080d18\]    { --tw-ring-offset-color: #f0f5fc; }
+
+/* ── Hover backgrounds ── */
+html[data-theme="light"] .hover\:bg-cyber\/\[0\.06\]:hover { background-color: rgba(8,145,178,0.07); }
+html[data-theme="light"] .hover\:bg-cyber\/\[0\.08\]:hover { background-color: rgba(8,145,178,0.09); }
+html[data-theme="light"] .hover\:bg-white\/\[0\.04\]:hover { background-color: rgba(15,23,42,0.04); }
+html[data-theme="light"] .hover\:bg-white\/\[0\.06\]:hover { background-color: rgba(15,23,42,0.05); }
+html[data-theme="light"] .hover\:bg-black\/\[0\.82\]:hover { background-color: rgba(241,246,252,0.97); }
+html[data-theme="light"] .hover\:bg-black\/\[0\.85\]:hover { background-color: rgba(248,251,255,0.98); }
+
+/* Hover text */
+html[data-theme="light"] .hover\:text-slate-200:hover { color: #1e293b; }
+html[data-theme="light"] .hover\:text-slate-300:hover { color: #334155; }
+html[data-theme="light"] .hover\:text-cyan-300:hover  { color: #0891b2; }
+
+/* Hover border */
+html[data-theme="light"] .hover\:border-cyber\/\[0\.2\]:hover  { border-color: rgba(8,145,178,0.35); }
+html[data-theme="light"] .hover\:border-cyber\/\[0\.28\]:hover { border-color: rgba(8,145,178,0.42); }
+html[data-theme="light"] .hover\:border-cyber\/\[0\.3\]:hover  { border-color: rgba(8,145,178,0.45); }
+html[data-theme="light"] .hover\:border-sky-500\/30:hover      { border-color: rgba(14,165,233,0.5); }
+
+/* ── Heading gradients ── */
+html[data-theme="light"] .ui-page-title,
+html[data-theme="light"] .ui-section-title,
+html[data-theme="light"] .heading-gradient {
+  background: linear-gradient(to bottom, #0f172a, #475569);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* bg-clip text (gradient headings) — keep the gradient colour, just darken */
+html[data-theme="light"] .bg-gradient-to-b.from-neutral-50 {
+  background-image: linear-gradient(to bottom, #0f172a, #475569) !important;
+}
+
+/* ── Nav active state ── */
+html[data-theme="light"] .bg-nav-active {
+  background: linear-gradient(135deg, rgba(8,145,178,0.1) 0%, rgba(6,182,212,0.07) 50%, rgba(241,246,252,0.8) 100%);
+}
+
+/* ── Input surfaces ── */
+html[data-theme="light"] .bg-surface-975\/70 { background-color: rgba(248,251,255,0.85); }
+
+/* ── Shadow adjustments for light surfaces ── */
+html[data-theme="light"] .shadow-\[0_4px_24px_-8px_rgba\(0\,0\,0\,0\.5\)\] {
+  box-shadow: 0 4px 24px -8px rgba(8,145,178,0.12);
+}
+html[data-theme="light"] .shadow-\[0_0_80px_-20px_rgba\(34\,211\,238\,0\.15\)\] {
+  box-shadow: 0 0 80px -20px rgba(8,145,178,0.18);
+}
+
+/* ── Dividers / separators ── */
+html[data-theme="light"] .bg-cyber\/\[0\.12\] { background-color: rgba(8,145,178,0.18); }
+html[data-theme="light"] .bg-cyber\/\[0\.1\]  { background-color: rgba(8,145,178,0.15); }
+
+/* ── CTA hover adjustments in light mode ── */
+@media (hover: hover) {
+  html[data-theme="light"] .cta-shimmer-secondary:hover {
+    border-color: rgba(8,145,178,0.3);
+    box-shadow: 0 0 0 1px rgba(8,145,178,0.1), 0 10px 32px -18px rgba(8,145,178,0.18);
   }
-  50% {
-    transform: translate3d(4%, 7%, 0) scale(1.07);
+  html[data-theme="light"] .hero-glow-panel:hover {
+    border-color: rgba(8,145,178,0.25);
+    box-shadow: 0 0 0 1px rgba(8,145,178,0.1), 0 28px 72px -34px rgba(0,0,0,0.18), 0 0 44px -18px rgba(8,145,178,0.12);
+  }
+  html[data-theme="light"] .hero-glow-card:hover {
+    border-color: rgba(8,145,178,0.22);
+    box-shadow: 0 0 0 1px rgba(8,145,178,0.18), 0 26px 64px -26px rgba(0,0,0,0.15), 0 0 38px -12px rgba(8,145,178,0.14);
   }
 }
 
-@keyframes heroParticleDrift {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0);
-    opacity: 0.28;
-  }
-  50% {
-    transform: translate3d(14px, -10px, 0);
-    opacity: 0.45;
-  }
+/* ── Scanline overlay — invisible but harmless on light bg ── */
+html[data-theme="light"] .nexus-card-scanline::before { display: none; }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   GRADIENT STOP OVERRIDES
+   bg-black/* overrides don't affect from-/via-/to- gradient utilities.
+   These rules light-adapt every dark card that uses bg-gradient-to-*
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+/* from- stops */
+html[data-theme="light"] .from-black\/\[0\.96\] { --tw-gradient-from: rgba(255,255,255,0.97) var(--tw-gradient-from-position); }
+html[data-theme="light"] .from-black\/\[0\.94\] { --tw-gradient-from: rgba(255,255,255,0.95) var(--tw-gradient-from-position); }
+html[data-theme="light"] .from-black\/\[0\.92\] { --tw-gradient-from: rgba(255,255,255,0.93) var(--tw-gradient-from-position); }
+html[data-theme="light"] .from-black\/\[0\.9\]  { --tw-gradient-from: rgba(248,251,255,0.98) var(--tw-gradient-from-position); }
+html[data-theme="light"] .from-black\/\[0\.88\] { --tw-gradient-from: rgba(248,251,255,0.95) var(--tw-gradient-from-position); }
+html[data-theme="light"] .from-black\/\[0\.85\] { --tw-gradient-from: rgba(248,251,255,0.95) var(--tw-gradient-from-position); }
+html[data-theme="light"] .from-black\/\[0\.84\] { --tw-gradient-from: rgba(248,251,255,0.94) var(--tw-gradient-from-position); }
+html[data-theme="light"] .from-black\/\[0\.82\] { --tw-gradient-from: rgba(241,246,252,0.95) var(--tw-gradient-from-position); }
+html[data-theme="light"] .from-black\/\[0\.8\]  { --tw-gradient-from: rgba(241,246,252,0.92) var(--tw-gradient-from-position); }
+html[data-theme="light"] .from-black\/\[0\.75\] { --tw-gradient-from: rgba(234,242,250,0.90) var(--tw-gradient-from-position); }
+html[data-theme="light"] .from-black\/\[0\.7\]  { --tw-gradient-from: rgba(234,242,250,0.90) var(--tw-gradient-from-position); }
+
+/* to- stops */
+html[data-theme="light"] .to-black\/\[0\.96\]   { --tw-gradient-to: rgba(255,255,255,0.97) var(--tw-gradient-to-position); }
+html[data-theme="light"] .to-black\/\[0\.94\]   { --tw-gradient-to: rgba(255,255,255,0.95) var(--tw-gradient-to-position); }
+html[data-theme="light"] .to-black\/\[0\.92\]   { --tw-gradient-to: rgba(255,255,255,0.93) var(--tw-gradient-to-position); }
+html[data-theme="light"] .to-black\/\[0\.9\]    { --tw-gradient-to: rgba(248,251,255,0.98) var(--tw-gradient-to-position); }
+html[data-theme="light"] .to-black\/\[0\.88\]   { --tw-gradient-to: rgba(248,251,255,0.95) var(--tw-gradient-to-position); }
+html[data-theme="light"] .to-black\/\[0\.85\]   { --tw-gradient-to: rgba(248,251,255,0.95) var(--tw-gradient-to-position); }
+html[data-theme="light"] .to-black\/\[0\.82\]   { --tw-gradient-to: rgba(241,246,252,0.95) var(--tw-gradient-to-position); }
+html[data-theme="light"] .to-black\/\[0\.8\]    { --tw-gradient-to: rgba(241,246,252,0.92) var(--tw-gradient-to-position); }
+html[data-theme="light"] .to-black\/\[0\.75\]   { --tw-gradient-to: rgba(234,242,250,0.90) var(--tw-gradient-to-position); }
+html[data-theme="light"] .to-\[\#060a12\]       { --tw-gradient-to: rgba(248,251,255,0.97) var(--tw-gradient-to-position); }
+html[data-theme="light"] .to-\[\#060a12\]\/90   { --tw-gradient-to: rgba(248,251,255,0.92) var(--tw-gradient-to-position); }
+
+/* via- stops (must override --tw-gradient-stops; the color is inlined, not a variable ref) */
+html[data-theme="light"] .via-black\/\[0\.96\]  { --tw-gradient-stops: var(--tw-gradient-from), rgba(255,255,255,0.97), var(--tw-gradient-to, rgba(255,255,255,0)); }
+html[data-theme="light"] .via-black\/\[0\.94\]  { --tw-gradient-stops: var(--tw-gradient-from), rgba(255,255,255,0.95), var(--tw-gradient-to, rgba(255,255,255,0)); }
+html[data-theme="light"] .via-black\/\[0\.92\]  { --tw-gradient-stops: var(--tw-gradient-from), rgba(255,255,255,0.93), var(--tw-gradient-to, rgba(255,255,255,0)); }
+html[data-theme="light"] .via-black\/\[0\.9\]   { --tw-gradient-stops: var(--tw-gradient-from), rgba(248,251,255,0.98), var(--tw-gradient-to, rgba(248,251,255,0)); }
+html[data-theme="light"] .via-black\/\[0\.88\]  { --tw-gradient-stops: var(--tw-gradient-from), rgba(248,251,255,0.95), var(--tw-gradient-to, rgba(248,251,255,0)); }
+html[data-theme="light"] .via-black\/\[0\.84\]  { --tw-gradient-stops: var(--tw-gradient-from), rgba(248,251,255,0.94), var(--tw-gradient-to, rgba(248,251,255,0)); }
+html[data-theme="light"] .via-\[\#0a1020\]      { --tw-gradient-stops: var(--tw-gradient-from), rgba(240,245,252,0.95), var(--tw-gradient-to, rgba(240,245,252,0)); }
+html[data-theme="light"] .via-\[\#0a0f1c\]      { --tw-gradient-stops: var(--tw-gradient-from), rgba(240,245,252,0.95), var(--tw-gradient-to, rgba(240,245,252,0)); }
+
+/* ── Dark hex / slate backgrounds ── */
+html[data-theme="light"] .bg-\[\#060a12\]      { background-color: rgba(241,246,252,0.95); }
+html[data-theme="light"] .bg-\[\#060a12\]\/80  { background-color: rgba(241,246,252,0.90); }
+html[data-theme="light"] .bg-\[\#060a12\]\/90  { background-color: rgba(241,246,252,0.92); }
+html[data-theme="light"] .bg-slate-950\/40     { background-color: rgba(248,251,255,0.95); }
+html[data-theme="light"] .bg-slate-950\/55     { background-color: rgba(248,251,255,0.95); }
+html[data-theme="light"] .bg-slate-950\/60     { background-color: rgba(248,251,255,0.95); }
+
+/* ── Missing white border overrides (border-white/ without these are near-invisible) ── */
+html[data-theme="light"] .border-white\/\[0\.05\]  { border-color: rgba(15,23,42,0.07); }
+html[data-theme="light"] .border-white\/\[0\.06\]  { border-color: rgba(15,23,42,0.09); }
+html[data-theme="light"] .border-white\/\[0\.07\]  { border-color: rgba(15,23,42,0.10); }
+html[data-theme="light"] .border-white\/\[0\.1\]   { border-color: rgba(15,23,42,0.12); }
+html[data-theme="light"] .border-white\/\[0\.14\]  { border-color: rgba(15,23,42,0.16); }
+html[data-theme="light"] .border-white\/\[0\.16\]  { border-color: rgba(15,23,42,0.18); }
+html[data-theme="light"] .border-white\/\[0\.2\]   { border-color: rgba(15,23,42,0.22); }
+/* Colored borders that are too faint on light backgrounds */
+html[data-theme="light"] .border-sky-500\/\[0\.12\]  { border-color: rgba(14,165,233,0.30); }
+html[data-theme="light"] .border-blue-500\/\[0\.12\] { border-color: rgba(59,130,246,0.28); }
+html[data-theme="light"] .border-blue-500\/\[0\.1\]  { border-color: rgba(59,130,246,0.25); }
+html[data-theme="light"] .border-blue-500\/15        { border-color: rgba(59,130,246,0.32); }
+html[data-theme="light"] .border-cyan-500\/15        { border-color: rgba(6,182,212,0.30);  }
+html[data-theme="light"] .border-indigo-500\/20      { border-color: rgba(99,102,241,0.32); }
+html[data-theme="light"] .border-slate-600\/50       { border-color: rgba(100,116,139,0.35); }
+html[data-theme="light"] .border-slate-700\/60       { border-color: rgba(100,116,139,0.35); }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   ACCENT TEXT — WCAG AA replacements for light surfaces
+   Dark mode accent colours (sky-300, violet-300, emerald-300, etc.)
+   fail contrast on near-white card backgrounds.  Values chosen to
+   achieve ≥ 4.5:1 against white (#ffffff).
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+/* sky-300 / sky-400 → sky-700 (#0369a1, 5.9:1 on white) */
+html[data-theme="light"] .text-sky-300        { color: #0369a1; }
+html[data-theme="light"] .text-sky-300\/95    { color: rgba(3,105,161,0.95); }
+html[data-theme="light"] .text-sky-300\/90    { color: rgba(3,105,161,0.90); }
+html[data-theme="light"] .text-sky-300\/85    { color: rgba(3,105,161,0.90); }
+html[data-theme="light"] .text-sky-300\/80    { color: rgba(3,105,161,0.88); }
+html[data-theme="light"] .text-sky-400        { color: #0369a1; }
+html[data-theme="light"] .text-sky-400\/95    { color: rgba(3,105,161,0.95); }
+html[data-theme="light"] .text-sky-400\/90    { color: rgba(3,105,161,0.90); }
+html[data-theme="light"] .text-sky-400\/85    { color: rgba(3,105,161,0.88); }
+html[data-theme="light"] .text-sky-400\/80    { color: rgba(3,105,161,0.85); }
+
+/* violet-300 / violet-400 → violet-700 (#6d28d9, 5.6:1 on white) */
+html[data-theme="light"] .text-violet-300        { color: #6d28d9; }
+html[data-theme="light"] .text-violet-300\/95    { color: rgba(109,40,217,0.95); }
+html[data-theme="light"] .text-violet-300\/90    { color: rgba(109,40,217,0.90); }
+html[data-theme="light"] .text-violet-300\/80    { color: rgba(109,40,217,0.88); }
+html[data-theme="light"] .text-violet-400        { color: #7c3aed; }
+html[data-theme="light"] .text-violet-400\/80    { color: rgba(124,58,237,0.85); }
+
+/* emerald-300 / emerald-400 → emerald-700 (#047857, 5.6:1 on white) */
+html[data-theme="light"] .text-emerald-300        { color: #047857; }
+html[data-theme="light"] .text-emerald-300\/95    { color: rgba(4,120,87,0.95); }
+html[data-theme="light"] .text-emerald-300\/90    { color: rgba(4,120,87,0.90); }
+html[data-theme="light"] .text-emerald-300\/80    { color: rgba(4,120,87,0.88); }
+html[data-theme="light"] .text-emerald-400        { color: #047857; }
+html[data-theme="light"] .text-emerald-400\/90    { color: rgba(4,120,87,0.90); }
+html[data-theme="light"] .text-emerald-400\/85    { color: rgba(4,120,87,0.88); }
+
+/* amber-300 / amber-400 → amber-800 (#92400e, 5.3:1 on white) */
+html[data-theme="light"] .text-amber-300        { color: #92400e; }
+html[data-theme="light"] .text-amber-300\/80    { color: rgba(146,64,14,0.85); }
+html[data-theme="light"] .text-amber-400        { color: #92400e; }
+html[data-theme="light"] .text-amber-400\/90    { color: rgba(146,64,14,0.92); }
+html[data-theme="light"] .text-amber-400\/85    { color: rgba(146,64,14,0.88); }
+html[data-theme="light"] .text-amber-400\/80    { color: rgba(146,64,14,0.85); }
+
+/* rose-400 → rose-700 (#be123c, 5.6:1 on white) */
+html[data-theme="light"] .text-rose-400       { color: #be123c; }
+html[data-theme="light"] .text-rose-400\/80   { color: rgba(190,18,60,0.85); }
+
+/* nexus (emerald-400, #34D399) → emerald-700 (#047857, same as emerald overrides above) */
+html[data-theme="light"] .text-nexus          { color: #047857; }
+html[data-theme="light"] .text-nexus\/90      { color: rgba(4,120,87,0.92); }
+html[data-theme="light"] .text-nexus\/80      { color: rgba(4,120,87,0.85); }
+html[data-theme="light"] .text-nexus\/70      { color: rgba(4,120,87,0.75); }
+
+/* cyber — add missing opacity variant */
+html[data-theme="light"] .text-cyber\/90      { color: rgba(8,145,178,0.92); }
+
+/* ── Auth compact nav label ── */
+html[data-theme="light"] nav .text-slate-400 { color: #475569; }
+
+/* ── Amber / warning surfaces (keep readable) ── */
+html[data-theme="light"] .border-amber-500\/25 { border-color: rgba(245,158,11,0.35); }
+html[data-theme="light"] .bg-amber-500\/\[0\.08\] { background-color: rgba(245,158,11,0.1); }
+html[data-theme="light"] .text-amber-100\/95 { color: #92400e; }
+html[data-theme="light"] .text-amber-50\/95 { color: #78350f; }
+
+/* ── Red / error surfaces ── */
+html[data-theme="light"] .border-red-500\/30 { border-color: rgba(239,68,68,0.38); }
+html[data-theme="light"] .bg-red-500\/10 { background-color: rgba(239,68,68,0.08); }
+html[data-theme="light"] .text-red-200 { color: #b91c1c; }
+
+/* ── Sky badge surfaces ── */
+html[data-theme="light"] .bg-sky-500\/10 { background-color: rgba(14,165,233,0.1); }
+html[data-theme="light"] .bg-cyber\/10 { background-color: rgba(8,145,178,0.1); }
+html[data-theme="light"] .text-sky-200\/95 { color: #0369a1; }
+
+/* ── Gradient text clip (page headings) ── */
+html[data-theme="light"] .gradient-text {
+  background: linear-gradient(90deg, #0891b2, #6366f1, #0891b2);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: none;
 }
+
+/* ── Log level colours stay vibrant (they work on both themes) ── */
 
 @media (prefers-reduced-motion: reduce) {
   .hero-ambient-orb,
@@ -326,55 +649,49 @@
   .hero-ambient-orb-2,
   .hero-ambient-orb-3,
   .hero-ambient-orb-4,
-  .hero-ambient-particle {
+  .hero-ambient-particle,
+  .gradient-text,
+  .text-gradient-cyber,
+  .terminal-cursor {
     animation: none !important;
   }
 }
 
 @media (hover: hover) {
   .cta-shimmer-primary:hover {
-    transform: translateY(-1px) scale(1.015);
+    transform: translateY(-1px) scale(1.012);
     box-shadow:
-      0 0 0 1px rgba(56, 189, 248, 0.42),
-      0 14px 44px -14px rgba(59, 130, 246, 0.42),
-      0 0 36px -10px rgba(96, 165, 250, 0.28),
-      0 0 28px -12px rgba(139, 92, 246, 0.22);
+      0 0 0 1px rgba(34,211,238,0.45),
+      0 14px 44px -14px rgba(34,211,238,0.3),
+      0 0 36px -10px rgba(103,232,249,0.2);
   }
-
   .cta-shimmer-primary:hover::after {
     transform: translateX(130%);
   }
-
   .cta-shimmer-secondary:hover {
-    transform: translateY(-1px) scale(1.01);
-    border-color: rgba(56, 189, 248, 0.32);
+    transform: translateY(-1px) scale(1.008);
+    border-color: rgba(34,211,238,0.28);
     box-shadow:
-      0 0 0 1px rgba(56, 189, 248, 0.12),
-      0 10px 32px -18px rgba(59, 130, 246, 0.28),
-      0 0 28px -14px rgba(99, 102, 241, 0.18);
+      0 0 0 1px rgba(34,211,238,0.1),
+      0 10px 32px -18px rgba(34,211,238,0.2);
   }
-
   .cta-shimmer-secondary:hover::after {
     transform: translateX(115%);
   }
-
   .hero-glow-panel:hover {
     transform: translateY(-1px);
-    border-color: rgba(59, 130, 246, 0.28);
+    border-color: rgba(34,211,238,0.22);
     box-shadow:
-      0 0 0 1px rgba(59, 130, 246, 0.14),
-      0 28px 72px -34px rgba(0, 0, 0, 0.58),
-      0 0 44px -18px rgba(59, 130, 246, 0.14),
-      0 0 32px -16px rgba(139, 92, 246, 0.1);
+      0 0 0 1px rgba(34,211,238,0.1),
+      0 28px 72px -34px rgba(0,0,0,0.58),
+      0 0 44px -18px rgba(34,211,238,0.12);
   }
-
   .hero-glow-card:hover {
     transform: translateY(-2px) scale(1.003);
-    border-color: rgba(255, 255, 255, 0.14);
+    border-color: rgba(34,211,238,0.2);
     box-shadow:
-      0 0 0 1px rgba(59, 130, 246, 0.22),
-      0 26px 64px -26px rgba(0, 0, 0, 0.68),
-      0 0 38px -12px rgba(56, 189, 248, 0.2),
-      0 0 30px -14px rgba(139, 92, 246, 0.14);
+      0 0 0 1px rgba(34,211,238,0.18),
+      0 26px 64px -26px rgba(0,0,0,0.68),
+      0 0 38px -12px rgba(34,211,238,0.18);
   }
 }

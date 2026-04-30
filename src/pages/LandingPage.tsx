@@ -1,118 +1,355 @@
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import {
+  motion,
+  useInView,
+  useMotionValue,
+  useSpring,
+  AnimatePresence,
+} from "framer-motion";
+import {
+  Activity,
+  AlertTriangle,
   ArrowRight,
   Brain,
   CheckCircle2,
   Cpu,
   FileSearch,
-  GitBranch,
-  Headphones,
+  Github,
   Layers,
-  ListTree,
+  Loader2,
+  Mail,
   Network,
   Radar,
-  Shield,
+  Send,
   Sparkles,
+  TrendingUp,
   Workflow,
-  Zap,
 } from "lucide-react";
-import { DashboardNavGrid } from "@/components/dashboard/DashboardNavGrid";
-import { LandingHero } from "@/components/landing/LandingHero";
-import { LandingMarketingNav } from "@/components/landing/LandingMarketingNav";
+import { LogIQFullLogo } from "@/components/branding/LogIQLogos";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
+import { SplineScene } from "@/components/ui/splite";
+import { Spotlight } from "@/components/ui/spotlight";
 import { ctaButtonGradient, ctaGlowBlueOnly } from "@/lib/ctaTheme";
 import { cn } from "@/lib/utils";
 
-const trustPills = [
-  "Deterministic RCA",
-  "Graph-based reasoning",
-  "LLM-assisted explanations",
-  "Role-aware workflows",
-] as const;
+// ── Animated number counter ────────────────────────────────────────────────
+function AnimatedCounter({ to, suffix = "" }: { to: number; suffix?: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-80px" });
+  const mv = useMotionValue(0);
+  const spring = useSpring(mv, { stiffness: 50, damping: 20 });
+  const [display, setDisplay] = useState("0");
 
+  useEffect(() => {
+    if (inView) mv.set(to);
+  }, [inView, mv, to]);
+  useEffect(() => {
+    return spring.on("change", (v) => setDisplay(Math.floor(v).toLocaleString()));
+  }, [spring]);
+
+  return <span ref={ref}>{display}{suffix}</span>;
+}
+
+// ── Features bento grid ────────────────────────────────────────────────────
 const features = [
   {
-    title: "Instant Root Cause Detection",
-    description:
-      "Find the root cause in seconds, not hours. LogIQ pinpoints the exact issue using intelligent signal analysis.",
+    title: "Root Cause in Seconds",
+    desc: "Pinpoint the exact failure using deterministic signal analysis. No guessing — graph-based correlation across logs, traces, and deploys.",
     icon: Sparkles,
-    ring: "hover:ring-sky-500/25",
-    glow: "group-hover:shadow-[0_0_40px_-12px_rgba(56,189,248,0.25)]",
+    size: "lg",
+    accentColor: "from-cyber/20 to-cyber/5",
+    borderColor: "border-cyber/[0.2]",
+    glowColor: "hover:shadow-glow-cyber",
+    iconColor: "text-cyber",
+    iconBg: "bg-cyber/10 ring-cyber/20",
   },
   {
-    title: "AI-Powered Debugging Agent",
-    description:
-      "Get clear explanations, not just errors. Understand what went wrong and why with human-readable insights.",
+    title: "AI-Powered Debug Agent",
+    desc: "LLM-assisted explanations in plain English. Understand what went wrong and exactly why.",
     icon: Brain,
-    ring: "hover:ring-violet-500/25",
-    glow: "group-hover:shadow-[0_0_40px_-12px_rgba(139,92,246,0.22)]",
+    size: "sm",
+    accentColor: "from-violet-500/15 to-violet-500/5",
+    borderColor: "border-violet-500/[0.18]",
+    glowColor: "hover:shadow-[0_0_40px_-12px_rgba(139,92,246,0.3)]",
+    iconColor: "text-violet-400",
+    iconBg: "bg-violet-500/10 ring-violet-500/20",
   },
   {
     title: "Smart Log Analysis",
-    description:
-      "Upload logs and uncover hidden patterns instantly. Parse logs, detect anomalies, and surface meaningful signals automatically.",
+    desc: "Upload logs. Uncover hidden patterns instantly.",
     icon: Network,
-    ring: "hover:ring-cyan-500/25",
-    glow: "group-hover:shadow-[0_0_40px_-12px_rgba(34,211,238,0.2)]",
+    size: "sm",
+    accentColor: "from-nexus/15 to-nexus/5",
+    borderColor: "border-nexus/[0.18]",
+    glowColor: "hover:shadow-glow-nexus",
+    iconColor: "text-nexus",
+    iconBg: "bg-nexus/10 ring-nexus/20",
   },
   {
     title: "Real-Time Anomaly Detection",
-    description:
-      "Catch issues before they escalate. Detect unusual behavior across services instantly.",
+    desc: "Catch issues before they escalate. Detect unusual patterns across services the moment they appear.",
     icon: Workflow,
-    ring: "hover:ring-indigo-500/25",
-    glow: "group-hover:shadow-[0_0_40px_-12px_rgba(99,102,241,0.22)]",
+    size: "sm",
+    accentColor: "from-amber-500/15 to-amber-500/5",
+    borderColor: "border-amber-500/[0.18]",
+    glowColor: "hover:shadow-glow-amber",
+    iconColor: "text-amber-400",
+    iconBg: "bg-amber-500/10 ring-amber-500/20",
+  },
+  {
+    title: "Role-Aware Collaboration",
+    desc: "One workspace — tuned views for each role. Developers, SREs, testers, and support all move at different speeds.",
+    icon: Layers,
+    size: "sm",
+    accentColor: "from-rose-500/15 to-rose-500/5",
+    borderColor: "border-rose-500/[0.18]",
+    glowColor: "hover:shadow-glow-rose",
+    iconColor: "text-rose-400",
+    iconBg: "bg-rose-500/10 ring-rose-500/20",
   },
 ] as const;
 
+const containerVariants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.08 } },
+} as const;
+const cardVariants = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+} as const;
+
+function FeaturesSection() {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-60px" });
+  const [lg, sm] = [features[0], features.slice(1)];
+
+  return (
+    <section
+      id="features"
+      className="border-t border-cyber/[0.08] bg-black/[0.94] py-16 sm:py-24"
+    >
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.5 }}
+        >
+          <p className="ui-section-eyebrow">Platform</p>
+          <h2 className="ui-section-title mt-2 max-w-2xl">
+            Everything you need to debug production faster
+          </h2>
+          <p className="ui-section-desc">
+            From raw logs to root cause — one intelligent debugging workspace.
+          </p>
+        </motion.div>
+
+        <motion.div
+          ref={ref}
+          variants={containerVariants}
+          initial="hidden"
+          animate={inView ? "show" : "hidden"}
+          className="mt-12 grid grid-cols-1 gap-4 lg:grid-cols-12 lg:grid-rows-2"
+        >
+          {/* Large card */}
+          <motion.div
+            variants={cardVariants}
+            className={cn(
+              "nexus-card-scanline group relative overflow-hidden rounded-card border p-6 transition-all duration-300",
+              "lg:col-span-5 lg:row-span-2",
+              lg.borderColor,
+              lg.glowColor,
+              "bg-gradient-to-br from-black/[0.85] to-black/[0.96]"
+            )}
+          >
+            <div
+              className={cn(
+                "pointer-events-none absolute inset-0 bg-gradient-to-br opacity-30",
+                lg.accentColor
+              )}
+            />
+            <div className="relative">
+              <span
+                className={cn(
+                  "inline-flex h-14 w-14 items-center justify-center rounded-card ring-1",
+                  lg.iconBg
+                )}
+              >
+                <lg.icon className={cn("h-7 w-7", lg.iconColor)} strokeWidth={1.75} />
+              </span>
+              <h3 className="mt-5 font-display text-xl font-bold text-white">{lg.title}</h3>
+              <p className="mt-3 text-sm leading-relaxed text-slate-400">{lg.desc}</p>
+
+              {/* Mini evidence mockup */}
+              <div className="mt-6 space-y-2 rounded-card border border-cyber/[0.1] bg-black/[0.94] p-4">
+                {[
+                  { k: "Deploy delta", v: "checkout-svc@v2.4.1", color: "text-cyber" },
+                  { k: "Error spike", v: "+340% vs baseline", color: "text-rose-400" },
+                  { k: "Code anchor", v: "CartValidator.ts:L128", color: "text-nexus" },
+                  { k: "Confidence", v: "94%", color: "text-amber-400" },
+                ].map((row) => (
+                  <div
+                    key={row.k}
+                    className="flex items-center justify-between gap-3 font-mono text-[11px]"
+                  >
+                    <span className="text-slate-600">{row.k}</span>
+                    <span className={cn("font-semibold", row.color)}>{row.v}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Small cards */}
+          {sm.map((f) => (
+            <motion.div
+              key={f.title}
+              variants={cardVariants}
+              className={cn(
+                "nexus-card-scanline group relative overflow-hidden rounded-card border p-5 transition-all duration-300",
+                "lg:col-span-7",
+                f.borderColor,
+                f.glowColor,
+                "bg-gradient-to-br from-black/[0.85] to-black/[0.96]"
+              )}
+            >
+              <div
+                className={cn(
+                  "pointer-events-none absolute inset-0 bg-gradient-to-br opacity-25",
+                  f.accentColor
+                )}
+              />
+              <div className="relative flex items-start gap-4">
+                <span
+                  className={cn(
+                    "flex h-10 w-10 shrink-0 items-center justify-center rounded-card ring-1",
+                    f.iconBg
+                  )}
+                >
+                  <f.icon className={cn("h-5 w-5", f.iconColor)} strokeWidth={1.75} />
+                </span>
+                <div>
+                  <h3 className="font-display font-semibold text-white">{f.title}</h3>
+                  <p className="mt-1.5 text-sm leading-relaxed text-slate-500">{f.desc}</p>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+// ── How it works ───────────────────────────────────────────────────────────
 const steps = [
-  {
-    n: "01",
-    title: "Ingest anomaly",
-    body: "Route from alerts, manual triggers, or API — capture anomaly and run context.",
-    icon: Radar,
-  },
-  {
-    n: "02",
-    title: "Run RCA pipeline",
-    body: "Deterministic correlation and graph walk across traces, deploys, and code.",
-    icon: Cpu,
-  },
-  {
-    n: "03",
-    title: "Review evidence & explanation",
-    body: "Ranked hypotheses with evidence panels and LLM assist — stay audit-ready.",
-    icon: FileSearch,
-  },
-  {
-    n: "04",
-    title: "Take remediation action",
-    body: "Track fixes, rollbacks, and owner handoff without leaving the investigation.",
-    icon: CheckCircle2,
-  },
+  { n: "01", title: "Ingest anomaly", body: "Route from alerts, manual trigger, or API. Capture context immediately.", icon: Radar },
+  { n: "02", title: "Run RCA pipeline", body: "Deterministic correlation across traces, deploys, and code diffs.", icon: Cpu },
+  { n: "03", title: "Review evidence", body: "Ranked hypotheses with evidence panels and LLM-assisted explanations.", icon: FileSearch },
+  { n: "04", title: "Take action", body: "Track fixes, rollbacks, and owner handoff without leaving the surface.", icon: CheckCircle2 },
 ] as const;
 
-const roles = [
-  { label: "Developer", icon: Cpu, desc: "Code anchors & deploy context" },
-  { label: "Tester", icon: Layers, desc: "Repro & regression trails" },
-  { label: "Support engineer", icon: Headphones, desc: "Customer-impacting incidents" },
-  { label: "SRE", icon: Zap, desc: "Production reliability & SLOs" },
-  { label: "Viewer", icon: Shield, desc: "Read-only dashboards & RCA" },
-] as const;
+function HowItWorksSection() {
+  return (
+    <section id="how-it-works" className="scroll-mt-20 py-16 sm:py-24">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.5 }}
+        >
+          <p className="ui-section-eyebrow">Flow</p>
+          <h2 className="ui-section-title mt-2">How investigations run</h2>
+          <p className="ui-section-desc">Signal to action — a clear pipeline your whole org can follow.</p>
+        </motion.div>
 
+        <div className="relative mt-14">
+          {/* Vertical connector line on desktop */}
+          <div className="absolute left-8 top-0 hidden h-full w-px bg-gradient-to-b from-cyber/40 via-cyber/20 to-transparent lg:block" aria-hidden />
+
+          <div className="space-y-6">
+            {steps.map((s, i) => (
+              <motion.div
+                key={s.n}
+                initial={{ opacity: 0, x: -24 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ duration: 0.5, delay: i * 0.1, ease: "easeOut" }}
+                className="relative flex items-start gap-6 lg:pl-20"
+              >
+                {/* Step node */}
+                <div className="relative flex h-16 w-16 shrink-0 items-center justify-center rounded-card border border-cyber/[0.2] bg-black/[0.88] shadow-glow-cyber lg:absolute lg:left-0 lg:top-0">
+                  <s.icon className="h-6 w-6 text-cyber" strokeWidth={1.75} />
+                  <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-cyber text-[10px] font-bold text-surface-975">
+                    {s.n.slice(-1)}
+                  </span>
+                </div>
+                <div className="min-h-[4rem] flex-1 rounded-card border border-cyber/[0.08] bg-black/[0.84] p-5 backdrop-blur-sm">
+                  <h3 className="font-display font-semibold text-white">{s.title}</h3>
+                  <p className="mt-1 text-sm leading-relaxed text-slate-500">{s.body}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ── Stats ──────────────────────────────────────────────────────────────────
+function StatsSection() {
+  const stats = [
+    { value: 94, suffix: "%", label: "RCA confidence", sub: "on matched investigations" },
+    { value: 134, suffix: "s", label: "Median triage time", sub: "P50 first-touch to hypothesis" },
+    { value: 2847, suffix: "", label: "Log events analyzed", sub: "per investigation on avg" },
+  ];
+  return (
+    <section className="border-y border-cyber/[0.08] bg-black/[0.94] py-14 sm:py-20">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div className="grid gap-10 sm:grid-cols-3">
+          {stats.map((s, i) => (
+            <motion.div
+              key={s.label}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.5, delay: i * 0.12 }}
+              className="text-center"
+            >
+              <p className="font-display text-5xl font-bold tracking-tight text-white sm:text-6xl">
+                <span className="text-gradient-cyber">
+                  <AnimatedCounter to={s.value} suffix={s.suffix} />
+                </span>
+              </p>
+              <p className="mt-2 font-display text-base font-semibold text-slate-200">{s.label}</p>
+              <p className="mt-1 text-sm text-slate-600">{s.sub}</p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ── CTA components ─────────────────────────────────────────────────────────
 function PrimaryCta({ className }: { className?: string }) {
   return (
     <Link
       to="/login"
       className={cn(
-        "inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold text-white transition",
+        "cta-shimmer-primary inline-flex items-center justify-center gap-2 rounded-card px-6 py-3 text-sm font-semibold text-white transition",
         ctaButtonGradient,
         ctaGlowBlueOnly,
-        "ring-1 ring-blue-400/35 hover:shadow-[0_0_0_1px_rgba(56,189,248,0.35)]",
-        "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400/70",
+        "ring-1 ring-cyber/35",
+        "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400/70",
         className
       )}
     >
-      Login
+      <span className="relative z-10">Open Workspace</span>
+      <ArrowRight className="relative z-10 h-4 w-4" />
     </Link>
   );
 }
@@ -122,298 +359,465 @@ function SecondaryCta({ className }: { className?: string }) {
     <Link
       to="/signup"
       className={cn(
-        "inline-flex items-center justify-center gap-2 rounded-xl border border-white/[0.12] bg-surface-900/50 px-6 py-3 text-sm font-semibold text-slate-100 backdrop-blur-sm transition",
-        "hover:border-white/[0.2] hover:bg-surface-900/75",
-        "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400/70",
+        "cta-shimmer-secondary inline-flex items-center justify-center gap-2 rounded-card border border-cyber/[0.2] bg-black/[0.82] px-6 py-3 text-sm font-semibold text-slate-100 backdrop-blur-sm transition",
+        "hover:border-cyber/[0.35] hover:bg-black/[0.82] hover:text-white",
+        "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400/70",
         className
       )}
     >
-      Create account
+      <span className="relative z-10">Create account</span>
     </Link>
   );
 }
 
-export function LandingPage() {
+// ── Nav ────────────────────────────────────────────────────────────────────
+const navLinks = [
+  { href: "#features", label: "Features" },
+  { href: "#how-it-works", label: "How it works" },
+  { href: "#contact", label: "Contact" },
+] as const;
+
+function LandingNav() {
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-[#080d18] text-slate-200">
-      {/* Ambient + grid */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_120%_90%_at_50%_-25%,rgba(37,99,235,0.2),transparent_55%)]" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_100%_0%,rgba(124,58,237,0.14),transparent_50%)]" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_45%_at_0%_80%,rgba(14,116,144,0.1),transparent_50%)]" />
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.4]"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='rgba(148,163,184,0.06)' stroke-width='0.5'%3E%3Cpath d='M0 32h64M32 0v64'/%3E%3C/g%3E%3C/svg%3E")`,
-        }}
-      />
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,#0a101f_0%,#080d18_45%,#070b14_100%)] opacity-95" />
+    <motion.header
+      initial={{ y: -20, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className="sticky top-0 z-40 border-b border-cyber/[0.06] bg-black/[0.94] backdrop-blur-xl"
+    >
+      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-3 px-4 sm:h-16 sm:px-6 lg:px-8">
+        <Link to="/" className="flex items-center gap-2 outline-none transition hover:opacity-90">
+          <LogIQFullLogo className="h-8 w-auto max-w-[200px] object-contain object-left sm:h-9" />
+        </Link>
 
-      <div className="relative z-10">
-        <LandingMarketingNav />
+        <nav className="hidden flex-1 items-center justify-center gap-1 lg:flex">
+          {navLinks.map((l) => (
+            <a
+              key={l.href}
+              href={l.href}
+              className="rounded-lg px-3 py-2 text-sm font-medium text-slate-500 transition hover:text-slate-200 hover:bg-cyber/[0.06]"
+            >
+              {l.label}
+            </a>
+          ))}
+        </nav>
 
-        <main>
-          <LandingHero />
-
-          {/* Interactive workspace blocks — same cards as in-app dashboard; guests route to login */}
-          <section
-            id="workspace-explore"
-            className="scroll-mt-24 border-t border-white/[0.06] bg-surface-975/20 py-14 sm:py-16"
+        <div className="flex items-center gap-2.5">
+          <ThemeToggle />
+          <Link
+            to="/login"
+            className="hidden rounded-lg px-3 py-2 text-sm font-semibold text-slate-400 transition hover:text-slate-200 sm:inline-block"
           >
-            <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-              <div className="mb-8 max-w-2xl">
-                <p className="ui-section-eyebrow">Explore</p>
-                <h2 className="ui-section-title mt-1">Explore the workspace</h2>
-                <p className="ui-section-desc">
-                  Everything you need to investigate faster — sign in to open Jobs, Anomalies,
-                  Utilities, and more.
-                </p>
-              </div>
-              <DashboardNavGrid forPublicLanding hideIntro />
-            </div>
-          </section>
+            Login
+          </Link>
+          <PrimaryCta className="px-4 py-2 text-sm" />
+        </div>
+      </div>
+    </motion.header>
+  );
+}
 
-          {/* Trust strip */}
-          <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-2 px-4 pb-12 sm:gap-3 sm:px-6 lg:px-8">
-            {trustPills.map((label) => (
-              <span
-                key={label}
-                className="inline-flex items-center rounded-full border border-white/[0.08] bg-gradient-to-b from-surface-900/90 to-surface-975/95 px-3.5 py-1.5 text-xs font-medium text-slate-300 shadow-[0_0_24px_-8px_rgba(59,130,246,0.35)] ring-1 ring-white/[0.04] transition hover:border-sky-500/20 hover:shadow-[0_0_28px_-6px_rgba(56,189,248,0.35)]"
+// ── Hero ───────────────────────────────────────────────────────────────────
+function HeroSection() {
+  const [typeIdx, setTypeIdx] = useState(0);
+  const headlines = [
+    "Debug production incidents with precision.",
+    "Root cause analysis in seconds, not hours.",
+    "Ship with certainty when production breaks.",
+  ];
+
+  useEffect(() => {
+    const t = setInterval(() => setTypeIdx((i) => (i + 1) % headlines.length), 4000);
+    return () => clearInterval(t);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  return (
+    <section id="top" className="relative overflow-hidden py-8 sm:py-12 lg:py-16">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        {/* Main hero card — dark immersive container */}
+        <div className="relative w-full rounded-2xl bg-black/[0.96] overflow-hidden border border-cyber/[0.15] shadow-[0_0_80px_-20px_rgba(34,211,238,0.15)]">
+          <Spotlight className="-top-40 left-0 md:left-60 md:-top-20" fill="white" />
+
+          <div className="flex flex-col lg:flex-row min-h-[560px]">
+            {/* Left: copy */}
+            <div className="flex-1 p-8 lg:p-14 relative z-10 flex flex-col justify-center">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
               >
-                {label}
-              </span>
-            ))}
-          </div>
+                <span className="inline-flex items-center gap-2 rounded-full border border-cyber/30 bg-cyber/10 px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-cyan-300 ring-1 ring-cyber/20">
+                  <span className="relative flex h-2 w-2">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-nexus/70 opacity-75" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-nexus" />
+                  </span>
+                  AI-Powered Deterministic RCA
+                </span>
+              </motion.div>
 
-          {/* Features */}
-          <section id="features" className="border-t border-white/[0.06] bg-surface-975/20 py-16 sm:py-20">
-            <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-              <div className="max-w-2xl">
-                <p className="ui-section-eyebrow">Platform</p>
-                <h2 className="ui-section-title mt-1">
-                  Everything you need to debug production faster
-                </h2>
-                <p className="ui-section-desc">
-                  From raw logs to root cause — all in one intelligent debugging workspace.
-                </p>
-              </div>
-              <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:gap-5">
-                {features.map(({ title, description, icon: Icon, ring, glow }) => (
-                  <div
-                    key={title}
-                    className={cn(
-                      "group relative overflow-hidden rounded-2xl border border-white/[0.08] bg-gradient-to-b from-surface-900/95 to-surface-975 p-6 ring-1 ring-white/[0.04] transition-all duration-300",
-                      "hover:-translate-y-0.5",
-                      ring,
-                      glow
-                    )}
-                  >
-                    <div className="flex gap-4">
-                      <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-sky-500/10 ring-1 ring-sky-500/20 transition group-hover:bg-sky-500/15">
-                        <Icon className="h-6 w-6 text-sky-400/95" strokeWidth={1.75} />
-                      </span>
-                      <div>
-                        <h3 className="font-semibold text-white">{title}</h3>
-                        <p className="mt-2 text-sm leading-relaxed text-slate-500">{description}</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          {/* How it works */}
-          <section id="how-it-works" className="scroll-mt-20 py-16 sm:py-20">
-            <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-              <div className="max-w-2xl">
-                <p className="ui-section-eyebrow">Flow</p>
-                <h2 className="ui-section-title mt-1">How investigations run</h2>
-                <p className="ui-section-desc">
-                  From signal to action — a pipeline your whole org can follow.
-                </p>
-              </div>
-              <div className="mt-12 grid gap-6 lg:grid-cols-4 lg:gap-4">
-                {steps.map((s, i) => (
-                  <div key={s.n} className="relative">
-                    {i < steps.length - 1 ? (
-                      <div
-                        className="absolute left-[calc(50%+3.5rem)] top-10 hidden h-px w-[calc(100%-1rem)] bg-gradient-to-r from-sky-500/35 via-sky-500/10 to-transparent lg:block"
-                        aria-hidden
-                      />
-                    ) : null}
-                    <div
-                      className={cn(
-                        "relative flex h-full flex-col rounded-2xl border border-white/[0.08] bg-surface-975/60 p-5 ring-1 ring-white/[0.04] transition hover:border-sky-500/20",
-                        "animate-investigation-reveal"
-                      )}
-                      style={{ animationDelay: `${i * 0.06}s` }}
-                    >
-                      <div className="flex items-start justify-between gap-2">
-                        <span className="font-mono text-[10px] font-bold text-sky-500/90">
-                          {s.n}
-                        </span>
-                        <s.icon className="h-5 w-5 shrink-0 text-slate-500" strokeWidth={1.75} />
-                      </div>
-                      <h3 className="mt-3 font-semibold text-white">{s.title}</h3>
-                      <p className="mt-2 flex-1 text-sm leading-relaxed text-slate-500">{s.body}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          {/* Product showcase */}
-          <section className="border-t border-white/[0.06] bg-gradient-to-b from-transparent via-surface-975/30 to-transparent py-16 sm:py-20">
-            <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-              <div className="max-w-2xl">
-                <p className="ui-section-eyebrow">In product</p>
-                <h2 className="ui-section-title mt-1">Investigation workspace preview</h2>
-                <p className="ui-section-desc">
-                  RCA summaries, evidence lists, and assistive explanations in one surface.
-                </p>
-              </div>
-              <div
-                className={cn(
-                  "mt-10 overflow-hidden rounded-2xl border border-white/[0.1] bg-gradient-to-br from-surface-900/98 to-slate-950 shadow-[0_32px_80px_-32px_rgba(0,0,0,0.75)] ring-1 ring-white/[0.05]",
-                  "animate-investigation-reveal"
-                )}
+              <motion.div
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.1, ease: "easeOut" }}
+                className="mt-6"
               >
-                <div className="flex flex-wrap items-center gap-2 border-b border-white/[0.06] bg-surface-975/90 px-4 py-2.5">
-                  {["RCA summary", "Evidence", "Explanation"].map((tab, idx) => (
-                    <button
-                      key={tab}
-                      type="button"
-                      className={cn(
-                        "rounded-lg px-3 py-1.5 text-xs font-semibold transition",
-                        idx === 0
-                          ? "bg-sky-500/15 text-sky-200 ring-1 ring-sky-500/30"
-                          : "text-slate-500 hover:bg-white/[0.04] hover:text-slate-300"
-                      )}
+                <div className="overflow-hidden">
+                  <AnimatePresence mode="wait">
+                    <motion.h1
+                      key={typeIdx}
+                      initial={{ y: 40, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      exit={{ y: -40, opacity: 0 }}
+                      transition={{ duration: 0.45, ease: "easeOut" }}
+                      className="font-display text-4xl font-bold tracking-tight md:text-5xl lg:leading-[1.08] bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400"
                     >
-                      {tab}
-                    </button>
-                  ))}
-                  <span className="ml-auto font-mono text-[10px] text-slate-600">job · dbg_inv_7f2a</span>
+                      {headlines[typeIdx]}
+                    </motion.h1>
+                  </AnimatePresence>
                 </div>
-                <div className="grid gap-0 lg:grid-cols-12">
-                  <div className="border-b border-white/[0.06] p-5 lg:col-span-5 lg:border-b-0 lg:border-r">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-slate-500">
-                      Top hypothesis
-                    </p>
-                    <p className="mt-3 text-sm leading-relaxed text-slate-200">
-                      Deployment <span className="font-mono text-sky-300/90">checkout-svc@v2.4.1</span>{" "}
-                      correlated with error rate and p99 latency in the cart path.
-                    </p>
-                    <ul className="mt-4 space-y-2 text-xs text-slate-400">
-                      <li className="flex gap-2">
-                        <ListTree className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-400/80" />
-                        Trace: checkout → payment edge timeout cluster
-                      </li>
-                      <li className="flex gap-2">
-                        <GitBranch className="mt-0.5 h-3.5 w-3.5 shrink-0 text-violet-400/80" />
-                        Diff touches validation in <span className="font-mono">CartValidator</span>
-                      </li>
-                    </ul>
-                  </div>
-                  <div className="border-b border-white/[0.06] p-5 lg:col-span-4 lg:border-b-0 lg:border-r">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-slate-500">
-                      Evidence
-                    </p>
-                    <div className="mt-3 space-y-2">
-                      {[
-                        { k: "Metric", v: "5xx rate +340% vs baseline" },
-                        { k: "Deploy", v: "v2.4.1 @ 14:02 UTC" },
-                        { k: "Anchor", v: "src/cart/validate.ts:L128" },
-                      ].map((row) => (
-                        <div
-                          key={row.k}
-                          className="flex justify-between gap-3 rounded-lg border border-white/[0.05] bg-slate-950/50 px-2.5 py-2 text-[11px]"
-                        >
-                          <span className="text-slate-500">{row.k}</span>
-                          <span className="truncate text-right font-mono text-slate-300">{row.v}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="p-5 lg:col-span-3">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-slate-500">
-                      Remediation
-                    </p>
-                    <ul className="mt-3 space-y-2.5">
-                      {["Rollback or hotfix validation path", "Notify #incident-441", "Open PR with guardrail test"].map(
-                        (line, idx) => (
-                          <li key={line} className="flex items-start gap-2 text-xs text-slate-400">
-                            <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded border border-white/[0.1] bg-slate-900/80 text-[10px] text-slate-500">
-                              {idx + 1}
-                            </span>
-                            {line}
-                          </li>
-                        )
-                      )}
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* Roles */}
-          <section className="py-16 sm:py-20">
-            <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-              <div className="max-w-2xl">
-                <p className="ui-section-eyebrow">Teams</p>
-                <h2 className="ui-section-title mt-1">Role-aware collaboration</h2>
-                <p className="ui-section-desc">
-                  Same workspace — tuned views for how each role triages and ships fixes.
+                <p className="mt-5 text-base leading-relaxed text-neutral-300 sm:text-lg max-w-lg">
+                  Upload logs, trace anomalies, identify root cause, and generate evidence-backed
+                  explanations in one intelligent debugging workspace.
                 </p>
-              </div>
-              <div className="mt-10 flex flex-wrap justify-center gap-3 sm:gap-4">
-                {roles.map(({ label, icon: Icon, desc }) => (
-                  <div
-                    key={label}
-                    className="flex min-w-[10rem] max-w-[14rem] flex-1 flex-col rounded-xl border border-white/[0.08] bg-surface-975/50 px-4 py-3 text-center ring-1 ring-white/[0.04] transition hover:border-indigo-500/25 hover:bg-surface-975/80"
-                  >
-                    <Icon className="mx-auto h-5 w-5 text-indigo-400/90" strokeWidth={1.75} />
-                    <p className="mt-2 text-sm font-semibold text-white">{label}</p>
-                    <p className="mt-1 text-[11px] leading-snug text-slate-500">{desc}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
+              </motion.div>
 
-          {/* Final CTA */}
-          <section className="relative border-t border-white/[0.08] py-20 sm:py-24">
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_100%,rgba(59,130,246,0.18),transparent_55%)]" />
-            <div className="relative mx-auto max-w-3xl px-4 text-center sm:px-6">
-              <h2 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
-                Ship with confidence when production breaks
-              </h2>
-              <p className="mt-4 text-base text-slate-400 sm:text-lg">
-                Join a debugging flow that respects evidence, speed, and accountability — not vibes.
-              </p>
-              <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.25 }}
+                className="mt-8 flex flex-col gap-3 sm:flex-row"
+              >
                 <PrimaryCta />
                 <SecondaryCta />
-              </div>
-              <Link
-                to="/login"
-                className="mt-6 inline-flex items-center gap-1 text-sm font-medium text-sky-400/90 transition hover:text-sky-300"
-              >
-                Already have an account? <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
-          </section>
+              </motion.div>
 
-          <footer
-            id="contact"
-            className="scroll-mt-16 border-t border-white/[0.06] py-8 text-center text-xs text-slate-600"
-          >
-            © {new Date().getFullYear()} LogIQ · Demo workspace
-          </footer>
-        </main>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                className="mt-8 flex flex-wrap gap-2"
+              >
+                {["Deterministic RCA", "Graph-based reasoning", "LLM explanations", "Role-aware"].map((pill) => (
+                  <span
+                    key={pill}
+                    className="inline-flex items-center rounded-full border border-white/[0.1] bg-white/[0.04] px-3 py-1.5 text-[11px] font-medium text-neutral-400 backdrop-blur-sm"
+                  >
+                    <span className="mr-1.5 h-1.5 w-1.5 rounded-full bg-cyber/70" />
+                    {pill}
+                  </span>
+                ))}
+              </motion.div>
+            </div>
+
+            {/* Right: Spline 3D scene */}
+            <div className="flex-1 relative min-h-[320px] lg:min-h-0">
+              <SplineScene
+                scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+                className="w-full h-full"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Below hero card: quick stats strip */}
+        <div className="mt-4 grid grid-cols-3 gap-3">
+          {[
+            { icon: Activity, val: "94%", label: "Avg confidence" },
+            { icon: TrendingUp, val: "2m14s", label: "P50 triage" },
+            { icon: AlertTriangle, val: "340%", label: "Spike caught" },
+          ].map((s) => (
+            <div
+              key={s.label}
+              className="rounded-card border border-cyber/[0.1] bg-black/[0.6] p-3 text-center backdrop-blur-sm"
+            >
+              <s.icon className="mx-auto h-4 w-4 text-cyber/70" strokeWidth={1.75} />
+              <p className="mt-1.5 font-display text-lg font-bold text-white">{s.val}</p>
+              <p className="text-[10px] text-slate-500">{s.label}</p>
+            </div>
+          ))}
+        </div>
       </div>
+    </section>
+  );
+}
+
+// ── Contact section ────────────────────────────────────────────────────────
+const TOPIC_OPTIONS = [
+  "General Inquiry",
+  "Technical Support",
+  "Bug Report",
+  "Feature Request",
+  "Partnership",
+  "Other",
+] as const;
+
+function ContactSection() {
+  const [form, setForm] = useState({ name: "", email: "", topic: "", message: "" });
+  const [touched, setTouched] = useState({ name: false, email: false, topic: false, message: false });
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  const errors = {
+    name: form.name.trim() ? null : "Name is required.",
+    email: !form.email.trim()
+      ? "Email is required."
+      : /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)
+        ? null
+        : "Enter a valid email address.",
+    topic: form.topic ? null : "Please select a topic.",
+    message: form.message.trim().length >= 10 ? null : "Message must be at least 10 characters.",
+  };
+
+  const isValid = Object.values(errors).every((e) => e === null);
+
+  function inputCls(key: keyof typeof errors) {
+    return cn(
+      "w-full rounded-xl border bg-black/[0.82] px-4 py-3 text-sm text-slate-100 outline-none transition placeholder:text-slate-600",
+      touched[key] && errors[key]
+        ? "border-red-500/40 focus:border-red-400/60 focus:ring-2 focus:ring-red-500/20"
+        : "border-white/[0.1] focus:border-cyber/50 focus:ring-2 focus:ring-cyber/20"
+    );
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setTouched({ name: true, email: true, topic: true, message: true });
+    if (!isValid) return;
+    setSubmitting(true);
+    await new Promise((r) => setTimeout(r, 1200));
+    setSubmitting(false);
+    setSubmitted(true);
+  }
+
+  return (
+    <section id="contact" className="scroll-mt-20 border-t border-cyber/[0.08] py-16 sm:py-24">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.5 }}
+        >
+          <p className="ui-section-eyebrow">Contact</p>
+          <h2 className="ui-section-title mt-2">Get in touch</h2>
+          <p className="ui-section-desc">
+            Questions, feedback, or partnership inquiries — we'd love to hear from you.
+          </p>
+        </motion.div>
+
+        <div className="mt-12 grid gap-10 lg:grid-cols-5 lg:gap-16">
+          {/* ── Form ── */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="lg:col-span-3"
+          >
+            {submitted ? (
+              <div className="flex flex-col items-center justify-center rounded-2xl border border-emerald-500/25 bg-emerald-500/[0.05] px-8 py-16 text-center">
+                <CheckCircle2 className="h-12 w-12 text-emerald-400" strokeWidth={1.5} />
+                <h3 className="mt-4 font-display text-xl font-bold text-white">Message sent!</h3>
+                <p className="mt-2 max-w-sm text-sm leading-relaxed text-slate-400">
+                  Thanks for reaching out. We'll get back to you within one business day.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSubmitted(false);
+                    setForm({ name: "", email: "", topic: "", message: "" });
+                    setTouched({ name: false, email: false, topic: false, message: false });
+                  }}
+                  className="mt-6 text-sm font-medium text-cyber/80 transition hover:text-cyan-300"
+                >
+                  Send another message
+                </button>
+              </div>
+            ) : (
+              <form
+                onSubmit={(e) => void handleSubmit(e)}
+                noValidate
+                className="rounded-2xl border border-cyber/[0.12] bg-black/[0.94] p-6 sm:p-8"
+              >
+                <div className="grid gap-5 sm:grid-cols-2">
+                  <div>
+                    <label htmlFor="contact-name" className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                      Name
+                    </label>
+                    <input
+                      id="contact-name"
+                      type="text"
+                      placeholder="Jane Smith"
+                      autoComplete="name"
+                      value={form.name}
+                      onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+                      onBlur={() => setTouched((t) => ({ ...t, name: true }))}
+                      className={inputCls("name")}
+                    />
+                    {touched.name && errors.name ? (
+                      <p className="mt-1.5 text-xs text-red-400">{errors.name}</p>
+                    ) : null}
+                  </div>
+                  <div>
+                    <label htmlFor="contact-email" className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                      Email
+                    </label>
+                    <input
+                      id="contact-email"
+                      type="email"
+                      placeholder="jane@company.com"
+                      autoComplete="email"
+                      value={form.email}
+                      onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+                      onBlur={() => setTouched((t) => ({ ...t, email: true }))}
+                      className={inputCls("email")}
+                    />
+                    {touched.email && errors.email ? (
+                      <p className="mt-1.5 text-xs text-red-400">{errors.email}</p>
+                    ) : null}
+                  </div>
+                </div>
+
+                <div className="mt-5">
+                  <label htmlFor="contact-topic" className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                    Topic
+                  </label>
+                  <select
+                    id="contact-topic"
+                    value={form.topic}
+                    onChange={(e) => setForm((f) => ({ ...f, topic: e.target.value }))}
+                    onBlur={() => setTouched((t) => ({ ...t, topic: true }))}
+                    className={cn(inputCls("topic"), "cursor-pointer")}
+                  >
+                    <option value="">Select a topic…</option>
+                    {TOPIC_OPTIONS.map((opt) => (
+                      <option key={opt} value={opt} className="bg-[#0a0f1e] text-slate-100">
+                        {opt}
+                      </option>
+                    ))}
+                  </select>
+                  {touched.topic && errors.topic ? (
+                    <p className="mt-1.5 text-xs text-red-400">{errors.topic}</p>
+                  ) : null}
+                </div>
+
+                <div className="mt-5">
+                  <label htmlFor="contact-message" className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                    Message
+                  </label>
+                  <textarea
+                    id="contact-message"
+                    rows={5}
+                    placeholder="Tell us what's on your mind…"
+                    value={form.message}
+                    onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
+                    onBlur={() => setTouched((t) => ({ ...t, message: true }))}
+                    className={cn(inputCls("message"), "resize-none")}
+                  />
+                  {touched.message && errors.message ? (
+                    <p className="mt-1.5 text-xs text-red-400">{errors.message}</p>
+                  ) : null}
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className={cn(
+                    "mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-70",
+                    ctaButtonGradient,
+                    ctaGlowBlueOnly,
+                    "ring-1 ring-blue-400/35"
+                  )}
+                >
+                  {submitting ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Send className="h-4 w-4" />
+                  )}
+                  {submitting ? "Sending…" : "Send message"}
+                </button>
+              </form>
+            )}
+          </motion.div>
+
+          {/* ── Contact info ── */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="flex flex-col gap-5 lg:col-span-2"
+          >
+            <p className="text-[11px] font-bold uppercase tracking-wider text-slate-600">
+              Other ways to reach us
+            </p>
+
+            <a
+              href="mailto:support@logiq.ai"
+              className="flex items-start gap-4 rounded-xl border border-cyber/[0.12] bg-black/[0.88] p-5 transition hover:border-cyber/[0.25] hover:bg-black/[0.94]"
+            >
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-cyber/10 ring-1 ring-cyber/20">
+                <Mail className="h-5 w-5 text-cyber" strokeWidth={1.75} />
+              </span>
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-slate-200">Email support</p>
+                <p className="mt-0.5 truncate font-mono text-xs text-cyber/70">assist.logiqdesk@outlook.com</p>
+              </div>
+            </a>
+
+            <a
+              href="https://github.com/Jay2704"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-start gap-4 rounded-xl border border-white/[0.08] bg-black/[0.88] p-5 transition hover:border-white/[0.15] hover:bg-black/[0.94]"
+            >
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white/[0.05] ring-1 ring-white/10">
+                <Github className="h-5 w-5 text-slate-300" strokeWidth={1.75} />
+              </span>
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-slate-200">GitHub</p>
+                <p className="mt-0.5 font-mono text-xs text-slate-500">github.com/logiq-ai</p>
+              </div>
+            </a>
+
+            <div className="rounded-xl border border-white/[0.06] bg-black/[0.6] p-5">
+              <p className="text-sm font-semibold text-slate-300">Response time</p>
+              <p className="mt-1.5 text-sm leading-relaxed text-slate-500">
+                We typically respond to all inquiries within one business day.
+              </p>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ── Page root ──────────────────────────────────────────────────────────────
+export function LandingPage() {
+  return (
+    <div className="relative min-h-screen overflow-x-hidden text-slate-200">
+      <LandingNav />
+      <main>
+        <HeroSection />
+        <StatsSection />
+        <FeaturesSection />
+        <HowItWorksSection />
+        <ContactSection />
+
+        <footer className="border-t border-cyber/[0.06] py-8">
+          <div className="mx-auto flex max-w-6xl flex-col items-center gap-3 px-4 sm:flex-row sm:justify-between sm:px-6 lg:px-8">
+            <p className="font-mono text-xs text-slate-700">
+              © {new Date().getFullYear()} LogIQ. All rights reserved.
+            </p>
+            <div className="flex items-center gap-5 font-mono text-xs text-slate-700">
+              <a href="#" className="transition hover:text-slate-400">Privacy</a>
+              <a href="#" className="transition hover:text-slate-400">Terms</a>
+              <a href="#contact" className="transition hover:text-slate-400">Contact</a>
+            </div>
+          </div>
+        </footer>
+      </main>
     </div>
   );
 }

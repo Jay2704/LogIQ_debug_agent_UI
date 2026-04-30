@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 175 56" fill="none">
+  <defs>
+    <linearGradient id="gm" x1="4" y1="4" x2="52" y2="52" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#22D3EE"/>
+      <stop offset="55%" stop-color="#6366F1"/>
+      <stop offset="100%" stop-color="#8B5CF6"/>
+    </linearGradient>
+    <linearGradient id="gt" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#22D3EE"/>
+      <stop offset="100%" stop-color="#8B5CF6"/>
+    </linearGradient>
+  </defs>
+  <!-- Icon mark -->
+  <path d="M12 7L12 40L30 40" stroke="url(#gm)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="38" cy="28" r="16" stroke="url(#gm)" stroke-width="7" stroke-linecap="round" fill="none"
+    stroke-dasharray="81 19.5" transform="rotate(170 38 28)"/>
+  <circle cx="38" cy="28" r="3.5" fill="url(#gm)"/>
+  <!-- Wordmark: "Log" in white, "IQ" in gradient -->
+  <text x="66" y="41" font-family="'Space Grotesk','DM Sans',system-ui,sans-serif" font-weight="700" font-size="30" letter-spacing="-0.5" fill="white">Log<tspan fill="url(#gt)">IQ</tspan></text>
+</svg>

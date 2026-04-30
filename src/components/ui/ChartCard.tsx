@@ -25,7 +25,7 @@ export function ChartCard({
   return (
     <div
       className={cn(
-        "rounded-2xl border border-white/[0.1] bg-gradient-to-b from-surface-850/90 via-surface-960 to-surface-975 p-5 shadow-[0_1px_0_0_rgba(255,255,255,0.04)_inset,0_20px_50px_-28px_rgba(0,0,0,0.55)]",
+        "rounded-2xl border border-cyber/[0.12] bg-black/[0.88] p-5 shadow-[0_1px_0_0_rgba(255,255,255,0.04)_inset,0_20px_50px_-28px_rgba(0,0,0,0.55)]",
         className
       )}
     >

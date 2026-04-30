@@ -127,7 +127,7 @@ export function Login() {
               onClick={() => void handleResendVerification()}
               disabled={resendLoading || !values.email.trim()}
               className={cn(
-                "w-full rounded-lg border border-white/[0.1] bg-surface-975/80 py-2 text-sm font-semibold text-slate-200 transition",
+                "w-full rounded-lg border border-white/[0.1] bg-black/[0.94] py-2 text-sm font-semibold text-slate-200 transition",
                 "hover:border-sky-500/25",
                 "disabled:cursor-not-allowed disabled:opacity-50",
                 "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400/70"
@@ -158,7 +158,7 @@ export function Login() {
                 setResendNote(null);
                 setSubmitStatus("idle");
               }}
-              className="w-full rounded-lg border border-white/[0.08] bg-surface-975/60 py-2 text-xs font-semibold text-sky-300/95 transition hover:border-sky-500/25 hover:text-sky-200"
+              className="w-full rounded-lg border border-white/[0.08] bg-black/[0.94] py-2 text-xs font-semibold text-sky-300/95 transition hover:border-sky-500/25 hover:text-sky-200"
             >
               I’ve verified my email — try Login again
             </button>

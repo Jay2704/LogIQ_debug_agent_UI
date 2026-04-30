@@ -11,11 +11,11 @@ export function ProductPreviewCard({ className }: { className?: string }) {
       />
       <div
         className={cn(
-          "hero-glow-card relative overflow-hidden rounded-2xl border border-white/[0.1] bg-gradient-to-b from-surface-900/95 to-surface-975 shadow-[0_0_0_1px_rgba(59,130,246,0.12),0_24px_64px_-24px_rgba(0,0,0,0.65)]",
+          "hero-glow-card relative overflow-hidden rounded-2xl border border-white/[0.1] bg-gradient-to-b from-black/[0.85] to-black/[0.96] shadow-[0_0_0_1px_rgba(59,130,246,0.12),0_24px_64px_-24px_rgba(0,0,0,0.65)]",
           "ring-1 ring-white/[0.04] animate-investigation-reveal"
         )}
       >
-        <div className="flex items-center justify-between border-b border-white/[0.06] bg-surface-975/80 px-4 py-2.5">
+        <div className="flex items-center justify-between border-b border-white/[0.06] bg-black/[0.94] px-4 py-2.5">
           <div className="flex items-center gap-2">
             <span className="font-mono text-[11px] text-slate-400">dbg_inv_7f2a</span>
             <span className="rounded-md bg-emerald-500/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-300/95">

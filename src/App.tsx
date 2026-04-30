@@ -1,4 +1,5 @@
 import { Route, Routes } from "react-router-dom";
+import { Component as EtherealShadow } from "@/components/ui/etheral-shadow";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { AuthenticatedAppShell } from "@/components/layout/AuthenticatedAppShell";
 import { About } from "@/pages/About";
@@ -19,9 +20,22 @@ import { Signup } from "@/pages/Signup";
 import { Utilities } from "@/pages/Utilities";
 import { UtilityDetail } from "@/pages/UtilityDetail";
 import { DevIntegrationCheck } from "@/pages/DevIntegrationCheck";
+import { RCAWithJira } from "@/pages/RCAWithJira";
 
 export default function App() {
   return (
+    <>
+      <div data-ethereal-bg aria-hidden style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none" }}>
+        <EtherealShadow
+          color="rgba(34, 211, 238, 0.18)"
+          animation={{ scale: 45, speed: 55 }}
+          noise={{ opacity: 0.25, scale: 1.2 }}
+          sizing="fill"
+          showTitle={false}
+          style={{ position: "absolute", inset: 0 }}
+        />
+      </div>
+      <div className="relative" style={{ zIndex: 1 }}>
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
@@ -31,11 +45,14 @@ export default function App() {
       <Route path="/" element={<AuthenticatedAppShell />}>
         <Route element={<AppLayout />}>
           <Route index element={<Dashboard />} />
+          <Route path="dashboard" element={<Dashboard />} />
           <Route path="jobs" element={<Jobs />} />
           <Route path="jobs/:jobId" element={<JobDetail />} />
           <Route path="anomalies" element={<Anomalies />} />
           <Route path="insights" element={<Insights />} />
           <Route path="reports" element={<Reports />} />
+          <Route path="rca" element={<RCAWithJira />} />
+          <Route path="rca-jira" element={<RCAWithJira />} />
           <Route path="utilities" element={<Utilities />} />
           <Route path="utilities/:toolId" element={<UtilityDetail />} />
           <Route path="settings" element={<Settings />} />
@@ -51,5 +68,7 @@ export default function App() {
         </Route>
       </Route>
     </Routes>
+      </div>
+    </>
   );
 }

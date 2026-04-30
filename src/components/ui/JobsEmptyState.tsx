@@ -19,7 +19,7 @@ export function JobsEmptyState({
         className
       )}
     >
-      <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/[0.08] bg-surface-975/90 shadow-[0_0_40px_-12px_rgba(56,189,248,0.2)] ring-1 ring-white/[0.04]">
+      <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/[0.08] bg-black/[0.94] shadow-[0_0_40px_-12px_rgba(56,189,248,0.2)] ring-1 ring-white/[0.04]">
         <ListTodo className="h-7 w-7 text-slate-500" strokeWidth={1.25} />
       </div>
       <h2 className="mt-6 text-lg font-semibold tracking-tight text-white">

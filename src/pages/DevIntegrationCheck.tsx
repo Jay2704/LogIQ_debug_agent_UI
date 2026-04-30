@@ -138,7 +138,7 @@ function Section({
   children?: ReactNode;
 }) {
   return (
-    <section className="rounded-lg border border-white/[0.08] bg-surface-975/50 p-4 ring-1 ring-inset ring-white/[0.03]">
+    <section className="rounded-lg border border-white/[0.08] bg-black/[0.94] p-4 ring-1 ring-inset ring-white/[0.03]">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
           <h2 className="font-bold text-white">{title}</h2>

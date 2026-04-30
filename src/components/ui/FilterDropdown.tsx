@@ -52,7 +52,7 @@ export function FilterDropdown({
           "ring-offset-2 ring-offset-surface-975",
           isActive
             ? "border-sky-500/35 bg-sky-500/[0.08] ring-1 ring-sky-500/25 hover:border-sky-400/45"
-            : "border-white/[0.08] bg-surface-975/70 backdrop-blur-sm hover:border-blue-500/25 hover:bg-surface-975/85"
+            : "border-white/[0.08] bg-black/[0.94] backdrop-blur-sm hover:border-blue-500/25 hover:bg-black/[0.94]"
         )}
       >
         <span className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
@@ -69,7 +69,7 @@ export function FilterDropdown({
         </span>
       </button>
       {open ? (
-        <ul className="absolute right-0 z-50 mt-1.5 max-h-60 min-w-full overflow-auto rounded-xl border border-white/[0.1] bg-surface-975/98 py-1 shadow-card-premium backdrop-blur-xl">
+        <ul className="absolute right-0 z-50 mt-1.5 max-h-60 min-w-full overflow-auto rounded-xl border border-white/[0.1] bg-black/[0.94] py-1 shadow-card-premium backdrop-blur-xl">
           {options.map((opt) => (
             <li key={opt.value}>
               <button

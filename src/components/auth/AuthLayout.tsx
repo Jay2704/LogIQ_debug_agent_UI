@@ -1,12 +1,13 @@
 import type { ReactNode } from "react";
 import { GitBranch, Network, Radar, Sparkles, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
-import { LogIQFullLogo } from "@/components/branding/LogIQLogos";
+import { LogIQFullLogo, LogIQIconMark } from "@/components/branding/LogIQLogos";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { cn } from "@/lib/utils";
 
 interface AuthLayoutProps {
   children: ReactNode;
-  /** Card heading (e.g. “Login”) */
+  /** Card heading (e.g. "Login") */
   cardTitle: string;
   cardDescription?: string;
   className?: string;
@@ -27,22 +28,40 @@ export function AuthLayout({
   return (
     <div
       className={cn(
-        "relative min-h-screen overflow-x-hidden bg-[#080d18] text-slate-200",
+        "relative min-h-screen overflow-x-hidden text-slate-200",
         className
       )}
     >
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_120%_90%_at_50%_-25%,rgba(37,99,235,0.18),transparent_55%)]" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_100%_0%,rgba(124,58,237,0.12),transparent_50%)]" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_45%_at_0%_80%,rgba(14,116,144,0.08),transparent_50%)]" />
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,#0a101f_0%,#080d18_40%,#070b14_100%)] opacity-90" />
+      {/* Compact sticky nav — icon mark links back to landing; toggle always accessible */}
+      <nav className="sticky top-0 z-40 flex items-center justify-between border-b border-white/[0.06] bg-black/[0.88] px-4 py-2.5 backdrop-blur-md sm:px-6">
+        <Link
+          to="/"
+          aria-label="Back to LogIQ home"
+          className="flex items-center gap-2.5 rounded-lg outline-none transition hover:opacity-80 focus-visible:ring-2 focus-visible:ring-sky-500/50"
+        >
+          <LogIQIconMark className="h-8 w-8" />
+          <span className="hidden text-sm font-semibold text-slate-400 sm:block">LogIQ</span>
+        </Link>
+        <ThemeToggle />
+      </nav>
 
-      {/* Center “bridge” glow — ties both columns visually */}
+      {/* Cyber ambient glows */}
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_120%_90%_at_50%_-20%,rgba(34,211,238,0.07),transparent_50%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_100%_0%,rgba(34,211,238,0.04),transparent_45%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_50%_40%_at_0%_80%,rgba(52,211,153,0.04),transparent_45%)]" />
+
+      {/* Cyber grid */}
       <div
-        className="pointer-events-none absolute left-1/2 top-[45%] h-[min(560px,75vh)] w-[min(100vw,920px)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(ellipse_at_center,rgba(59,130,246,0.14)_0%,rgba(99,102,241,0.08)_40%,transparent_72%)] blur-2xl"
+        className="pointer-events-none absolute inset-0 opacity-[0.2]"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg fill='none' stroke='rgba(34,211,238,0.08)' stroke-width='0.5'%3E%3Cpath d='M0 30h60M30 0v60'/%3E%3C/g%3E%3C/svg%3E")`,
+        }}
         aria-hidden
       />
+
+      {/* Center glow bridge */}
       <div
-        className="pointer-events-none absolute left-1/2 top-1/2 h-[420px] w-[min(88vw,640px)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-r from-sky-500/[0.07] via-violet-500/[0.09] to-cyan-500/[0.05] opacity-80 blur-3xl"
+        className="pointer-events-none absolute left-1/2 top-[45%] h-[min(500px,70vh)] w-[min(100vw,800px)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(ellipse_at_center,rgba(34,211,238,0.07)_0%,rgba(52,211,153,0.04)_40%,transparent_70%)] blur-2xl"
         aria-hidden
       />
 
@@ -63,7 +82,7 @@ export function AuthLayout({
                 to="/"
                 className="inline-flex max-w-full items-center rounded-xl outline-none ring-offset-2 ring-offset-[#080d18] transition hover:opacity-90 focus-visible:ring-2 focus-visible:ring-sky-500/50"
               >
-                <LogIQFullLogo className="max-h-20 max-w-[min(380px,92%)] sm:max-h-24" />
+                <LogIQFullLogo className="max-h-14 max-w-[min(280px,92%)] sm:max-h-16" />
               </Link>
               <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">
                 AI debugging platform
@@ -73,19 +92,19 @@ export function AuthLayout({
                 {highlightBadges.map(({ label, icon: Icon }) => (
                   <span
                     key={label}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.08] bg-surface-975/80 px-2.5 py-1 text-[11px] font-medium text-slate-300 shadow-[0_0_20px_-6px_rgba(59,130,246,0.35)] ring-1 ring-white/[0.04] transition hover:border-sky-500/25 hover:text-slate-100"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-cyber/[0.15] bg-black/[0.88] px-2.5 py-1 text-[11px] font-medium text-slate-300 shadow-glow-cyber ring-1 ring-cyber/[0.06] transition hover:border-cyber/[0.3] hover:text-cyan-300"
                   >
-                    <Icon className="h-3.5 w-3.5 text-sky-400/90" strokeWidth={2} />
+                    <Icon className="h-3.5 w-3.5 text-cyber/80" strokeWidth={2} />
                     {label}
                   </span>
                 ))}
               </div>
 
               <div className="space-y-4">
-                <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-sky-500/90">
+                <p className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-cyber/80">
                   Product
                 </p>
-                <h1 className="text-2xl font-bold leading-snug tracking-tight text-white sm:text-3xl xl:text-[1.85rem] xl:leading-tight">
+                <h1 className="font-display text-2xl font-bold leading-snug tracking-tight text-white sm:text-3xl xl:text-[1.85rem] xl:leading-tight">
                   AI-powered deterministic root cause analysis for engineering teams
                 </h1>
                 <p className="max-w-xl text-[15px] leading-relaxed text-slate-400 sm:text-base">
@@ -96,15 +115,15 @@ export function AuthLayout({
 
               <ul className="max-w-md space-y-4 text-sm leading-relaxed text-slate-400">
                 <li className="flex gap-3">
-                  <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-violet-400/85" strokeWidth={2} />
+                  <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-cyber/80" strokeWidth={2} />
                   <span>Deterministic RCA with explainable, replayable steps.</span>
                 </li>
                 <li className="flex gap-3">
-                  <Radar className="mt-0.5 h-4 w-4 shrink-0 text-sky-400/85" strokeWidth={2} />
+                  <Radar className="mt-0.5 h-4 w-4 shrink-0 text-nexus/80" strokeWidth={2} />
                   <span>Built for SRE, platform, and app teams shipping under pressure.</span>
                 </li>
                 <li className="flex gap-3">
-                  <GitBranch className="mt-0.5 h-4 w-4 shrink-0 text-cyan-400/80" strokeWidth={2} />
+                  <GitBranch className="mt-0.5 h-4 w-4 shrink-0 text-cyber/70" strokeWidth={2} />
                   <span>Graph-aware context across services, deploys, and code anchors.</span>
                 </li>
               </ul>
@@ -122,14 +141,14 @@ export function AuthLayout({
                 to="/"
                 className="inline-flex min-w-0 flex-1 items-center rounded-lg text-slate-400 transition hover:opacity-90"
               >
-                <LogIQFullLogo className="max-h-16 max-w-[min(340px,88vw)] sm:max-h-18" />
+                <LogIQFullLogo className="max-h-10 max-w-[min(240px,88vw)]" />
               </Link>
             </div>
             <div className="flex flex-wrap gap-2">
               {highlightBadges.map(({ label, icon: Icon }) => (
                 <span
                   key={label}
-                  className="inline-flex items-center gap-1 rounded-full border border-white/[0.08] bg-surface-975/70 px-2 py-0.5 text-[10px] font-medium text-slate-400"
+                  className="inline-flex items-center gap-1 rounded-full border border-white/[0.08] bg-black/[0.7] px-2 py-0.5 text-[10px] font-medium text-slate-400"
                 >
                   <Icon className="h-3 w-3 text-sky-400/80" strokeWidth={2} />
                   {label}
@@ -145,25 +164,20 @@ export function AuthLayout({
           <main className="flex flex-col items-center justify-center lg:items-stretch lg:pl-6 xl:pl-10">
             <div className="group relative w-full max-w-md lg:ml-0 lg:max-w-[440px]">
               <div
-                className="pointer-events-none absolute -inset-[1px] rounded-[1.35rem] bg-gradient-to-br from-sky-500/35 via-violet-500/25 to-cyan-500/15 opacity-40 blur-lg transition duration-500 group-hover:opacity-70"
-                aria-hidden
-              />
-              <div
-                className="pointer-events-none absolute -inset-3 rounded-[1.5rem] bg-gradient-to-br from-sky-500/15 to-violet-600/10 opacity-0 blur-xl transition duration-500 group-hover:opacity-100"
+                className="pointer-events-none absolute -inset-[1px] rounded-card bg-gradient-to-br from-cyber/40 via-nexus/20 to-cyber/10 opacity-30 blur-lg transition duration-500 group-hover:opacity-55"
                 aria-hidden
               />
               <div
                 className={cn(
-                  "relative rounded-2xl border border-white/[0.12] bg-gradient-to-b from-surface-900/98 via-surface-960 to-surface-975",
-                  "p-6 shadow-[0_0_0_1px_rgba(99,102,241,0.12),0_28px_72px_-36px_rgba(0,0,0,0.75),0_0_88px_-44px_rgba(59,130,246,0.28)]",
-                  "ring-1 ring-white/[0.06] transition duration-300 ease-out will-change-transform",
-                  "group-hover:-translate-y-0.5 group-hover:scale-[1.015] group-hover:border-sky-500/25",
-                  "group-hover:shadow-[0_0_0_1px_rgba(56,189,248,0.2),0_32px_80px_-28px_rgba(0,0,0,0.8),0_0_100px_-36px_rgba(59,130,246,0.42)]",
+                  "relative rounded-card border border-cyber/[0.18] bg-black/[0.96]",
+                  "p-6 shadow-glow-cyber",
+                  "ring-1 ring-cyber/[0.06] transition duration-300 ease-out will-change-transform",
+                  "group-hover:-translate-y-0.5 group-hover:border-cyber/[0.28]",
                   "sm:p-8"
                 )}
               >
                 <div className="mb-6 space-y-2">
-                  <h2 className="text-xl font-bold tracking-tight text-white sm:text-2xl">
+                  <h2 className="font-display text-xl font-bold tracking-tight text-white sm:text-2xl">
                     {cardTitle}
                   </h2>
                   {cardDescription ? (

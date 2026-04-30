@@ -42,7 +42,7 @@ export function ConfidenceProgressBar({
     return (
       <div
         className={cn(
-          "rounded-2xl border border-white/[0.1] bg-gradient-to-br from-surface-950/95 to-[#060a12] p-5 shadow-inner ring-1 ring-inset ring-white/[0.04]",
+          "rounded-2xl border border-white/[0.1] bg-gradient-to-br from-black/[0.9] to-[#060a12] p-5 shadow-inner ring-1 ring-inset ring-white/[0.04]",
           className
         )}
         role="group"
@@ -87,7 +87,7 @@ export function ConfidenceProgressBar({
             </span>
           </div>
         </div>
-        <div className="mt-5 h-4 overflow-hidden rounded-full border border-white/[0.08] bg-surface-950 shadow-[inset_0_2px_6px_rgba(0,0,0,0.45)]">
+        <div className="mt-5 h-4 overflow-hidden rounded-full border border-white/[0.08] bg-black/[0.9] shadow-[inset_0_2px_6px_rgba(0,0,0,0.45)]">
           <div
             className={cn(
               "h-full rounded-full bg-gradient-to-r transition-[width] duration-500",
@@ -125,7 +125,7 @@ export function ConfidenceProgressBar({
           </span>
         </div>
       ) : null}
-      <div className="h-2 overflow-hidden rounded-full border border-white/[0.06] bg-surface-800/90 shadow-inner">
+      <div className="h-2 overflow-hidden rounded-full border border-white/[0.06] bg-black/[0.7] shadow-inner">
         <div
           className={cn(
             "h-full rounded-full bg-gradient-to-r transition-all duration-500",

@@ -68,7 +68,7 @@ export function AuthInput({
       aria-invalid={error ? true : undefined}
       aria-describedby={errId}
       className={cn(
-        "w-full rounded-xl border bg-surface-975/80 px-3.5 py-2.5 text-sm text-slate-100 placeholder:text-slate-500",
+        "w-full rounded-xl border bg-black/[0.94] px-3.5 py-2.5 text-sm text-slate-100 placeholder:text-slate-500",
         "shadow-inner outline-none transition-all duration-200",
         "focus:ring-0",
         error
@@ -110,7 +110,7 @@ export function AuthPasswordInput({
         aria-invalid={error ? true : undefined}
         aria-describedby={errId}
         className={cn(
-          "w-full rounded-xl border bg-surface-975/80 py-2.5 pl-3.5 pr-11 text-sm text-slate-100 placeholder:text-slate-500",
+          "w-full rounded-xl border bg-black/[0.94] py-2.5 pl-3.5 pr-11 text-sm text-slate-100 placeholder:text-slate-500",
           "shadow-inner outline-none transition-all duration-200",
           "focus:ring-0",
           error
@@ -169,7 +169,7 @@ export function AuthSelect({
       aria-invalid={error ? true : undefined}
       aria-describedby={error ? `${id}-error` : undefined}
       className={cn(
-        "w-full cursor-pointer appearance-none rounded-xl border bg-surface-975/80 px-3.5 py-2.5 text-sm text-slate-100",
+        "w-full cursor-pointer appearance-none rounded-xl border bg-black/[0.94] px-3.5 py-2.5 text-sm text-slate-100",
         "shadow-inner outline-none transition-all duration-200",
         "focus:ring-0",
         "bg-[url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 viewBox=%270 0 12 12%27%3E%3Cpath fill=%27%2394a3b8%27 d=%27M6 8L1 3h10z%27/%3E%3C/svg%3E')] bg-[length:12px] bg-[right_0.75rem_center] bg-no-repeat pr-10",

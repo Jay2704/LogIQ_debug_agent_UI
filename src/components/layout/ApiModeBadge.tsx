@@ -12,7 +12,7 @@ export function ApiModeBadge() {
         "inline-flex max-w-[100%] shrink-0 items-center gap-1.5 rounded-full border px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.14em] sm:text-[10px]",
         live
           ? "border-emerald-500/25 bg-emerald-500/[0.07] text-emerald-400/85"
-          : "border-white/[0.08] bg-surface-900/70 text-slate-500"
+          : "border-white/[0.08] bg-black/[0.82] text-slate-500"
       )}
       title={
         live

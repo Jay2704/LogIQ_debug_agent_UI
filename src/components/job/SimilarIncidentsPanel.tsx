@@ -15,7 +15,7 @@ export function SimilarIncidentsPanel({
   return (
     <div
       className={cn(
-        "rounded-2xl border border-violet-500/20 bg-surface-975/95 p-6 shadow-card",
+        "rounded-2xl border border-violet-500/20 bg-black/[0.94] p-6 shadow-card",
         className
       )}
     >
@@ -31,7 +31,7 @@ export function SimilarIncidentsPanel({
         </div>
       </div>
       {incidents.length === 0 ? (
-        <p className="mt-5 rounded-xl border border-dashed border-slate-700/50 bg-surface-900/40 px-4 py-6 text-center text-sm text-slate-500">
+        <p className="mt-5 rounded-xl border border-dashed border-slate-700/50 bg-black/[0.82] px-4 py-6 text-center text-sm text-slate-500">
           No indexed similar incidents for this pattern yet.
         </p>
       ) : (
@@ -39,10 +39,10 @@ export function SimilarIncidentsPanel({
           {incidents.map((si) => (
             <li
               key={si.id}
-              className="rounded-xl border border-white/[0.06] bg-surface-900/60 p-4 transition hover:border-violet-500/20"
+              className="rounded-xl border border-white/[0.06] bg-black/[0.82] p-4 transition hover:border-violet-500/20"
             >
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <span className="rounded-lg border border-white/[0.08] bg-surface-975/80 px-2.5 py-1 font-mono text-[11px] font-semibold text-sky-300/95">
+                <span className="rounded-lg border border-white/[0.08] bg-black/[0.94] px-2.5 py-1 font-mono text-[11px] font-semibold text-sky-300/95">
                   {si.service}
                 </span>
                 <time

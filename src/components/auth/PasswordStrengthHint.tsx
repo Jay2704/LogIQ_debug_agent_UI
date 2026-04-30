@@ -1,3 +1,4 @@
+
 import { Check } from "lucide-react";
 import {
   getPasswordRuleChecks,
@@ -32,7 +33,7 @@ export function PasswordStrengthHint({
   return (
     <div
       className={cn(
-        "rounded-xl border border-white/[0.06] bg-surface-975/50 px-3 py-2.5",
+        "rounded-xl border border-white/[0.06] bg-black/[0.94] px-3 py-2.5",
         disabled && "opacity-50"
       )}
       aria-live="polite"
@@ -60,7 +61,7 @@ export function PasswordStrengthHint({
                   "flex h-4 w-4 shrink-0 items-center justify-center rounded-full border text-[9px] font-bold",
                   ok
                     ? "border-emerald-500/40 bg-emerald-500/15 text-emerald-300"
-                    : "border-white/[0.08] bg-surface-975/80 text-slate-600"
+                    : "border-white/[0.08] bg-black/[0.94] text-slate-600"
                 )}
               >
                 {ok ? <Check className="h-2.5 w-2.5" strokeWidth={3} /> : ""}

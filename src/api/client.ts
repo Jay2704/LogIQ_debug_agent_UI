@@ -1,7 +1,5 @@
 import type { LogIQApi } from "@/api/contracts";
-import { USE_HTTP_API, API_BASE_URL } from "@/api/config";
 import { createHttpApi } from "@/api/http/createHttpApi";
-import { createMockApi } from "@/api/mock/mockApi";
 
 /**
  * Factory for the active API implementation.
@@ -13,10 +11,7 @@ import { createMockApi } from "@/api/mock/mockApi";
  * transports is centralized in `src/api/config.ts` and this file.
  */
 export function createApiClient(): LogIQApi {
-  if (USE_HTTP_API && API_BASE_URL) {
-    return createHttpApi(API_BASE_URL);
-  }
-  return createMockApi();
+  return createHttpApi();
 }
 
 /** Singleton used across the app */

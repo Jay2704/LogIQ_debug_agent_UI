@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { LogIQFullLogo } from "@/components/branding/LogIQLogos";
 import { HeroAmbientGlow } from "@/components/landing/HeroAmbientGlow";
 import { ProductPreviewCard } from "@/components/landing/ProductPreviewCard";
 import { ctaButtonGradient, ctaGlowBlueOnly } from "@/lib/ctaTheme";
@@ -10,14 +9,11 @@ export function LandingHero() {
   return (
     <section
       id="top"
-      className="relative mx-auto max-w-6xl overflow-hidden px-4 pb-16 pt-8 sm:px-6 sm:pt-10 lg:px-8 lg:pb-20"
+      className="relative mx-auto max-w-6xl overflow-hidden px-4 pb-16 pt-14 sm:px-6 sm:pt-20 lg:px-8 lg:pb-20 lg:pt-24"
     >
       <HeroAmbientGlow variant="landing" />
       <div className="relative z-10 mx-auto max-w-3xl text-center">
-        <div className="flex justify-center px-2 py-4 sm:py-6">
-          <LogIQFullLogo className="mx-auto h-auto w-auto max-h-[min(18rem,52vw)] max-w-[min(980px,96vw)] object-contain sm:max-h-[min(22rem,48vh)] md:max-h-[min(26rem,52vh)] lg:max-h-[min(28rem,56vh)]" />
-        </div>
-        <span className="mt-8 inline-flex items-center rounded-full border border-sky-500/30 bg-sky-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-sky-200/95 ring-1 ring-sky-500/20 sm:mt-10">
+        <span className="inline-flex items-center rounded-full border border-sky-500/30 bg-sky-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-sky-200/95 ring-1 ring-sky-500/20">
           AI-Powered Deterministic RCA
         </span>
         <h1 className="gradient-text mt-6 text-3xl font-bold tracking-tight sm:text-4xl lg:text-[2.75rem] lg:leading-[1.12]">
@@ -43,8 +39,8 @@ export function LandingHero() {
           <a
             href="#features"
             className={cn(
-              "cta-shimmer-secondary inline-flex min-w-[10rem] items-center justify-center gap-2 rounded-xl border border-white/[0.12] bg-surface-900/50 px-6 py-3 text-sm font-semibold text-slate-100 backdrop-blur-sm transition",
-              "hover:border-sky-500/30 hover:bg-surface-900/75 hover:text-white",
+              "cta-shimmer-secondary inline-flex min-w-[10rem] items-center justify-center gap-2 rounded-xl border border-white/[0.12] bg-black/[0.82] px-6 py-3 text-sm font-semibold text-slate-100 backdrop-blur-sm transition",
+              "hover:border-sky-500/30 hover:bg-black/[0.82] hover:text-white",
               "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400/70"
             )}
           >

@@ -9,6 +9,7 @@ const links = [
   { to: "/anomalies", label: "Anomalies" },
   { to: "/insights", label: "Insights" },
   { to: "/reports", label: "Reports" },
+  { to: "/rca-jira", label: "RCA with JIRA" },
   { to: "/utilities", label: "Utilities" },
   { to: "/about", label: "About Us" },
   { to: "/faq", label: "FAQs" },
@@ -17,7 +18,7 @@ const links = [
 
 export function QuickNav() {
   return (
-    <div className="flex gap-1 overflow-x-auto border-b border-white/[0.08] bg-surface-975/95 px-4 py-2 shadow-inner backdrop-blur-md md:hidden">
+    <div className="flex gap-1 overflow-x-auto border-b border-white/[0.08] bg-black/[0.94] px-4 py-2 shadow-inner backdrop-blur-md md:hidden">
       {links.map((l) => (
         <NavLink
           key={l.to}

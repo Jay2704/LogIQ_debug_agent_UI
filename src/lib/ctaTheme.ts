@@ -1,18 +1,17 @@
 /**
- * Explicit blue → indigo/violet gradients + blue-only outer glows (no magenta-heavy
- * violet in shadows — those can read as “red” on dark UIs).
+ * NEXUS Terminal — Cyber cyan CTA gradients + glow system
  */
 export const ctaButtonGradient =
-  "bg-[linear-gradient(135deg,#3B82F6_0%,#6366f1_48%,#7C3AED_100%)] hover:bg-[linear-gradient(135deg,#60A5FA_0%,#818cf8_45%,#8B5CF6_100%)]";
+  "bg-[linear-gradient(135deg,#06B6D4_0%,#0891B2_48%,#0E7490_100%)] hover:bg-[linear-gradient(135deg,#22D3EE_0%,#06B6D4_48%,#0891B2_100%)]";
 
-/** Sidebar / quick-nav active pill — indigo-forward, less magenta than pure violet */
+/** Sidebar / quick-nav active pill — cyber teal */
 export const navItemActiveGradient =
-  "bg-[linear-gradient(135deg,rgba(59,130,246,0.44)_0%,rgba(79,70,229,0.28)_48%,rgba(15,23,42,0.48)_100%)]";
+  "bg-[linear-gradient(135deg,rgba(34,211,238,0.16)_0%,rgba(6,182,212,0.09)_50%,rgba(15,23,42,0.4)_100%)]";
 
-/** Replace shadow-glow-cta where a strictly blue halo is needed (auth + primary buttons) */
+/** Outer cyan glow for primary buttons */
 export const ctaGlowBlueOnly =
-  "shadow-[0_0_0_1px_rgba(59,130,246,0.42),0_10px_36px_-8px_rgba(59,130,246,0.22),0_0_52px_-14px_rgba(96,165,250,0.16)]";
+  "shadow-[0_0_0_1px_rgba(34,211,238,0.4),0_10px_36px_-8px_rgba(34,211,238,0.22),0_0_52px_-14px_rgba(103,232,249,0.14)]";
 
-/** Inset ring for active nav — blue/indigo, not purple-pink */
+/** Inset ring for active nav items */
 export const navActiveInsetShadow =
-  "shadow-[inset_0_0_0_1px_rgba(59,130,246,0.28),inset_0_1px_0_0_rgba(255,255,255,0.06)]";
+  "shadow-[inset_0_0_0_1px_rgba(34,211,238,0.22),inset_0_1px_0_0_rgba(255,255,255,0.05)]";

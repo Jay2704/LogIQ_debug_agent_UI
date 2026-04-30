@@ -61,7 +61,7 @@ export function StepProgressBar({
                       "bg-amber-500/25 text-amber-300 shadow-[0_0_24px_-4px_rgba(245,158,11,0.55)] ring-1 ring-amber-400/55",
                     !done &&
                       !active &&
-                      "bg-surface-900 text-slate-600 ring-1 ring-white/[0.08]"
+                      "bg-black/[0.85] text-slate-600 ring-1 ring-white/[0.08]"
                   )}
                 >
                   {done ? (

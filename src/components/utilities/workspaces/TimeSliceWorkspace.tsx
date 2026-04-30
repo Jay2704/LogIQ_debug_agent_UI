@@ -25,7 +25,7 @@ export function TimeSliceWorkspace({ logLines, hasUploadedLog }: UtilityWorkspac
               type="datetime-local"
               value={start}
               onChange={(e) => setStart(e.target.value)}
-              className="mt-1.5 w-full rounded-lg border border-white/[0.1] bg-surface-960/90 px-3 py-2 font-mono text-xs text-slate-200 focus:border-sky-500/40 focus:outline-none focus:ring-1 focus:ring-sky-500/30"
+              className="mt-1.5 w-full rounded-lg border border-white/[0.1] bg-black/[0.92] px-3 py-2 font-mono text-xs text-slate-200 focus:border-sky-500/40 focus:outline-none focus:ring-1 focus:ring-sky-500/30"
             />
           </div>
           <div>
@@ -34,7 +34,7 @@ export function TimeSliceWorkspace({ logLines, hasUploadedLog }: UtilityWorkspac
               type="datetime-local"
               value={end}
               onChange={(e) => setEnd(e.target.value)}
-              className="mt-1.5 w-full rounded-lg border border-white/[0.1] bg-surface-960/90 px-3 py-2 font-mono text-xs text-slate-200 focus:border-sky-500/40 focus:outline-none focus:ring-1 focus:ring-sky-500/30"
+              className="mt-1.5 w-full rounded-lg border border-white/[0.1] bg-black/[0.92] px-3 py-2 font-mono text-xs text-slate-200 focus:border-sky-500/40 focus:outline-none focus:ring-1 focus:ring-sky-500/30"
             />
           </div>
         </div>

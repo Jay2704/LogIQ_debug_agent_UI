@@ -20,7 +20,7 @@ export function RemediationChecklist({
   return (
     <div
       className={cn(
-        "rounded-2xl border border-emerald-500/25 bg-gradient-to-b from-emerald-500/[0.08] to-surface-975 p-6 shadow-card",
+        "rounded-2xl border border-emerald-500/25 bg-gradient-to-b from-emerald-500/[0.08] to-black/[0.96] p-6 shadow-card",
         className
       )}
     >
@@ -41,7 +41,7 @@ export function RemediationChecklist({
           No remediation steps generated for this job yet.
         </p>
       ) : (
-        <ul className="mt-6 space-y-0 divide-y divide-white/[0.06] rounded-xl border border-white/[0.06] bg-surface-975/60">
+        <ul className="mt-6 space-y-0 divide-y divide-white/[0.06] rounded-xl border border-white/[0.06] bg-black/[0.94]">
           {steps.map((step, i) => (
             <li key={i} className="flex gap-3 p-4">
               <label className="flex cursor-pointer gap-3">
@@ -49,7 +49,7 @@ export function RemediationChecklist({
                   type="checkbox"
                   checked={!!done[i]}
                   onChange={() => toggle(i)}
-                  className="mt-1 h-4 w-4 shrink-0 rounded border-emerald-500/40 bg-surface-950 text-emerald-500 focus:ring-emerald-500/40 focus:ring-offset-0"
+                  className="mt-1 h-4 w-4 shrink-0 rounded border-emerald-500/40 bg-black/[0.9] text-emerald-500 focus:ring-emerald-500/40 focus:ring-offset-0"
                 />
                 <span
                   className={cn(

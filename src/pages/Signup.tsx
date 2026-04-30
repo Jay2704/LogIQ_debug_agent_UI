@@ -365,8 +365,8 @@ export function Signup() {
               onClick={() => void handleResendVerification()}
               disabled={resendLoading || !registeredEmail}
               className={cn(
-                "w-full rounded-xl border border-white/[0.1] bg-surface-975/80 py-2.5 text-sm font-semibold text-slate-200 transition",
-                "hover:border-sky-500/25 hover:bg-surface-975",
+                "w-full rounded-xl border border-white/[0.1] bg-black/[0.94] py-2.5 text-sm font-semibold text-slate-200 transition",
+                "hover:border-sky-500/25 hover:bg-black/[0.96]",
                 "disabled:cursor-not-allowed disabled:opacity-50",
                 "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400/70"
               )}
