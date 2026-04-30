@@ -1,8 +1,6 @@
 import type { LogIQApi } from "@/api/contracts";
 import { createHttpApi } from "@/api/http/createHttpApi";
 
-const BASE_URL = "http://localhost:8000";
-
 /**
  * Factory for the active API implementation.
  * - Default: in-memory mock (`src/data/mock/`) — no network, no backend required.
@@ -13,7 +11,7 @@ const BASE_URL = "http://localhost:8000";
  * transports is centralized in `src/api/config.ts` and this file.
  */
 export function createApiClient(): LogIQApi {
-  return createHttpApi(BASE_URL);
+  return createHttpApi();
 }
 
 /** Singleton used across the app */

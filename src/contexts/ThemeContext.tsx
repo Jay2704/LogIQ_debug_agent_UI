@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useEffect, useState, type ReactNode } from "react";
 
 type Theme = "dark" | "light";
 
@@ -14,13 +14,13 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     try {
       const stored = localStorage.getItem("logiq-theme") as Theme | null;
       if (stored === "light" || stored === "dark") return stored;
-    } catch {}
+    } catch { /* localStorage unavailable (e.g. private browsing) */ }
     return "dark";
   });
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
-    try { localStorage.setItem("logiq-theme", theme); } catch {}
+    try { localStorage.setItem("logiq-theme", theme); } catch { /* localStorage unavailable */ }
   }, [theme]);
 
   const toggleTheme = () => setTheme(t => (t === "dark" ? "light" : "dark"));
@@ -31,9 +31,4 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     </ThemeContext.Provider>
   );
 }
-
-export function useTheme(): ThemeContextValue {
-  const ctx = useContext(ThemeContext);
-  if (!ctx) throw new Error("useTheme must be inside ThemeProvider");
-  return ctx;
-}
+export { ThemeContext };

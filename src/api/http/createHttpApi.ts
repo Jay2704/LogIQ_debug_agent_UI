@@ -199,7 +199,7 @@ async function fetchNetwork(url: string, init?: RequestInit): Promise<Response> 
   }
 }
 
-export function createHttpApi(_baseUrl: string): LogIQApi {
+export function createHttpApi(): LogIQApi {
   const baseUrl = EXPLICIT_API_ORIGIN;
   const mocks = createMockApi();
 
