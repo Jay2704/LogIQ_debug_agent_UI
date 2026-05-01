@@ -385,7 +385,7 @@ function StructuredAssistiveBody({ data }: { data: RcaAssistiveExplanation }) {
             during warmup, empty JSON, or when the assistive service returns a shell
             payload. The page layout is fine.
           </p>
-          <p className="mt-3 text-xs text-slate-600">
+          <p className="mt-3 text-xs text-slate-500">
             Deterministic RCA on the RCA tab is unchanged and remains the source of truth.
           </p>
         </div>
@@ -455,7 +455,7 @@ function StructuredAssistiveBody({ data }: { data: RcaAssistiveExplanation }) {
                 <p className="mt-3 text-sm leading-relaxed text-slate-300">
                   {data.confidenceAlignmentNote.trim()}
                 </p>
-                <p className="mt-3 border-l-2 border-cyan-500/30 pl-4 text-[11px] leading-relaxed text-slate-600">
+                <p className="mt-3 border-l-2 border-cyan-500/30 pl-4 text-[11px] leading-relaxed text-slate-500">
                   Narrative cross-check to the deterministic score — not a second
                   confidence metric.
                 </p>

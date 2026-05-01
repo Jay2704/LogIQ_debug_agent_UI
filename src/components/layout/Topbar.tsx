@@ -122,14 +122,14 @@ export function Topbar({ onToggleSidebar }: TopbarProps) {
                 <span className="block truncate font-semibold text-slate-100">
                   {userDisplayName(user) || user.email}
                 </span>
-                <span className="truncate font-mono text-[10px] text-slate-600">
+                <span className="truncate font-mono text-[10px] text-slate-500">
                   {formatUserContextLine(user)}
                 </span>
               </>
             ) : (
               <>
                 <span className="block font-semibold text-slate-400">Guest</span>
-                <span className="font-mono text-[10px] text-slate-600">not authenticated</span>
+                <span className="font-mono text-[10px] text-slate-500">not authenticated</span>
               </>
             )}
           </span>

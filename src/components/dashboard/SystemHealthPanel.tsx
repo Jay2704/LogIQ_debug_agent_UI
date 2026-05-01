@@ -117,10 +117,10 @@ export function SystemHealthPanel({
                 className={cn("h-2 w-2 shrink-0 rounded-full", st.dot)}
                 title={st.label}
               />
-              <Icon className="h-3.5 w-3.5 shrink-0 text-slate-600" strokeWidth={1.75} />
+              <Icon className="h-3.5 w-3.5 shrink-0 text-slate-500" strokeWidth={1.75} />
               <div className="min-w-0 flex-1">
                 <p className="text-xs font-medium text-slate-300">{row.name}</p>
-                <p className="truncate font-mono text-[10px] text-slate-600">
+                <p className="truncate font-mono text-[10px] text-slate-500">
                   {row.detail}
                 </p>
               </div>

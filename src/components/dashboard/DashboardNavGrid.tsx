@@ -81,7 +81,7 @@ export function DashboardNavGrid({
                       Active
                     </span>
                   ) : (
-                    <ArrowRight className="h-4 w-4 shrink-0 text-slate-700 transition group-hover:translate-x-0.5 group-hover:text-cyber" />
+                    <ArrowRight className="h-4 w-4 shrink-0 text-slate-500 transition group-hover:translate-x-0.5 group-hover:text-cyber" />
                   )}
                 </div>
                 <h3 className="mt-3.5 font-display text-base font-bold tracking-tight text-white">{item.label}</h3>

@@ -135,7 +135,7 @@ export function JobDetail() {
       <div className="space-y-4 pb-16">
         {createdBannerEl}
         {jobId?.trim() ? (
-          <p className="text-center font-mono text-xs text-slate-600">
+          <p className="text-center font-mono text-xs text-slate-500">
             Loading job{" "}
             <span className="text-slate-400">{jobId}</span>
             …
@@ -208,7 +208,7 @@ export function JobDetail() {
       <div className="space-y-6 pb-16">
         {createdBannerEl}
         {jobId?.trim() ? (
-          <p className="text-center font-mono text-xs text-slate-600">
+          <p className="text-center font-mono text-xs text-slate-500">
             Requested id:{" "}
             <span className="text-slate-400">{jobId}</span>
           </p>

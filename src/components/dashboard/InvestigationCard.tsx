@@ -61,16 +61,16 @@ export function InvestigationCard({
               </span>
               <StatusBadge status={job.status} />
             </div>
-            <p className="mt-2 flex items-center gap-1.5 text-[11px] text-slate-600">
-              <Cpu className="h-3 w-3 shrink-0 text-slate-700" />
-              <span className="truncate font-medium text-slate-500">
+            <p className="mt-2 flex items-center gap-1.5 text-[11px] text-slate-500">
+              <Cpu className="h-3 w-3 shrink-0 text-slate-500" />
+              <span className="truncate font-medium text-slate-400">
                 {job.service ?? "—"}
               </span>
-              <span className="text-slate-700">·</span>
+              <span className="text-slate-600">·</span>
               <span className="font-mono text-violet-400/70">{job.anomalyId}</span>
             </p>
           </div>
-          <ArrowUpRight className="h-4 w-4 shrink-0 text-slate-700 transition group-hover:text-cyber" />
+          <ArrowUpRight className="h-4 w-4 shrink-0 text-slate-500 transition group-hover:text-cyber" />
         </div>
 
         <p className="relative mt-3 line-clamp-2 text-sm leading-relaxed text-slate-500">
@@ -78,7 +78,7 @@ export function InvestigationCard({
         </p>
 
         <div className="relative mt-4 flex items-center justify-between border-t border-cyber/[0.06] pt-3 text-[11px]">
-          <span className="font-mono tabular-nums text-slate-600">
+          <span className="font-mono tabular-nums text-slate-500">
             {formatRelativeShort(job.createdAt)}
           </span>
           {conf && confidence != null ? (
@@ -96,7 +96,7 @@ export function InvestigationCard({
               </span>
             </span>
           ) : (
-            <span className="text-slate-700">—</span>
+            <span className="text-slate-500">—</span>
           )}
         </div>
       </Link>

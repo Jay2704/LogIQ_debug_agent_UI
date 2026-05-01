@@ -128,7 +128,7 @@ export function AuthLayout({
                 </li>
               </ul>
 
-              <p className="text-xs text-slate-600">
+              <p className="text-xs text-slate-500">
                 © {new Date().getFullYear()} LogIQ · Demo workspace
               </p>
             </div>

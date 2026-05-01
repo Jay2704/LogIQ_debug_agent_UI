@@ -105,7 +105,7 @@ export function DashboardKpiCard({
             {value}
           </p>
           {subtitle ? (
-            <p className="mt-1.5 text-xs leading-relaxed text-slate-600">{subtitle}</p>
+            <p className="mt-1.5 text-xs leading-relaxed text-slate-500">{subtitle}</p>
           ) : null}
         </div>
         <div

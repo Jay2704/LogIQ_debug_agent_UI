@@ -99,7 +99,7 @@ export function Settings() {
                   </Link>{" "}
                   to bind this workspace to a user record and see role-based UI hints.
                 </p>
-                <p className="text-xs text-slate-600">
+                <p className="text-xs text-slate-500">
                   Guests cannot create jobs or run investigations from the UI; viewers can
                   browse but not run pipelines (prototype only — not server authorization).
                 </p>

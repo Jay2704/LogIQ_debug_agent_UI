@@ -84,7 +84,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       <nav className="relative flex-1 overflow-y-auto px-2 py-4">
         {navGroups.map((group, gi) => (
           <div key={group.label} className={cn(gi > 0 && "mt-4")}>
-            <p className="mb-1.5 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-700">
+            <p className="mb-1.5 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">
               {group.label}
             </p>
             <div className="space-y-0.5">
@@ -120,7 +120,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                       <item.icon
                         className={cn(
                           "h-4 w-4 shrink-0 transition-colors duration-200",
-                          isActive ? "text-cyber" : "text-slate-600 group-hover:text-slate-300"
+                          isActive ? "text-cyber" : "text-slate-500 group-hover:text-slate-200"
                         )}
                         strokeWidth={1.75}
                       />
@@ -140,7 +140,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       <div className="relative border-t border-cyber/[0.06] p-3">
         <div className="rounded-card border border-cyber/[0.08] bg-black/[0.6] p-3 font-mono">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-700">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
               ENV
             </span>
             <span

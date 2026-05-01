@@ -76,7 +76,7 @@ export function EvidenceMetadataRow({
               className={cn(
                 "mt-2 break-all leading-relaxed",
                 missing
-                  ? "text-[12px] italic text-slate-600"
+                  ? "text-[12px] italic text-slate-500"
                   : "text-[13px] text-slate-100",
                 mono &&
                   !missing &&

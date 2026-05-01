@@ -53,7 +53,7 @@ export function JobReportSummaryCard({
             {report.title}
           </p>
           <p className="text-sm leading-relaxed text-slate-500">{report.summary}</p>
-          <p className="text-[11px] text-slate-600">
+          <p className="text-[11px] text-slate-500">
             Exports: {report.formats.join(", ").toUpperCase()}
           </p>
         </div>

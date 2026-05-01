@@ -65,7 +65,7 @@ function FaqAccordionItem({
   answer: string;
 }) {
   return (
-    <details className="group rounded-xl border border-white/[0.08] bg-black/[0.82] ring-1 ring-white/[0.04] transition-colors open:border-sky-500/25 open:bg-black/[0.82]">
+    <details className="group rounded-xl border border-white/[0.08] bg-black/[0.82] ring-1 ring-white/[0.04] transition-colors open:border-sky-500/25">
       <summary
         className={cn(
           "flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3.5 text-left text-sm font-semibold text-slate-100 outline-none transition",

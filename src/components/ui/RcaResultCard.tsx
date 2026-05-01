@@ -147,7 +147,7 @@ function CandidateWhyStrip({ rca }: { rca: RcaResult }) {
             title={path || undefined}
           >
             {shortPath ? shortPath : (
-              <span className="text-slate-600">No path in response</span>
+              <span className="text-slate-500">No path in response</span>
             )}
           </p>
         </div>
@@ -161,7 +161,7 @@ function CandidateWhyStrip({ rca }: { rca: RcaResult }) {
             title={hasEv ? ev! : undefined}
           >
             {hasEv ? ev! : (
-              <span className="text-slate-600">Not linked</span>
+              <span className="text-slate-500">Not linked</span>
             )}
           </p>
         </div>
@@ -263,7 +263,7 @@ export function RcaResultCard({
           <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-400">
             Evidence store references
           </p>
-          <p className="mb-3 text-xs text-slate-600">
+          <p className="mb-3 text-xs text-slate-500">
             Full ids for audit — evidence ref is the graph link for this rank.
           </p>
           <EvidenceMetadataRow

@@ -210,7 +210,7 @@ export function Jobs() {
                 <span className="font-mono font-semibold tabular-nums text-slate-200">
                   {summary.total}
                 </span>
-                <span className="text-slate-600">total</span>
+                <span className="text-slate-500">total</span>
               </span>
               <span className="inline-flex items-center gap-2 rounded-xl border border-amber-500/20 bg-amber-500/[0.06] px-3 py-2 text-xs text-amber-200/90">
                 <Activity className="h-3.5 w-3.5 text-amber-400" />
@@ -324,7 +324,7 @@ export function Jobs() {
             />
           </div>
         </div>
-        <p className="mt-4 text-xs text-slate-600">
+        <p className="mt-4 text-xs text-slate-500">
           {filtered.length === jobs?.length
             ? `All ${jobs?.length ?? 0} jobs in workspace`
             : `${filtered.length} match${filtered.length === 1 ? "" : "es"} · ${jobs?.length ?? 0} total`}

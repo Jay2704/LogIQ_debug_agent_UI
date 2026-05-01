@@ -70,7 +70,7 @@ export function ConfidenceProgressBar({
             ) : null}
             <div className="space-y-1 text-xs leading-relaxed text-slate-500">
               <p>{CONFIDENCE_CONTEXT_RANKED}</p>
-              <p className="text-slate-600">{CONFIDENCE_CONTEXT_SIGNALS}</p>
+              <p className="text-slate-500">{CONFIDENCE_CONTEXT_SIGNALS}</p>
             </div>
           </div>
           <div className="flex shrink-0 flex-col items-start gap-0.5 sm:items-end sm:text-right">

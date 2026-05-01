@@ -193,7 +193,7 @@ function FeaturesSection() {
                     key={row.k}
                     className="flex items-center justify-between gap-3 font-mono text-[11px]"
                   >
-                    <span className="text-slate-600">{row.k}</span>
+                    <span className="text-slate-500">{row.k}</span>
                     <span className={cn("font-semibold", row.color)}>{row.v}</span>
                   </div>
                 ))}
@@ -286,9 +286,9 @@ function HowItWorksSection() {
                     {s.n.slice(-1)}
                   </span>
                 </div>
-                <div className="min-h-[4rem] flex-1 rounded-card border border-cyber/[0.08] bg-black/[0.84] p-5 backdrop-blur-sm">
+                <div className="min-h-[4rem] flex-1 rounded-card border border-cyber/[0.08] bg-black/[0.85] p-5 backdrop-blur-sm">
                   <h3 className="font-display font-semibold text-white">{s.title}</h3>
-                  <p className="mt-1 text-sm leading-relaxed text-slate-500">{s.body}</p>
+                  <p className="mt-1 text-sm leading-relaxed text-slate-400">{s.body}</p>
                 </div>
               </motion.div>
             ))}
@@ -325,7 +325,7 @@ function StatsSection() {
                 </span>
               </p>
               <p className="mt-2 font-display text-base font-semibold text-slate-200">{s.label}</p>
-              <p className="mt-1 text-sm text-slate-600">{s.sub}</p>
+              <p className="mt-1 text-sm text-slate-500">{s.sub}</p>
             </motion.div>
           ))}
         </div>
@@ -748,7 +748,7 @@ function ContactSection() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="flex flex-col gap-5 lg:col-span-2"
           >
-            <p className="text-[11px] font-bold uppercase tracking-wider text-slate-600">
+            <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
               Other ways to reach us
             </p>
 
@@ -807,10 +807,10 @@ export function LandingPage() {
 
         <footer className="border-t border-cyber/[0.06] py-8">
           <div className="mx-auto flex max-w-6xl flex-col items-center gap-3 px-4 sm:flex-row sm:justify-between sm:px-6 lg:px-8">
-            <p className="font-mono text-xs text-slate-700">
+            <p className="font-mono text-xs text-slate-500">
               © {new Date().getFullYear()} LogIQ. All rights reserved.
             </p>
-            <div className="flex items-center gap-5 font-mono text-xs text-slate-700">
+            <div className="flex items-center gap-5 font-mono text-xs text-slate-500">
               <a href="#" className="transition hover:text-slate-400">Privacy</a>
               <a href="#" className="transition hover:text-slate-400">Terms</a>
               <a href="#contact" className="transition hover:text-slate-400">Contact</a>

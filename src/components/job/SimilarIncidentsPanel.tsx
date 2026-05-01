@@ -53,7 +53,7 @@ export function SimilarIncidentsPanel({
                 </time>
               </div>
               <p className="mt-2 text-sm font-semibold text-slate-100">{si.title}</p>
-              <p className="mt-1 font-mono text-[10px] text-slate-600">{si.id}</p>
+              <p className="mt-1 font-mono text-[10px] text-slate-500">{si.id}</p>
               <p className="mt-2 text-sm leading-relaxed text-slate-500">
                 {si.overlap}
               </p>
