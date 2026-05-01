@@ -1,11 +1,20 @@
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { LogOut, Menu, Terminal, UserRound } from "lucide-react";
 import { useCurrentUser } from "@/auth";
 import { LogIQFullLogo } from "@/components/branding/LogIQLogos";
 import { ApiModeBadge } from "@/components/layout/ApiModeBadge";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
+import { NavHeader, NavTab } from "@/components/ui/nav-header";
 import { formatUserContextLine, userDisplayName } from "@/lib/userDisplay";
 import { cn } from "@/lib/utils";
+
+const APP_NAV_TABS: NavTab[] = [
+  { label: "Dashboard", href: "/" },
+  { label: "Jobs", href: "/jobs" },
+  { label: "Anomalies", href: "/anomalies" },
+  { label: "Insights", href: "/insights" },
+  { label: "Reports", href: "/reports" },
+];
 
 interface TopbarProps {
   onToggleSidebar: () => void;
@@ -13,18 +22,11 @@ interface TopbarProps {
 
 export function Topbar({ onToggleSidebar }: TopbarProps) {
   const navigate = useNavigate();
-  const { pathname } = useLocation();
   const { user, clearCurrentUser } = useCurrentUser();
-  const showCompactBrand = pathname === "/";
 
   return (
-    <header
-      className={cn(
-        "sticky top-0 z-30 flex shrink-0 items-center gap-3 border-b border-cyber/[0.08] bg-black/[0.9] px-4 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.5)] backdrop-blur-xl sm:gap-3 sm:px-6",
-        showCompactBrand ? "h-14 sm:h-16" : "h-16"
-      )}
-    >
-      {/* Left: brand + nav (on dashboard home) */}
+    <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-3 border-b border-cyber/[0.08] bg-black/[0.9] px-4 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.5)] backdrop-blur-xl sm:gap-3 sm:px-6">
+      {/* Left: sidebar toggle + brand */}
       <button
         type="button"
         onClick={onToggleSidebar}
@@ -34,38 +36,21 @@ export function Topbar({ onToggleSidebar }: TopbarProps) {
         <Menu className="h-4 w-4" />
       </button>
 
-      <div className="mr-auto flex items-center gap-4 sm:gap-5">
-        <Link
-          to="/"
-          className="flex shrink-0 items-center rounded-lg outline-none ring-offset-2 ring-offset-surface-975 transition hover:opacity-90 focus-visible:ring-2 focus-visible:ring-cyan-500/50"
-          aria-label="LogIQ home"
-        >
-          <LogIQFullLogo className="h-8 w-auto sm:h-9" />
-        </Link>
-        {showCompactBrand && (
-          <>
-            <div className="h-5 w-px bg-cyber/[0.12]" aria-hidden />
-            <nav className="flex items-center gap-1">
-              <Link
-                to="/about"
-                className="rounded-lg px-2.5 py-1.5 text-sm font-medium text-slate-500 transition hover:text-slate-200 hover:bg-cyber/[0.06]"
-              >
-                About Us
-              </Link>
-              <Link
-                to="/faq"
-                className="rounded-lg px-2.5 py-1.5 text-sm font-medium text-slate-500 transition hover:text-slate-200 hover:bg-cyber/[0.06]"
-              >
-                FAQs
-              </Link>
-            </nav>
-          </>
-        )}
+      <Link
+        to="/"
+        className="flex shrink-0 items-center rounded-lg outline-none ring-offset-2 ring-offset-surface-975 transition hover:opacity-90 focus-visible:ring-2 focus-visible:ring-cyan-500/50"
+        aria-label="LogIQ home"
+      >
+        <LogIQFullLogo className="h-8 w-auto sm:h-9" />
+      </Link>
+
+      <div className="hidden flex-1 items-center justify-center lg:flex">
+        <NavHeader tabs={APP_NAV_TABS} />
       </div>
 
       {/* Right: controls + user section */}
-      <div className="flex min-w-0 flex-1 items-center justify-end gap-2 sm:gap-3">
-        {pathname !== "/" ? <ApiModeBadge /> : null}
+      <div className="flex min-w-0 flex-1 items-center justify-end gap-2 sm:gap-3 lg:flex-none">
+        <ApiModeBadge />
 
         {/* Theme toggle */}
         <ThemeToggle />

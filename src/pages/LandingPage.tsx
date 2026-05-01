@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { NavHeader, NavTab } from "@/components/ui/nav-header";
 import {
   motion,
   useInView,
@@ -371,11 +372,11 @@ function SecondaryCta({ className }: { className?: string }) {
 }
 
 // ── Nav ────────────────────────────────────────────────────────────────────
-const navLinks = [
-  { href: "#features", label: "Features" },
-  { href: "#how-it-works", label: "How it works" },
-  { href: "#contact", label: "Contact" },
-] as const;
+const LANDING_NAV_TABS: NavTab[] = [
+  { label: "Features", href: "#features" },
+  { label: "How it works", href: "#how-it-works" },
+  { label: "Contact", href: "#contact" },
+];
 
 function LandingNav() {
   return (
@@ -390,17 +391,9 @@ function LandingNav() {
           <LogIQFullLogo className="h-8 w-auto max-w-[200px] object-contain object-left sm:h-9" />
         </Link>
 
-        <nav className="hidden flex-1 items-center justify-center gap-1 lg:flex">
-          {navLinks.map((l) => (
-            <a
-              key={l.href}
-              href={l.href}
-              className="rounded-lg px-3 py-2 text-sm font-medium text-slate-500 transition hover:text-slate-200 hover:bg-cyber/[0.06]"
-            >
-              {l.label}
-            </a>
-          ))}
-        </nav>
+        <div className="hidden flex-1 items-center justify-center lg:flex">
+          <NavHeader tabs={LANDING_NAV_TABS} />
+        </div>
 
         <div className="flex items-center gap-2.5">
           <ThemeToggle />
