@@ -384,7 +384,7 @@ function LandingNav() {
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className="sticky top-0 z-40 border-b border-cyber/[0.06] bg-black/[0.94] backdrop-blur-xl"
+      className="sticky top-0 z-40 bg-transparent backdrop-blur-xl"
     >
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-3 px-4 sm:h-16 sm:px-6 lg:px-8">
         <Link to="/" className="flex items-center gap-2 outline-none transition hover:opacity-90">

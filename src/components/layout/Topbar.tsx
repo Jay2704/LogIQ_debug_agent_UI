@@ -25,7 +25,7 @@ export function Topbar({ onToggleSidebar }: TopbarProps) {
   const { user, clearCurrentUser } = useCurrentUser();
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-3 border-b border-cyber/[0.08] bg-black/[0.9] px-4 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.5)] backdrop-blur-xl sm:gap-3 sm:px-6">
+    <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-3 bg-transparent px-4 backdrop-blur-xl sm:gap-3 sm:px-6">
       {/* Left: sidebar toggle + brand */}
       <button
         type="button"
