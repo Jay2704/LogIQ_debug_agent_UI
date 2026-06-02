@@ -29,26 +29,74 @@ import type { JiraRcaResult, JiraTicketSummary } from "@/types";
 
 const TICKET_KEY_PATTERN = /^[A-Z][A-Z0-9]+-\d+$/;
 
+function parseLabelsInput(input: string): string[] {
+  return input
+    .split(",")
+    .map((label) => label.trim())
+    .filter(Boolean);
+}
+
+function buildTicketFromFields(input: {
+  key: string;
+  title: string;
+  description: string;
+  labelsInput: string;
+  status: string;
+  priority: string;
+  extractedHints?: string[];
+}): JiraTicketSummary | null {
+  const normalizedKey = input.key.trim().toUpperCase();
+  if (!TICKET_KEY_PATTERN.test(normalizedKey) || !input.title.trim()) {
+    return null;
+  }
+  return {
+    key: normalizedKey,
+    summary: input.title.trim(),
+    status: input.status.trim() || "Unknown",
+    priority: input.priority.trim() || "Unknown",
+    labels: parseLabelsInput(input.labelsInput),
+    cleanedDescription: input.description.trim(),
+    extractedHints: input.extractedHints ?? [],
+  };
+}
+
+function applyTicketToFormFields(
+  payload: JiraTicketSummary,
+  setters: {
+    setTicketTitle: (v: string) => void;
+    setTicketDescription: (v: string) => void;
+    setTicketLabelsInput: (v: string) => void;
+    setTicketStatus: (v: string) => void;
+    setTicketPriority: (v: string) => void;
+  }
+) {
+  setters.setTicketTitle(payload.summary);
+  setters.setTicketDescription(payload.cleanedDescription);
+  setters.setTicketLabelsInput(payload.labels.join(", "));
+  setters.setTicketStatus(payload.status);
+  setters.setTicketPriority(payload.priority);
+}
+
 function mapTicketError(message: string): string {
   const safe = message.trim();
   const lower = safe.toLowerCase();
   if (lower.includes("network error (no response)")) {
-    return "We couldn’t reach the server. Check your connection and try again.";
+    return "Failed to fetch ticket";
   }
   const status = safe.match(/\b(\d{3})\b/)?.[1];
   if (status === "400") {
     return "That doesn’t look like a valid ticket key. Try something like LOG-123.";
   }
   if (status === "404") {
-    return "We couldn’t find that ticket. Check the key and try again.";
+    return "Ticket not found";
   }
   if (status === "401" || status === "403") {
-    return "JIRA isn’t reachable with the current setup. Ask your admin to check JIRA access.";
+    return "Failed to fetch ticket";
   }
   if (status === "500" || status === "502" || status === "503") {
-    return "JIRA is temporarily unavailable. Please try again in a moment.";
+    return "Failed to fetch ticket";
   }
-  return safe || "Couldn’t load this ticket. Please try again.";
+  return safe || "Failed to fetch ticket";
 }
 
 function mapRcaError(message: string): string {
@@ -91,6 +139,11 @@ export function DashboardHomeHero({
   const [ticketLoading, setTicketLoading] = useState(false);
   const [ticketError, setTicketError] = useState<string | null>(null);
   const [ticket, setTicket] = useState<JiraTicketSummary | null>(null);
+  const [ticketTitle, setTicketTitle] = useState("");
+  const [ticketDescription, setTicketDescription] = useState("");
+  const [ticketLabelsInput, setTicketLabelsInput] = useState("");
+  const [ticketStatus, setTicketStatus] = useState("");
+  const [ticketPriority, setTicketPriority] = useState("");
   const [logName, setLogName] = useState<string | null>(null);
   const [logContent, setLogContent] = useState("");
   const [logLines, setLogLines] = useState<string[]>([]);
@@ -104,8 +157,21 @@ export function DashboardHomeHero({
   const [rcaResult, setRcaResult] = useState<JiraRcaResult | null>(null);
   const [recentInvestigations, setRecentInvestigations] = useState<RecentInvestigationEntry[]>([]);
 
-  const canRunRca = Boolean(ticket && confirmedLogInput && logContent.trim());
-  const canUploadLogs = Boolean(ticket);
+  const manualTicket = buildTicketFromFields({
+    key: ticketKey,
+    title: ticketTitle,
+    description: ticketDescription,
+    labelsInput: ticketLabelsInput,
+    status: ticketStatus,
+    priority: ticketPriority,
+    extractedHints: ticket?.extractedHints,
+  });
+  const effectiveTicket = ticket ?? manualTicket;
+  const hasValidTicketKey = TICKET_KEY_PATTERN.test(ticketKey.trim().toUpperCase());
+  const hasFetchedTicket = Boolean(ticket?.key.trim());
+  const hasManualTicket = Boolean(hasValidTicketKey && ticketTitle.trim());
+  const canUploadLogs = hasFetchedTicket || hasManualTicket;
+  const canRunRca = Boolean(hasValidTicketKey && effectiveTicket && logContent.trim());
   const confidencePct =
     typeof rcaResult?.confidence === "number"
       ? Math.round(Math.max(0, Math.min(1, rcaResult.confidence)) * 100)
@@ -117,43 +183,39 @@ export function DashboardHomeHero({
   );
   const hasStrongCandidate = Boolean(rcaResult && !isWeakRca);
   const workflowStageLabel = ticketLoading
-    ? "Fetching ticket…"
+    ? "Fetching ticket..."
     : rcaLoading
       ? "Running RCA…"
       : rcaResult
         ? isWeakRca
           ? "RCA done (partial)"
           : "RCA complete"
-        : ticket
+        : hasFetchedTicket || hasManualTicket
           ? logContent.trim()
-            ? confirmedLogInput
-              ? "Ready to run RCA"
-              : "Preview logs"
-            : "Ticket loaded"
+            ? "Ready to run RCA"
+            : "Ticket ready — upload logs"
           : ticketKey.trim()
-            ? "Enter ticket key"
+            ? "Fetch ticket or fill fields manually"
             : "Start here";
   const nextActionHint = ticketLoading
-    ? "Loading ticket details from JIRA…"
+    ? "Fetching ticket..."
     : ticketError
-      ? "Fix the issue above, then fetch the ticket again."
-      : !ticket
-        ? "Enter JIRA ticket key to start investigation."
+      ? "Fix the issue above, then fetch again or enter ticket fields manually."
+      : !hasFetchedTicket && !hasManualTicket
+        ? "Enter a ticket key, then fetch or fill title and other fields manually."
         : !logContent.trim()
           ? "Upload a log file (.log, .txt, or .csv)."
-          : !confirmedLogInput
-            ? "Review the preview and check the box to confirm this file for RCA."
-            : rcaLoading
-              ? "Analysis in progress — results appear in Step 5."
-              : rcaResult
-                ? "Scroll down to review the result, or start a new ticket above."
-                : "Choose Run RCA when you’re ready.";
-  const runDisabledReason = !ticket
-    ? "Load ticket first"
-    : !logContent.trim()
-      ? "Upload logs first"
-      : !confirmedLogInput
-        ? "Confirm log input"
+          : rcaLoading
+            ? "Analysis in progress — results appear in Step 5."
+            : rcaResult
+              ? "Scroll down to review the result, or start a new ticket above."
+              : "Choose Run RCA when you’re ready.";
+  const runDisabledReason = !hasValidTicketKey
+    ? "Enter a valid ticket key"
+    : !hasFetchedTicket && !hasManualTicket
+      ? "Fetch ticket or enter title manually"
+      : !logContent.trim()
+        ? "Upload logs first"
         : null;
 
   useEffect(() => {
@@ -175,8 +237,21 @@ export function DashboardHomeHero({
     setWorkflowInfo(null);
     try {
       const payload = await api.jira.getTicketSummary(normalizedKey);
+      if (!payload.key.trim()) {
+        throw new Error("[LogIQ] Ticket response missing ticket_key");
+      }
+      console.log("Fetch status:", 200);
+      console.log("Fetched ticket:", payload);
+      setTicketError(null);
       setTicket(payload);
       setTicketKey(normalizedKey);
+      applyTicketToFormFields(payload, {
+        setTicketTitle,
+        setTicketDescription,
+        setTicketLabelsInput,
+        setTicketStatus,
+        setTicketPriority,
+      });
       setRcaResult(null);
       setRcaError(null);
       setWorkflowInfo(null);
@@ -242,16 +317,22 @@ export function DashboardHomeHero({
   };
 
   async function handleRunRca() {
-    if (!ticket) {
-      setRcaError("Choose a ticket in Step 1 first.");
+    const ticketForRca =
+      ticket ??
+      buildTicketFromFields({
+        key: ticketKey,
+        title: ticketTitle,
+        description: ticketDescription,
+        labelsInput: ticketLabelsInput,
+        status: ticketStatus,
+        priority: ticketPriority,
+      });
+    if (!ticketForRca) {
+      setRcaError("Enter a valid ticket key and title in Step 1 first.");
       return;
     }
     if (!logContent.trim()) {
       setRcaError("Upload a log file in Step 2 first.");
-      return;
-    }
-    if (!confirmedLogInput) {
-      setRcaError("Confirm the log preview in Step 3 before running RCA.");
       return;
     }
 
@@ -261,12 +342,12 @@ export function DashboardHomeHero({
     setWorkflowInfo(null);
     try {
       const result = await api.jira.runRcaWithTicket({
-        ticket,
+        ticket: ticketForRca,
         logContent,
       });
       console.log("RCA RESULT:", result);
       setRcaResult(result);
-      const nextRecent = addRecentInvestigation(ticket, result, {
+      const nextRecent = addRecentInvestigation(ticketForRca, result, {
         fileName: logName,
         lineCount: logLines.length,
       });
@@ -294,8 +375,7 @@ export function DashboardHomeHero({
 
   function restoreRecentInvestigation(entry: RecentInvestigationEntry) {
     scrollRestoredInvestigationRef.current = true;
-    setTicketKey(entry.ticket.key);
-    setTicket({
+    const restored: JiraTicketSummary = {
       key: entry.ticket.key,
       summary: entry.ticket.summary,
       status: entry.ticket.status,
@@ -303,6 +383,15 @@ export function DashboardHomeHero({
       labels: [],
       cleanedDescription: "",
       extractedHints: entry.ticket.extractedHints,
+    };
+    setTicketKey(entry.ticket.key);
+    setTicket(restored);
+    applyTicketToFormFields(restored, {
+      setTicketTitle,
+      setTicketDescription,
+      setTicketLabelsInput,
+      setTicketStatus,
+      setTicketPriority,
     });
     setLogName(entry.log.fileName);
     setLogContent("");
@@ -394,7 +483,7 @@ export function DashboardHomeHero({
                       ? isWeakRca
                         ? "bg-amber-300"
                         : "bg-emerald-300"
-                      : ticket
+                      : hasFetchedTicket || hasManualTicket
                         ? "bg-sky-300"
                         : "bg-slate-500"
               )}
@@ -407,14 +496,14 @@ export function DashboardHomeHero({
               {
                 k: "01",
                 label: "Fetch ticket",
-                done: Boolean(ticket),
+                done: hasFetchedTicket || hasManualTicket,
                 active: ticketLoading,
               },
               { k: "02", label: "Upload logs", done: Boolean(logContent.trim()), active: false },
               {
                 k: "03",
                 label: "Preview logs",
-                done: confirmedLogInput && Boolean(logContent.trim()),
+                done: Boolean(logContent.trim()),
                 active: false,
               },
               { k: "04", label: "Run RCA", done: Boolean(rcaResult), active: rcaLoading },
@@ -444,7 +533,8 @@ export function DashboardHomeHero({
             </p>
           </div>
           <p className="mt-2 text-xs text-slate-500 sm:text-sm">
-            Enter JIRA ticket key to start investigation.
+            Enter a ticket key, fetch from the API, or fill the fields below manually for offline
+            RCA testing.
           </p>
           <div className="mt-6 flex max-w-3xl flex-col gap-3 sm:flex-row">
             <label className="sr-only" htmlFor="jira-ticket-key">
@@ -474,18 +564,18 @@ export function DashboardHomeHero({
               ) : (
                 <SearchCheck className="h-4 w-4" />
               )}
-              {ticketLoading ? "Fetching..." : "Fetch Ticket"}
+              {ticketLoading ? "Fetching ticket..." : "Fetch Ticket"}
             </button>
           </div>
-          {!ticketLoading && !ticket && !ticketError ? (
+          {!ticketLoading && !hasFetchedTicket && !hasManualTicket && !ticketError ? (
             <p className="mt-2 text-xs text-slate-500">
-              Example: <span className="font-mono text-slate-300">LOG-123</span>
+              Example: <span className="font-mono text-slate-300">LAAA-78</span>
             </p>
           ) : null}
           {ticketLoading ? (
             <p className="mt-3 inline-flex items-center gap-2 text-xs text-sky-300/90">
               <Loader2 className="h-3.5 w-3.5 animate-spin shrink-0" aria-hidden />
-              Fetching ticket from JIRA…
+              Fetching ticket...
             </p>
           ) : null}
           {ticketError ? (
@@ -497,35 +587,82 @@ export function DashboardHomeHero({
               <span>{ticketError}</span>
             </div>
           ) : null}
-          {ticket ? (
-            <div className="mt-4 rounded-xl border border-white/[0.08] bg-black/[0.82] p-4 ring-1 ring-white/[0.04]">
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <p className="font-mono text-sm font-semibold text-sky-300">{ticket.key}</p>
-                <span className="rounded-full border border-white/[0.12] bg-white/[0.03] px-2.5 py-1 text-[11px] font-semibold text-slate-300">
-                  {ticket.status}
-                </span>
-              </div>
-              <h3 className="mt-2 text-sm font-semibold text-white">{ticket.summary}</h3>
-              <div className="mt-3 flex flex-wrap gap-2 text-[11px]">
-                <span className="rounded-full border border-violet-500/35 bg-violet-500/10 px-2 py-0.5 font-semibold text-violet-200">
-                  Priority: {ticket.priority}
-                </span>
-                {ticket.labels.length > 0
-                  ? ticket.labels.map((label) => (
-                      <span
-                        key={label}
-                        className="rounded-full border border-slate-500/35 bg-slate-500/10 px-2 py-0.5 text-slate-300"
-                      >
-                        {label}
-                      </span>
-                    ))
-                  : null}
-              </div>
-              <p className="mt-3 text-xs leading-relaxed text-slate-400">
-                {ticket.cleanedDescription || "No description text was included for this ticket."}
+          {hasValidTicketKey || hasFetchedTicket || hasManualTicket ? (
+            <div className="mt-4 space-y-3 rounded-xl border border-white/[0.08] bg-black/[0.82] p-4 ring-1 ring-white/[0.04]">
+              <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
+                Ticket details {hasFetchedTicket ? "(from API)" : "(manual)"}
               </p>
-              {ticket.extractedHints.length > 0 ? (
-                <div className="mt-3">
+              <div className="grid gap-3 sm:grid-cols-2">
+                <label className="block sm:col-span-2">
+                  <span className="mb-1 block text-[11px] font-semibold text-slate-400">Title</span>
+                  <input
+                    value={ticketTitle}
+                    onChange={(e) => {
+                      setTicketTitle(e.target.value);
+                      setTicket(null);
+                    }}
+                    placeholder="Users unable to complete MFA authentication"
+                    className="w-full rounded-lg border border-white/[0.12] bg-black/[0.82] px-3 py-2 text-sm text-slate-100 outline-none focus:border-sky-400/55 focus:ring-2 focus:ring-sky-500/25"
+                  />
+                </label>
+                <label className="block sm:col-span-2">
+                  <span className="mb-1 block text-[11px] font-semibold text-slate-400">
+                    Description
+                  </span>
+                  <textarea
+                    value={ticketDescription}
+                    onChange={(e) => {
+                      setTicketDescription(e.target.value);
+                      setTicket(null);
+                    }}
+                    rows={3}
+                    placeholder="OTP validation timeout during MFA verification."
+                    className="w-full resize-y rounded-lg border border-white/[0.12] bg-black/[0.82] px-3 py-2 text-sm text-slate-100 outline-none focus:border-sky-400/55 focus:ring-2 focus:ring-sky-500/25"
+                  />
+                </label>
+                <label className="block">
+                  <span className="mb-1 block text-[11px] font-semibold text-slate-400">Status</span>
+                  <input
+                    value={ticketStatus}
+                    onChange={(e) => {
+                      setTicketStatus(e.target.value);
+                      setTicket(null);
+                    }}
+                    placeholder="open"
+                    className="w-full rounded-lg border border-white/[0.12] bg-black/[0.82] px-3 py-2 text-sm text-slate-100 outline-none focus:border-sky-400/55 focus:ring-2 focus:ring-sky-500/25"
+                  />
+                </label>
+                <label className="block">
+                  <span className="mb-1 block text-[11px] font-semibold text-slate-400">
+                    Priority
+                  </span>
+                  <input
+                    value={ticketPriority}
+                    onChange={(e) => {
+                      setTicketPriority(e.target.value);
+                      setTicket(null);
+                    }}
+                    placeholder="high"
+                    className="w-full rounded-lg border border-white/[0.12] bg-black/[0.82] px-3 py-2 text-sm text-slate-100 outline-none focus:border-sky-400/55 focus:ring-2 focus:ring-sky-500/25"
+                  />
+                </label>
+                <label className="block sm:col-span-2">
+                  <span className="mb-1 block text-[11px] font-semibold text-slate-400">
+                    Labels (comma-separated)
+                  </span>
+                  <input
+                    value={ticketLabelsInput}
+                    onChange={(e) => {
+                      setTicketLabelsInput(e.target.value);
+                      setTicket(null);
+                    }}
+                    placeholder="sev1, auth, mfa"
+                    className="w-full rounded-lg border border-white/[0.12] bg-black/[0.82] px-3 py-2 text-sm text-slate-100 outline-none focus:border-sky-400/55 focus:ring-2 focus:ring-sky-500/25"
+                  />
+                </label>
+              </div>
+              {ticket?.extractedHints && ticket.extractedHints.length > 0 ? (
+                <div>
                   <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
                     Extracted hints
                   </p>
@@ -564,7 +701,11 @@ export function DashboardHomeHero({
                 type="button"
                 disabled={!canUploadLogs}
                 onClick={onPickFile}
-                title={!canUploadLogs ? "Fetch ticket first" : undefined}
+                title={
+                  !canUploadLogs
+                    ? "Fetch ticket or enter title manually first"
+                    : undefined
+                }
                 className={cn(
                   "inline-flex items-center gap-2 rounded-lg border border-sky-500/35 bg-sky-500/15 px-3.5 py-2 text-xs font-semibold text-sky-100 transition hover:bg-sky-500/25 disabled:cursor-not-allowed disabled:opacity-60"
                 )}
@@ -579,15 +720,17 @@ export function DashboardHomeHero({
                 </span>
               ) : null}
             </div>
-            {!ticket ? (
-              <p className="mt-2 text-xs text-slate-500">Fetch a JIRA ticket first to enable log intake.</p>
+            {!canUploadLogs ? (
+              <p className="mt-2 text-xs text-slate-500">
+                Fetch a ticket or enter a title manually to enable log upload.
+              </p>
             ) : null}
-            {ticket && !logContent.trim() ? (
+            {canUploadLogs && !logContent.trim() ? (
               <p className="mt-2 text-xs text-slate-500">
                 No logs uploaded yet. Upload a file to continue the investigation workflow.
               </p>
             ) : null}
-            {ticket && logContent.trim() && logName ? (
+            {canUploadLogs && logContent.trim() && logName ? (
               <p className="mt-2 text-xs text-emerald-300/90">Log file uploaded successfully</p>
             ) : null}
             {logError ? (
@@ -616,7 +759,7 @@ export function DashboardHomeHero({
               <p className="text-sm font-semibold text-white">Run RCA</p>
             </div>
             <p className="mt-2 text-xs text-slate-500">
-              Uses the ticket above and the log file you confirmed in Step 3.
+              Uses the ticket key, ticket fields above, and the uploaded log file.
             </p>
             <button
               type="button"
@@ -663,7 +806,7 @@ export function DashboardHomeHero({
               </div>
               <p className="mt-2 text-xs text-slate-500">
                 From ticket{" "}
-                <span className="font-mono text-sky-300">{ticket?.key ?? "—"}</span>
+                <span className="font-mono text-sky-300">{effectiveTicket?.key ?? "—"}</span>
                 {logName ? (
                   <>
                     {" "}
@@ -738,13 +881,13 @@ export function DashboardHomeHero({
                   <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
                     Ticket context
                   </p>
-                  {ticket ? (
+                  {effectiveTicket ? (
                     <ul className="mt-2 space-y-1.5 text-xs text-slate-300">
                       <li>
-                        <span className="text-slate-500">Key:</span> {ticket.key}
+                        <span className="text-slate-500">Key:</span> {effectiveTicket.key}
                       </li>
                       <li>
-                        <span className="text-slate-500">Summary:</span> {ticket.summary}
+                        <span className="text-slate-500">Title:</span> {effectiveTicket.summary}
                       </li>
                     </ul>
                   ) : (

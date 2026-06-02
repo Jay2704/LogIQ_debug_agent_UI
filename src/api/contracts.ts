@@ -80,6 +80,7 @@ export interface UtilitiesService {
 export interface JiraService {
   /** GET /api/v1/jira/tickets/search?q=… — partial key or summary text. */
   searchTickets(query: string): Promise<JiraTicketSearchHit[]>;
+  /** GET /api/v1/jira/ticket/:ticket_key — full ticket for RCA intake. */
   getTicketSummary(ticketKey: string): Promise<JiraTicketSummary>;
   runRcaWithTicket(input: {
     ticket: JiraTicketSummary;

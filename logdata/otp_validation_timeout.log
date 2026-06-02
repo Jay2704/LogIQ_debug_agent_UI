@@ -1,0 +1,13 @@
+2026-04-08T10:01:01Z INFO auth-service Request received request_id=req_101 user_id=usr_77 endpoint=/login
+
+2026-04-08T10:01:02Z INFO auth-service MFA challenge initiated user_id=usr_77 method=otp channel=sms
+
+2026-04-08T10:01:03Z INFO auth-service OTP validation started request_id=req_101 user_id=usr_77
+
+2026-04-08T10:01:04Z ERROR auth-service OTP validation timeout request_id=req_101 user_id=usr_77
+
+Traceback (most recent call last):
+  File "/srv/auth/otp_service.py", line 112, in validate_otp
+    raise TimeoutError("OTP validation timeout")
+
+TimeoutError: OTP validation timeout

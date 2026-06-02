@@ -1,4 +1,5 @@
 import type { LogIQApi } from "@/api/contracts";
+import { API_BASE_URL } from "@/api/config";
 import { createMockApi } from "@/api/mock/mockApi";
 import type {
   CreateJobInput,
@@ -21,9 +22,6 @@ import {
   parseUserListJson,
   serializeCreateUserBody,
 } from "./parseUserApi";
-
-const BASE_URL = "http://localhost:8000";
-const EXPLICIT_API_ORIGIN = BASE_URL.replace(/\/+$/, "");
 
 /**
  * “Hybrid” HTTP client: real `fetch` calls for backend-supported routes (jobs, RCA, debug-agent,
@@ -54,72 +52,29 @@ async function httpError(res: Response, label: string): Promise<never> {
 }
 
 /**
- * Backend may return a flat ticket object or `{ ticket: { ticket_key, summary, description, ... }, hints: [...] }`.
- * Normalize to {@link JiraTicketSummary} in one place so the dashboard shows real priority and description.
+ * Flat backend ticket payload from GET /api/v1/jira/ticket/:ticket_key.
  */
-function parseJiraTicketSummaryJson(json: unknown): JiraTicketSummary {
-  if (!json || typeof json !== "object") {
-    throw new Error("[LogIQ API] GET /api/v1/jira/tickets/:key: invalid JSON payload");
+function parseJiraTicketFlatJson(data: Record<string, unknown>): JiraTicketSummary {
+  const ticketKey =
+    typeof data.ticket_key === "string" ? data.ticket_key.trim().toUpperCase() : "";
+  if (!ticketKey) {
+    throw new Error("[LogIQ API] GET /api/v1/jira/ticket/:ticket_key: missing ticket_key");
   }
-  const root = json as Record<string, unknown>;
-  const nested =
-    root.ticket && typeof root.ticket === "object"
-      ? (root.ticket as Record<string, unknown>)
-      : null;
-  const t = nested ?? root;
 
-  const labels = Array.isArray(t.labels)
-    ? t.labels.filter((x): x is string => typeof x === "string")
-    : Array.isArray(root.labels)
-      ? root.labels.filter((x): x is string => typeof x === "string")
-      : [];
-
-  const hintsFromRoot = Array.isArray(root.hints)
-    ? root.hints.filter((x): x is string => typeof x === "string")
+  const labels = Array.isArray(data.labels)
+    ? data.labels.filter((label): label is string => typeof label === "string")
     : [];
-  const hintsFromTicket = Array.isArray(t.extracted_hints)
-    ? t.extracted_hints.filter((x): x is string => typeof x === "string")
-    : [];
-  const hintsFromRootLegacy = Array.isArray(root.extracted_hints)
-    ? root.extracted_hints.filter((x): x is string => typeof x === "string")
-    : [];
-  const extractedHints =
-    hintsFromRoot.length > 0
-      ? hintsFromRoot
-      : hintsFromTicket.length > 0
-        ? hintsFromTicket
-        : hintsFromRootLegacy;
-
-  const str = (v: unknown) => (typeof v === "string" ? v : "");
-
-  const key =
-    str(t.ticket_key).trim() ||
-    str(t.key).trim() ||
-    str(root.key).trim() ||
-    "";
-
-  const summary = str(t.summary) || str(root.summary);
-
-  const statusRaw = str(t.status) || str(root.status);
-  const status = statusRaw.trim() ? statusRaw : "Unknown";
-
-  const priorityRaw = str(t.priority) || str(root.priority);
-  const priority = priorityRaw.trim() ? priorityRaw : "Unknown";
-
-  const cleanedDescription =
-    str(t.cleaned_description) ||
-    str(t.description) ||
-    str(root.cleaned_description) ||
-    str(root.description);
 
   return {
-    key,
-    summary,
-    status,
-    priority,
+    key: ticketKey,
+    summary: typeof data.title === "string" ? data.title : "",
+    status:
+      typeof data.status === "string" && data.status.trim() ? data.status : "Unknown",
+    priority:
+      typeof data.priority === "string" && data.priority.trim() ? data.priority : "Unknown",
     labels,
-    cleanedDescription,
-    extractedHints,
+    cleanedDescription: typeof data.description === "string" ? data.description : "",
+    extractedHints: [],
   };
 }
 
@@ -200,7 +155,10 @@ async function fetchNetwork(url: string, init?: RequestInit): Promise<Response> 
 }
 
 export function createHttpApi(): LogIQApi {
-  const baseUrl = EXPLICIT_API_ORIGIN;
+  if (!API_BASE_URL) {
+    throw new Error("[LogIQ API] createHttpApi requires VITE_API_BASE_URL when HTTP mode is enabled");
+  }
+  const baseUrl = API_BASE_URL;
   const mocks = createMockApi();
 
   async function postAuthLogin(input: LoginInput): Promise<User> {
@@ -409,12 +367,27 @@ export function createHttpApi(): LogIQApi {
         const key = ticketKey.trim().toUpperCase();
         const url = joinApiUrl(
           baseUrl,
-          `/api/v1/jira/tickets/${encodeURIComponent(key)}`
+          `/api/v1/jira/ticket/${encodeURIComponent(key)}`
         );
         const res = await fetchNetwork(url);
-        if (!res.ok) await httpError(res, "GET /api/v1/jira/tickets/:key");
+        console.log("Fetch status:", res.status);
         const json: unknown = await readJsonOrNull(res);
-        return parseJiraTicketSummaryJson(json);
+        console.log("Fetched ticket:", json);
+
+        if (res.status !== 200) {
+          await httpError(res, "GET /api/v1/jira/ticket/:ticket_key");
+        }
+
+        if (!json || typeof json !== "object") {
+          throw new Error("[LogIQ API] GET /api/v1/jira/ticket/:ticket_key: invalid JSON payload");
+        }
+
+        const data = json as Record<string, unknown>;
+        if (typeof data.ticket_key !== "string" || !data.ticket_key.trim()) {
+          throw new Error("[LogIQ API] GET /api/v1/jira/ticket/:ticket_key: missing ticket_key");
+        }
+
+        return parseJiraTicketFlatJson(data);
       },
       runRcaWithTicket: async ({ ticket, logContent }) => {
         const ticketKey = ticket.key;
@@ -422,70 +395,68 @@ export function createHttpApi(): LogIQApi {
         if (!trimmedLogContent) {
           throw new Error("[LogIQ API] runRcaWithTicket: log_content is empty");
         }
-        const url = `${baseUrl}/api/v1/jira/rca/run`;
+        const url = joinApiUrl(baseUrl, "/api/v1/jira/rca/run");
         const payload = {
           ticket_key: ticketKey,
-          ticket_summary: ticket.summary,
-          ticket_status: ticket.status,
-          ticket_priority: ticket.priority,
-          extracted_hints: ticket.extractedHints,
+          ticket: {
+            key: ticket.key,
+            title: ticket.summary,
+            description: ticket.cleanedDescription,
+            labels: ticket.labels,
+          },
           log_content: trimmedLogContent,
         };
-        console.log("FINAL URL:", `${baseUrl}/api/v1/jira/rca/run`);
-        console.log("Payload length:", trimmedLogContent.length);
-        console.log("[LogIQ API] runRcaWithTicket request", {
-          finalUrl: `${baseUrl}/api/v1/jira/rca/run`,
-          payloadKeys: Object.keys(payload),
+        logApiDebug("jira/rca/run request", {
+          url,
+          ticketKey,
+          logBytes: trimmedLogContent.length,
         });
-        const finalUrl = url;
-        const options: RequestInit = {
+        const res = await fetchNetwork(url, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
-        };
+        });
+        if (!res.ok) await httpError(res, "POST /api/v1/jira/rca/run");
+        const data = (await readJsonOrNull(res)) as Record<string, unknown> | null;
+        if (!data || typeof data !== "object") {
+          throw new Error("[LogIQ API] POST /api/v1/jira/rca/run: invalid JSON payload");
+        }
 
-        try {
-          const response = await fetch(finalUrl, options);
-
-          const rawText = await response.text();
-          console.log("RAW BACKEND RESPONSE:", rawText);
-
-          if (!response.ok) {
-            throw new Error(rawText);
-          }
-
-          const data = JSON.parse(rawText) as Record<string, unknown>;
-          console.log("RCA API RESPONSE:", data);
-
-          const evidence = Array.isArray(data.evidence)
-            ? data.evidence.filter((x): x is string => typeof x === "string")
+        const evidence = Array.isArray(data.evidence)
+          ? data.evidence.filter((x): x is string => typeof x === "string")
+          : Array.isArray(data.evidence_summary)
+            ? data.evidence_summary.filter((x): x is string => typeof x === "string")
             : [];
 
-          return {
-            primary_root_cause:
-              typeof data.primary_root_cause === "string"
-                ? data.primary_root_cause
-                : typeof data.root_cause === "string"
-                  ? data.root_cause
-                  : "",
-            rootCause:
-              typeof data.root_cause === "string"
+        const extractedLogSignals = Array.isArray(data.extracted_log_signals)
+          ? data.extracted_log_signals.filter((x): x is string => typeof x === "string")
+          : [];
+
+        const remediationSuggestions = Array.isArray(data.remediation_suggestions)
+          ? data.remediation_suggestions.filter((x): x is string => typeof x === "string")
+          : Array.isArray(data.remediationSuggestions)
+            ? data.remediationSuggestions.filter((x): x is string => typeof x === "string")
+            : [];
+
+        return {
+          primary_root_cause:
+            typeof data.primary_root_cause === "string"
+              ? data.primary_root_cause
+              : typeof data.root_cause === "string"
                 ? data.root_cause
-                : typeof data.primary_root_cause === "string"
-                  ? data.primary_root_cause
-                  : "",
-            confidence: typeof data.confidence === "number" ? data.confidence : undefined,
-            evidenceSummary: evidence,
-            extractedLogSignals: [],
-            explanation: typeof data.explanation === "string" ? data.explanation : undefined,
-            remediationSuggestions: [],
-          };
-        } catch (err) {
-          console.error("FULL RCA ERROR:", err);
-          const message = err instanceof Error ? err.message : String(err);
-          alert("RCA failed: " + message);
-          throw err;
-        }
+                : "",
+          rootCause:
+            typeof data.root_cause === "string"
+              ? data.root_cause
+              : typeof data.primary_root_cause === "string"
+                ? data.primary_root_cause
+                : "",
+          confidence: typeof data.confidence === "number" ? data.confidence : undefined,
+          evidenceSummary: evidence,
+          extractedLogSignals,
+          explanation: typeof data.explanation === "string" ? data.explanation : undefined,
+          remediationSuggestions,
+        };
       },
     },
     auth: {
