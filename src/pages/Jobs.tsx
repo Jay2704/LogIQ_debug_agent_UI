@@ -17,6 +17,7 @@ import { useJobs } from "@/api/hooks";
 import { CreateJobModal } from "@/components/jobs/CreateJobModal";
 import { FeedbackNotice } from "@/components/ui/FeedbackNotice";
 import { computeJobStatusSummary } from "@/lib/insights";
+import { getDemoJobs, shouldUseDemoData } from "@/api/demo/demoDataProvider";
 import { getJobRouteId } from "@/lib/jobRoute";
 import { ctaButtonGradient, ctaGlowBlueOnly } from "@/lib/ctaTheme";
 import { cn } from "@/lib/utils";
@@ -46,7 +47,8 @@ export function Jobs() {
   const location = useLocation();
   const { user } = useCurrentUser();
   const roleCaps = useRoleUiCapabilities();
-  const { data: jobs, loading, error, refetch } = useJobs();
+  const { data: jobsFromHook, loading, error, refetch } = useJobs();
+  const jobs = jobsFromHook ?? (shouldUseDemoData() ? getDemoJobs() : null);
   const canCreateJob =
     Boolean(user?.userId?.trim()) && roleCaps.canCreateJob;
   const createBlockedNoUser = !user?.userId?.trim();
@@ -149,7 +151,7 @@ export function Jobs() {
     );
   }
 
-  if (error) {
+  if (error && !shouldUseDemoData()) {
     return (
       <div className="space-y-6">
         <FeedbackNotice tone="error" title="Could not load jobs">

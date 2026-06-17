@@ -1,10 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
-import { api } from "@/api";
+import { getDemoJobs, shouldUseDemoData } from "@/api/demo/demoDataProvider";
+import { getApi } from "@/api/client";
 import type { Job } from "@/types";
 
 export function useJobs() {
-  const [data, setData] = useState<Job[] | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState<Job[] | null>(() =>
+    shouldUseDemoData() ? getDemoJobs() : null
+  );
+  const [loading, setLoading] = useState(() => !shouldUseDemoData());
   const [error, setError] = useState<Error | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
 
@@ -13,11 +16,18 @@ export function useJobs() {
   }, []);
 
   useEffect(() => {
+    if (shouldUseDemoData()) {
+      setData(getDemoJobs());
+      setLoading(false);
+      setError(null);
+      return;
+    }
+
     let cancelled = false;
     setLoading(true);
     setError(null);
-    api.jobs
-      .list()
+    getApi()
+      .jobs.list()
       .then((jobs) => {
         if (!cancelled) {
           setData(jobs);

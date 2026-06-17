@@ -3,6 +3,7 @@ import { Component as EtherealShadow } from "@/components/ui/etheral-shadow";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { AppErrorBoundary } from "@/components/layout/AppErrorBoundary";
 import { AuthenticatedAppShell } from "@/components/layout/AuthenticatedAppShell";
+import { DemoAuthRedirect } from "@/components/auth/DemoAuthRedirect";
 import { About } from "@/pages/About";
 import { Faq } from "@/pages/Faq";
 import { Anomalies } from "@/pages/Anomalies";
@@ -39,11 +40,11 @@ export default function App() {
       <div className="relative" style={{ zIndex: 1 }}>
     <AppErrorBoundary>
     <Routes>
-      <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<Signup />} />
-      <Route path="/verify-email" element={<VerifyEmail />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/login" element={<DemoAuthRedirect><Login /></DemoAuthRedirect>} />
+      <Route path="/signup" element={<DemoAuthRedirect><Signup /></DemoAuthRedirect>} />
+      <Route path="/verify-email" element={<DemoAuthRedirect><VerifyEmail /></DemoAuthRedirect>} />
+      <Route path="/forgot-password" element={<DemoAuthRedirect><ForgotPassword /></DemoAuthRedirect>} />
+      <Route path="/reset-password" element={<DemoAuthRedirect><ResetPassword /></DemoAuthRedirect>} />
       <Route path="/" element={<AuthenticatedAppShell />}>
         <Route element={<AppLayout />}>
           <Route index element={<Dashboard />} />

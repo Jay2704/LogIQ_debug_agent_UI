@@ -78,6 +78,11 @@ export function JobsTable({ jobs, emptyMessage, footer }: JobsTableProps) {
                   <span className="font-mono text-[13px] font-medium text-slate-100 transition group-hover:text-white">
                     {getJobRouteId(job)}
                   </span>
+                  {job.userSummary ? (
+                    <span className="mt-0.5 block text-xs font-medium text-slate-400">
+                      {job.userSummary}
+                    </span>
+                  ) : null}
                 </td>
                 <td className="max-w-[200px] px-4 py-3.5 align-middle">
                   <span

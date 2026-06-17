@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { LogIQFullLogo } from "@/components/branding/LogIQLogos";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { ctaButtonGradient, ctaGlowBlueOnly } from "@/lib/ctaTheme";
+import { DEMO_MODE, getOpenWorkspacePath } from "@/lib/demoMode";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
@@ -37,14 +38,16 @@ export function LandingMarketingNav() {
 
         <div className="flex shrink-0 items-center gap-2.5 sm:gap-3">
           <ThemeToggle />
+          {!DEMO_MODE ? (
           <Link
             to="/login"
             className="hidden rounded-lg px-3 py-2 text-sm font-semibold leading-tight text-slate-400 transition hover:bg-white/[0.04] hover:text-slate-200 sm:inline-block"
           >
             Login
           </Link>
+          ) : null}
           <Link
-            to="/login"
+            to={getOpenWorkspacePath()}
             className={cn(
               "rounded-lg px-4 py-2 text-xs font-semibold leading-tight text-white sm:px-5 sm:py-2.5 sm:text-sm",
               ctaButtonGradient,

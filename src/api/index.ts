@@ -1,4 +1,4 @@
-export { api, createApiClient } from "./client";
+export { api, createApiClient, getApi } from "./client";
 export {
   API_BASE_URL,
   API_BASE_URL_USES_DEV_DEFAULT,

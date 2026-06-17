@@ -1,5 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { api } from "@/api";
+import { getApi } from "@/api/client";
+import {
+  getDemoJobDetailBundle,
+  getDemoRcaForJob,
+  shouldUseDemoData,
+} from "@/api/demo/demoDataProvider";
+import { getConferenceExplanationForJob } from "@/data/demo/conferenceDemoData";
 import { logApiDebug } from "@/api/http/debugLog";
 import type { RcaAssistiveExplanation, RcaResult } from "@/types";
 
@@ -137,6 +143,7 @@ export function useRcaInvestigation(
     const aid = anomalyId?.trim() ?? "";
     const jid = jobId?.trim() ?? "";
     if (!aid) {
+      if (shouldUseDemoData()) return;
       setPhase("error");
       setError("Anomaly ID is missing — cannot run the debug agent.");
       setWarning(null);
@@ -146,6 +153,7 @@ export function useRcaInvestigation(
       return;
     }
     if (!jid) {
+      if (shouldUseDemoData()) return;
       setPhase("error");
       setError("Job ID is missing — cannot attach RCA results.");
       setWarning(null);
@@ -162,14 +170,43 @@ export function useRcaInvestigation(
     setSuccessMessage(null);
     setLiveRca(undefined);
     setLiveExplanation(undefined);
+
+    if (shouldUseDemoData()) {
+      await new Promise((r) => setTimeout(r, 450));
+      setPhase("fetching");
+      await new Promise((r) => setTimeout(r, 550));
+      const rcaRes = getDemoRcaForJob(jid) ?? null;
+      const bundle = getDemoJobDetailBundle(jid);
+      const explanationText = getConferenceExplanationForJob(jid) || bundle?.explanation || "";
+      const ex: RcaAssistiveExplanation = {
+        explanationSummary: explanationText,
+        evidenceHighlights: bundle?.evidence.map((e) => e.detail) ?? [],
+        confidenceAlignmentNote:
+          "Conference demo — deterministic RCA and assistive narrative are aligned.",
+        limitations: "Demo dataset only.",
+        remediationSteps: bundle?.remediation ?? [],
+        finalReportSummary: explanationText,
+      };
+      setLiveRca(rcaRes);
+      setLiveExplanation(ex);
+      setPhase("ready");
+      setSuccessMessage(
+        rcaRes
+          ? "Deterministic RCA and assistive explanation are now shown below."
+          : "Investigation complete — review the workspace tabs for available context."
+      );
+      inFlightRef.current = false;
+      return;
+    }
+
     try {
       logApiDebug("runInvestigation start", { anomalyId: aid, jobId: jid });
-      await api.debugAgent.run(aid);
+      await getApi().debugAgent.run(aid);
       setPhase("fetching");
 
       const [rcaSettled, exSettled] = await Promise.allSettled([
-        api.rca.getResultsByAnomalyId(aid, jid),
-        api.rca.getExplanationByAnomalyId(aid),
+        getApi().rca.getResultsByAnomalyId(aid, jid),
+        getApi().rca.getExplanationByAnomalyId(aid),
       ]);
 
       let rcaRes: RcaResult | null = null;

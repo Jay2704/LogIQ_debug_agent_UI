@@ -36,6 +36,8 @@ import {
   getRunInvestigationDisabledTitle,
   useRoleUiCapabilities,
 } from "@/lib/roleUiCapabilities";
+import { getDemoJobDetailBundle } from "@/api/demo/demoDataProvider";
+import { DEMO_MODE } from "@/lib/demoMode";
 import { cn, formatDateTime } from "@/lib/utils";
 
 const triggerLabels = {
@@ -146,7 +148,7 @@ export function JobDetail() {
     );
   }
 
-  if (error) {
+  if (error && !DEMO_MODE) {
     return (
       <div className="space-y-6 pb-16">
         {createdBannerEl}
@@ -187,7 +189,11 @@ export function JobDetail() {
     );
   }
 
-  if (!bundle) {
+  const activeBundle =
+    bundle ??
+    (DEMO_MODE && jobId?.trim() ? getDemoJobDetailBundle(jobId.trim()) : undefined);
+
+  if (!activeBundle) {
     const isMissingParam = notFoundReason === "missing_job_id";
     const isUnknownJob = notFoundReason === "unknown_job";
     const syncLikely = isUnknownJob && showCreatedBanner;
@@ -270,7 +276,7 @@ export function JobDetail() {
     similarIncidents,
     confidenceNote,
     limitationsNote,
-  } = bundle;
+  } = activeBundle;
 
   const routeJobId = getJobRouteId(job);
 
@@ -481,7 +487,7 @@ export function JobDetail() {
           </div>
         ) : null}
 
-        {investigationPhase === "error" && investigationError ? (
+        {investigationPhase === "error" && investigationError && !DEMO_MODE ? (
           <div className="mt-4">
             <FeedbackNotice tone="error" title="Investigation failed">
               <p className="text-red-100/90">{investigationError}</p>

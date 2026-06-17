@@ -1,11 +1,18 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
+  getDemoAnomalies,
+  shouldUseDemoData,
+} from "@/api/demo/demoDataProvider";
+import { getApi } from "@/api/client";
+import {
   AnomalyStatusBadge,
   SeverityBadge,
 } from "@/components/ui/StatusBadge";
 import { PageLoading } from "@/components/ui/PageLoading";
+import { DEMO_MODE } from "@/lib/demoMode";
 import { formatDateTime } from "@/lib/utils";
+import type { Anomaly } from "@/types";
 
 type UiSeverity = "low" | "medium" | "high" | "critical";
 type UiStatus = "open" | "investigating" | "mitigated" | "resolved";
@@ -46,26 +53,24 @@ function normalizeStatus(value: unknown): UiStatus {
   return "open";
 }
 
-function parseAnomalyRow(row: unknown): UiAnomaly | null {
-  if (!row || typeof row !== "object") return null;
-  const r = row as Record<string, unknown>;
-  const id = String(r.anomaly_id ?? r.id ?? "").trim();
-  if (!id) return null;
+function fromDomainAnomaly(a: Anomaly): UiAnomaly {
   return {
-    id,
-    service: String(r.service ?? "unknown-service").trim() || "unknown-service",
-    severity: normalizeSeverity(r.severity),
-    status: normalizeStatus(r.status),
-    detectedAt: String(r.timestamp ?? r.detected_at ?? r.detectedAt ?? new Date().toISOString()),
-    summary: String(r.summary ?? "").trim() || "No summary provided.",
-    signalType: String(r.signal_type ?? r.signalType ?? "api"),
+    id: a.id,
+    service: a.service,
+    severity: normalizeSeverity(a.severity),
+    status: normalizeStatus(a.status),
+    detectedAt: a.detectedAt,
+    summary: a.summary,
+    signalType: a.signalType,
   };
 }
 
 export function Anomalies() {
   const navigate = useNavigate();
-  const [anomalies, setAnomalies] = useState<UiAnomaly[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [anomalies, setAnomalies] = useState<UiAnomaly[]>(() =>
+    shouldUseDemoData() ? getDemoAnomalies().map(fromDomainAnomaly) : []
+  );
+  const [loading, setLoading] = useState(() => !shouldUseDemoData());
   const [loadError, setLoadError] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [creating, setCreating] = useState(false);
@@ -82,20 +87,18 @@ export function Anomalies() {
   };
 
   const fetchAnomalies = async () => {
+    if (shouldUseDemoData()) {
+      setAnomalies(getDemoAnomalies().map(fromDomainAnomaly));
+      setLoading(false);
+      setLoadError(null);
+      return;
+    }
+
     setLoading(true);
     setLoadError(null);
     try {
-      const res = await fetch("http://localhost:8000/api/v1/anomalies");
-      if (!res.ok) {
-        throw new Error(`Failed to fetch anomalies (${res.status})`);
-      }
-      const json: unknown = await res.json();
-      const rows = Array.isArray(json)
-        ? json
-        : json && typeof json === "object" && Array.isArray((json as Record<string, unknown>).items)
-          ? ((json as Record<string, unknown>).items as unknown[])
-          : [];
-      setAnomalies(rows.map(parseAnomalyRow).filter((x): x is UiAnomaly => x !== null));
+      const rows = await getApi().anomalies.list();
+      setAnomalies(rows.map(fromDomainAnomaly));
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
       setLoadError(msg || "Could not load anomalies.");
@@ -106,6 +109,12 @@ export function Anomalies() {
   };
 
   useEffect(() => {
+    if (shouldUseDemoData()) {
+      setAnomalies(getDemoAnomalies().map(fromDomainAnomaly));
+      setLoading(false);
+      setLoadError(null);
+      return;
+    }
     void fetchAnomalies();
   }, []);
 
@@ -121,6 +130,22 @@ export function Anomalies() {
     setCreating(true);
     setFormError(null);
     try {
+      if (DEMO_MODE) {
+        const newRow: UiAnomaly = {
+          id: anomalyId,
+          service,
+          severity: normalizeSeverity(form.severity),
+          status: "open",
+          detectedAt: new Date().toISOString(),
+          summary,
+          signalType: "manual",
+        };
+        setAnomalies((prev) => [newRow, ...prev]);
+        setToastMessage("Anomaly recorded (demo mode).");
+        setShowModal(false);
+        setForm(EMPTY_FORM);
+        return;
+      }
       const res = await fetch("http://localhost:8000/api/v1/anomalies", {
         method: "POST",
         headers: {
@@ -157,7 +182,7 @@ export function Anomalies() {
     return <PageLoading message="Loading anomalies…" />;
   }
 
-  if (loadError) {
+  if (loadError && !shouldUseDemoData()) {
     return (
       <div className="rounded-card border border-red-500/20 bg-red-500/5 p-6 text-sm text-red-300">
         {loadError}

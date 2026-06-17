@@ -2,6 +2,7 @@ import { Link, NavLink } from "react-router-dom";
 import { LogIQFullLogo } from "@/components/branding/LogIQLogos";
 import { USE_HTTP_API } from "@/api/config";
 import { MAIN_NAV_ITEMS } from "@/lib/mainNav";
+import { DEMO_MODE } from "@/lib/demoMode";
 import { navActiveInsetShadow, navItemActiveGradient } from "@/lib/ctaTheme";
 import { cn } from "@/lib/utils";
 import { ui } from "@/lib/ui";
@@ -162,6 +163,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               › dev: integration check
             </Link>
           ) : null}
+          {!DEMO_MODE ? (
           <Link
             to="/login"
             onClick={onClose}
@@ -169,6 +171,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           >
             › Login (demo)
           </Link>
+          ) : null}
         </div>
       </div>
     </aside>

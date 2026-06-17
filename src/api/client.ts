@@ -1,20 +1,35 @@
 import type { LogIQApi } from "@/api/contracts";
 import { USE_HTTP_API } from "@/api/config";
+import { createConferenceDemoApi } from "@/api/demo/createConferenceDemoApi";
 import { createHttpApi } from "@/api/http/createHttpApi";
 import { createMockApi } from "@/api/mock/mockApi";
+import { DEMO_MODE } from "@/lib/demoMode";
+
+let cachedClient: LogIQApi | null = null;
+let cachedDemoFlag: boolean | null = null;
 
 /**
  * Factory for the active API implementation.
- * - Default: in-memory mock (`src/data/mock/`) — no network, no backend required.
- * - HTTP: when {@link import('./config').USE_HTTP_API} is true, all requests use
- *   {@link import('./config').API_BASE_URL} inside {@link import('./http/createHttpApi').createHttpApi}.
- *
- * Pages and hooks import the singleton {@link api} — not this function — so swapping
- * transports is centralized in `src/api/config.ts` and this file.
+ * When {@link DEMO_MODE} is enabled, always returns conference fixtures (no network).
  */
 export function createApiClient(): LogIQApi {
+  if (DEMO_MODE) return createConferenceDemoApi();
   return USE_HTTP_API ? createHttpApi() : createMockApi();
 }
 
-/** Singleton used across the app */
-export const api = createApiClient();
+/** Resolves the active API client (rebuilt if demo flag changes). */
+export function getApi(): LogIQApi {
+  if (cachedClient === null || cachedDemoFlag !== DEMO_MODE) {
+    cachedClient = createApiClient();
+    cachedDemoFlag = DEMO_MODE;
+  }
+  return cachedClient;
+}
+
+/** Lazy proxy — every `api.*` call uses the client for the current mode. */
+export const api: LogIQApi = new Proxy({} as LogIQApi, {
+  get(_target, prop) {
+    const client = getApi();
+    return client[prop as keyof LogIQApi];
+  },
+});

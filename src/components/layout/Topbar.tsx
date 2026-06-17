@@ -6,6 +6,7 @@ import { ApiModeBadge } from "@/components/layout/ApiModeBadge";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { NavHeader, NavTab } from "@/components/ui/nav-header";
 import { formatUserContextLine, userDisplayName } from "@/lib/userDisplay";
+import { DEMO_MODE } from "@/lib/demoMode";
 import { cn } from "@/lib/utils";
 
 const APP_NAV_TABS: NavTab[] = [
@@ -57,7 +58,7 @@ export function Topbar({ onToggleSidebar }: TopbarProps) {
 
         <div className="h-5 w-px bg-cyber/[0.1]" aria-hidden />
 
-        {user ? (
+        {!DEMO_MODE && user ? (
           <button
             type="button"
             onClick={() => {
@@ -70,7 +71,8 @@ export function Topbar({ onToggleSidebar }: TopbarProps) {
             <LogOut className="h-3.5 w-3.5" strokeWidth={2} />
             Sign out
           </button>
-        ) : (
+        ) : null}
+        {!DEMO_MODE && !user ? (
           <>
             <Link
               to="/login"
@@ -85,7 +87,7 @@ export function Topbar({ onToggleSidebar }: TopbarProps) {
               Sign up
             </Link>
           </>
-        )}
+        ) : null}
 
         {/* User pill */}
         <div

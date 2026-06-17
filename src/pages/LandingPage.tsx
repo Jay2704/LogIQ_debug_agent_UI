@@ -32,6 +32,7 @@ import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { SplineScene } from "@/components/ui/splite";
 import { Spotlight } from "@/components/ui/spotlight";
 import { ctaButtonGradient, ctaGlowBlueOnly } from "@/lib/ctaTheme";
+import { DEMO_MODE, getCreateAccountPath, getOpenWorkspacePath } from "@/lib/demoMode";
 import { cn } from "@/lib/utils";
 
 // ── Animated number counter ────────────────────────────────────────────────
@@ -339,7 +340,7 @@ function StatsSection() {
 function PrimaryCta({ className }: { className?: string }) {
   return (
     <Link
-      to="/login"
+      to={getOpenWorkspacePath()}
       className={cn(
         "cta-shimmer-primary inline-flex items-center justify-center gap-2 rounded-card px-6 py-3 text-sm font-semibold text-white transition",
         ctaButtonGradient,
@@ -358,7 +359,7 @@ function PrimaryCta({ className }: { className?: string }) {
 function SecondaryCta({ className }: { className?: string }) {
   return (
     <Link
-      to="/signup"
+      to={getCreateAccountPath()}
       className={cn(
         "cta-shimmer-secondary inline-flex items-center justify-center gap-2 rounded-card border border-cyber/[0.2] bg-black/[0.82] px-6 py-3 text-sm font-semibold text-slate-100 backdrop-blur-sm transition",
         "hover:border-cyber/[0.35] hover:bg-black/[0.82] hover:text-white",
@@ -397,12 +398,14 @@ function LandingNav() {
 
         <div className="flex items-center gap-2.5">
           <ThemeToggle />
+          {!DEMO_MODE ? (
           <Link
             to="/login"
             className="hidden rounded-lg px-3 py-2 text-sm font-semibold text-slate-400 transition hover:text-slate-200 sm:inline-block"
           >
             Login
           </Link>
+          ) : null}
           <PrimaryCta className="px-4 py-2 text-sm" />
         </div>
       </div>

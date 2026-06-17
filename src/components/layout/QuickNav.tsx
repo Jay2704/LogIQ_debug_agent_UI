@@ -1,5 +1,6 @@
 import { Link, NavLink } from "react-router-dom";
 import { navActiveInsetShadow, navItemActiveGradient } from "@/lib/ctaTheme";
+import { DEMO_MODE } from "@/lib/demoMode";
 import { cn } from "@/lib/utils";
 import { ui } from "@/lib/ui";
 
@@ -41,6 +42,7 @@ export function QuickNav() {
           {l.label}
         </NavLink>
       ))}
+      {!DEMO_MODE ? (
       <Link
         to="/login"
         className={cn(
@@ -51,6 +53,7 @@ export function QuickNav() {
       >
         Login
       </Link>
+      ) : null}
     </div>
   );
 }

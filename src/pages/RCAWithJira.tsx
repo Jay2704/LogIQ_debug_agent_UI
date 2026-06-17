@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { DashboardHomeHero } from "@/components/landing/DashboardHomeHero";
+import { DEMO_MODE } from "@/lib/demoMode";
 
 export function RCAWithJira() {
   const location = useLocation();
@@ -46,6 +47,7 @@ export function RCAWithJira() {
 
   return (
     <div className="space-y-10">
+      {!DEMO_MODE && anomalyId ? (
       <div className="rounded-2xl border border-cyber/[0.12] bg-black/[0.88] p-4 text-sm text-slate-300 sm:p-5">
         <p>
           <span className="font-semibold text-slate-100">Anomaly:</span>{" "}
@@ -69,8 +71,13 @@ export function RCAWithJira() {
           </p>
         ) : null}
       </div>
+      ) : null}
       <div className="mt-6">
-        <DashboardHomeHero showHero={false} showWorkflow />
+        <DashboardHomeHero
+          showHero={false}
+          showWorkflow
+          preloadDemoInvestigation={DEMO_MODE}
+        />
       </div>
     </div>
   );
