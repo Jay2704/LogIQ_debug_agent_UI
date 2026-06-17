@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import { Component as EtherealShadow } from "@/components/ui/etheral-shadow";
 import { AppLayout } from "@/components/layout/AppLayout";
+import { AppErrorBoundary } from "@/components/layout/AppErrorBoundary";
 import { AuthenticatedAppShell } from "@/components/layout/AuthenticatedAppShell";
 import { About } from "@/pages/About";
 import { Faq } from "@/pages/Faq";
@@ -36,6 +37,7 @@ export default function App() {
         />
       </div>
       <div className="relative" style={{ zIndex: 1 }}>
+    <AppErrorBoundary>
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
@@ -68,6 +70,7 @@ export default function App() {
         </Route>
       </Route>
     </Routes>
+    </AppErrorBoundary>
       </div>
     </>
   );

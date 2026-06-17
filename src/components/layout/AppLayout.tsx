@@ -5,6 +5,7 @@ import type { Variants } from "framer-motion";
 import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
 import { QuickNav } from "./QuickNav";
+import { DemoStabilityBanner } from "./DemoStabilityBanner";
 
 const pageVariants: Variants = {
   initial: { opacity: 0, y: 10 },
@@ -36,6 +37,9 @@ export function AppLayout() {
       <div className="flex min-h-screen flex-col">
         <Topbar onToggleSidebar={() => setIsSidebarOpen((prev) => !prev)} />
         <QuickNav />
+        <div className="mx-auto w-full max-w-[1600px] px-4 pt-2 sm:px-6 lg:px-8">
+          <DemoStabilityBanner />
+        </div>
         <AnimatePresence mode="wait">
           <motion.main
             key={pathname}

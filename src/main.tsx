@@ -1,6 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter } from "react-router-dom";
+import { HashRouter } from "react-router-dom";
 import { CurrentUserProvider } from "./auth";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import {
@@ -30,12 +30,12 @@ if (!import.meta.env.DEV && HTTP_MODE_FLAG && !API_BASE_URL) {
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <BrowserRouter>
+    <HashRouter>
       <ThemeProvider>
         <CurrentUserProvider>
           <App />
         </CurrentUserProvider>
       </ThemeProvider>
-    </BrowserRouter>
+    </HashRouter>
   </StrictMode>
 );

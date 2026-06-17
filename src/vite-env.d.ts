@@ -13,6 +13,8 @@ interface ImportMetaEnv {
    * `VITE_API_BASE_URL` / `VITE_API_URL`. Otherwise the app uses in-memory mocks.
    */
   readonly VITE_USE_HTTP?: string;
+  /** Vite `base` for GitHub Pages — e.g. `/LogIQ_debug_agent_UI/` (set in CI). */
+  readonly VITE_BASE_PATH?: string;
 }
 
 interface ImportMeta {

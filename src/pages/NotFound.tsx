@@ -8,7 +8,8 @@ export function NotFound() {
       <p className="font-mono text-sm text-slate-500">404</p>
       <h1 className="mt-2 text-xl font-bold text-white">Page not found</h1>
       <p className="mt-2 max-w-md text-sm text-slate-500">
-        That route does not exist in this UI build.
+        That route does not exist in this demo build. Use the sidebar or return to the
+        dashboard to continue exploring.
       </p>
       <Link
         to="/"
