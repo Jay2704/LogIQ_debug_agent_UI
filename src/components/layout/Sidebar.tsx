@@ -2,7 +2,6 @@ import { Link, NavLink } from "react-router-dom";
 import { LogIQFullLogo } from "@/components/branding/LogIQLogos";
 import { USE_HTTP_API } from "@/api/config";
 import { MAIN_NAV_ITEMS } from "@/lib/mainNav";
-import { DEMO_MODE } from "@/lib/demoMode";
 import { navActiveInsetShadow, navItemActiveGradient } from "@/lib/ctaTheme";
 import { cn } from "@/lib/utils";
 import { ui } from "@/lib/ui";
@@ -163,15 +162,13 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               › dev: integration check
             </Link>
           ) : null}
-          {!DEMO_MODE ? (
           <Link
             to="/login"
             onClick={onClose}
             className="mt-2 block text-[11px] text-cyber/70 transition hover:text-cyan-300"
           >
-            › Login (demo)
+            › Login
           </Link>
-          ) : null}
         </div>
       </div>
     </aside>

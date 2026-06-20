@@ -11,6 +11,9 @@ export const mockRcaService: RcaService = {
   async getResultsByAnomalyId(_anomalyId: string, jobId: string) {
     return mockRcaByJobId[jobId] ?? null;
   },
+  async run() {
+    await new Promise((r) => setTimeout(r, 450));
+  },
   async getExplanationByAnomalyId(anomalyId: string): Promise<RcaAssistiveExplanation> {
     const job = mockJobs.find((j) => j.anomalyId === anomalyId);
     const summary = job

@@ -5,7 +5,7 @@ import type { Variants } from "framer-motion";
 import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
 import { QuickNav } from "./QuickNav";
-import { DemoStabilityBanner } from "./DemoStabilityBanner";
+import { ApiStatusBanner } from "./ApiStatusBanner";
 
 const pageVariants: Variants = {
   initial: { opacity: 0, y: 10 },
@@ -38,7 +38,7 @@ export function AppLayout() {
         <Topbar onToggleSidebar={() => setIsSidebarOpen((prev) => !prev)} />
         <QuickNav />
         <div className="mx-auto w-full max-w-[1600px] px-4 pt-2 sm:px-6 lg:px-8">
-          <DemoStabilityBanner />
+          <ApiStatusBanner />
         </div>
         <AnimatePresence mode="wait">
           <motion.main

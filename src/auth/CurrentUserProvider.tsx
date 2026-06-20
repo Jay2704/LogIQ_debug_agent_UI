@@ -9,8 +9,6 @@ import {
   type ReactNode,
 } from "react";
 import type { User } from "@/types";
-import { DEMO_MODE } from "@/lib/demoMode";
-import { DEMO_USER } from "@/lib/demoUser";
 import {
   clearCurrentUser as clearPersistedSession,
   getCurrentUser,
@@ -31,36 +29,25 @@ export interface CurrentUserContextValue {
 const CurrentUserContext = createContext<CurrentUserContextValue | null>(null);
 
 export function CurrentUserProvider({ children }: { children: ReactNode }) {
-  const [user, setUserState] = useState<User | null>(() =>
-    DEMO_MODE ? DEMO_USER : getCurrentUser()
-  );
+  const [user, setUserState] = useState<User | null>(() => getCurrentUser());
 
   const syncFromStorage = useCallback(() => {
-    if (DEMO_MODE) {
-      setUserState(DEMO_USER);
-      return;
-    }
     setUserState(getCurrentUser());
   }, []);
 
-  useEffect(() => {
-    if (DEMO_MODE) return;
-    return subscribeCurrentUserChanged(syncFromStorage);
-  }, [syncFromStorage]);
+  useEffect(() => subscribeCurrentUserChanged(syncFromStorage), [syncFromStorage]);
 
   const setUser = useCallback((next: User | CurrentUserSnapshot) => {
-    if (DEMO_MODE) return;
     persistCurrentUser(next);
   }, []);
 
   const clear = useCallback(() => {
-    if (DEMO_MODE) return;
     clearPersistedSession();
   }, []);
 
   const value = useMemo<CurrentUserContextValue>(
     () => ({
-      user: DEMO_MODE ? DEMO_USER : user,
+      user,
       setCurrentUser: setUser,
       clearCurrentUser: clear,
     }),

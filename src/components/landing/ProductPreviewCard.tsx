@@ -1,24 +1,15 @@
 import { Gauge } from "lucide-react";
-import { getConferenceJobDetailBundle } from "@/data/demo/conferenceDemoData";
-import { DEMO_MODE } from "@/lib/demoMode";
 import { cn } from "@/lib/utils";
 
 /** Stylized product / RCA workspace preview — glass card, dashboard-like rows. */
 export function ProductPreviewCard({ className }: { className?: string }) {
-  const demoBundle = DEMO_MODE ? getConferenceJobDetailBundle("INV-1001") : undefined;
-  const demoId = demoBundle?.job.jobId ?? "dbg_inv_7f2a";
-  const demoStatus = demoBundle ? "RCA Complete" : "Complete";
-  const demoConfidence = demoBundle
-    ? `${Math.round((demoBundle.rca.confidence ?? 0) * 100)}%`
-    : "94%";
+  const demoId = "dbg_inv_7f2a";
+  const demoStatus = "Complete";
+  const demoConfidence = "94%";
   const demoRootCause =
-    demoBundle?.rca.rootCausePath ??
     "Deploy checkout-svc@v2.4.1 introduced a regression in cart validation under load.";
-  const demoSignals = demoBundle
-    ? ["timeout", "otp_validation", "auth_service"]
-    : ["trace", "deploy", "code"];
+  const demoSignals = ["trace", "deploy", "code"];
   const demoExplanation =
-    demoBundle?.explanation ??
     "Hypothesis ranks deploy change first; trace evidence supports rollback while metrics stabilize.";
 
   return (

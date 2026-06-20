@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import { HeroAmbientGlow } from "@/components/landing/HeroAmbientGlow";
 import { ProductPreviewCard } from "@/components/landing/ProductPreviewCard";
 import { ctaButtonGradient, ctaGlowBlueOnly } from "@/lib/ctaTheme";
-import { getOpenWorkspacePath } from "@/lib/demoMode";
 import { cn } from "@/lib/utils";
 
 /** Centered SaaS-style hero for the public landing page */
@@ -26,7 +25,7 @@ export function LandingHero() {
         </p>
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
           <Link
-            to={getOpenWorkspacePath()}
+            to="/login"
             className={cn(
               "cta-shimmer-primary inline-flex min-w-[10rem] items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold text-white transition",
               ctaButtonGradient,
@@ -35,7 +34,7 @@ export function LandingHero() {
               "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400/70"
             )}
           >
-            <span className="relative z-10">Try Demo</span>
+            <span className="relative z-10">Get started</span>
           </Link>
           <a
             href="#features"

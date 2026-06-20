@@ -46,10 +46,7 @@ export interface RcaService {
   getExplanationByAnomalyId(
     anomalyId: string
   ): Promise<RcaAssistiveExplanation>;
-}
-
-/** Triggers backend RCA pipeline for an anomaly (POST /debug-agent/run). */
-export interface DebugAgentService {
+  /** POST /api/v1/rca/run — triggers deterministic RCA pipeline for an anomaly. */
   run(anomalyId: string): Promise<void>;
 }
 
@@ -114,7 +111,6 @@ export interface LogIQApi {
   jobs: JobsService;
   anomalies: AnomaliesService;
   rca: RcaService;
-  debugAgent: DebugAgentService;
   reports: ReportsService;
   insights: InsightsService;
   dashboard: DashboardService;

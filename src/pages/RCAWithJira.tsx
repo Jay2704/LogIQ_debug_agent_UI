@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { api } from "@/api";
 import { DashboardHomeHero } from "@/components/landing/DashboardHomeHero";
-import { DEMO_MODE } from "@/lib/demoMode";
 
 export function RCAWithJira() {
   const location = useLocation();
@@ -25,17 +25,7 @@ export function RCAWithJira() {
     setRunning(true);
     setRunError(null);
     try {
-      const res = await fetch("/api/v1/rca/run", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          anomaly_id: anomalyId,
-        }),
-      });
-      if (!res.ok) {
-        const body = await res.text().catch(() => "");
-        throw new Error(body || `RCA request failed with ${res.status}`);
-      }
+      await api.rca.run(anomalyId);
       navigate("/jobs");
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
@@ -47,7 +37,7 @@ export function RCAWithJira() {
 
   return (
     <div className="space-y-10">
-      {!DEMO_MODE && anomalyId ? (
+      {anomalyId ? (
       <div className="rounded-2xl border border-cyber/[0.12] bg-black/[0.88] p-4 text-sm text-slate-300 sm:p-5">
         <p>
           <span className="font-semibold text-slate-100">Anomaly:</span>{" "}
@@ -73,11 +63,7 @@ export function RCAWithJira() {
       </div>
       ) : null}
       <div className="mt-6">
-        <DashboardHomeHero
-          showHero={false}
-          showWorkflow
-          preloadDemoInvestigation={DEMO_MODE}
-        />
+        <DashboardHomeHero showHero={false} showWorkflow />
       </div>
     </div>
   );

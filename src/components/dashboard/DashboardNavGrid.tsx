@@ -1,7 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { MAIN_NAV_ITEMS, type MainNavItem } from "@/lib/mainNav";
-import { DEMO_MODE } from "@/lib/demoMode";
 import { cn } from "@/lib/utils";
 
 interface DashboardNavGridProps {
@@ -27,7 +26,7 @@ export function DashboardNavGrid({
   };
 
   const cardTarget = (item: MainNavItem) =>
-    forPublicLanding && !DEMO_MODE ? "/login" : item.to;
+    forPublicLanding ? "/login" : item.to;
 
   return (
     <section className="relative overflow-hidden rounded-card border border-cyber/[0.12] bg-black/[0.88] p-5 shadow-card-premium sm:p-7">

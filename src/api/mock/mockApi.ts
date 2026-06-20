@@ -3,8 +3,8 @@
  *
  * **Live vs mock split:** `createHttpApi` delegates anomalies, reports, insights, dashboard,
  * and utilities to this same mock layer until those backends exist — so demo pages stay
- * polished without stubbing each route in the HTTP client. Jobs / RCA / debug-agent use real
- * `fetch` when `VITE_USE_HTTP=true`.
+ * polished without stubbing each route in the HTTP client. Jobs / RCA use real `fetch` when
+ * `VITE_USE_HTTP=true`.
  */
 import type { LogIQApi } from "@/api/contracts";
 import { mockAnomaliesService } from "./anomalies";
@@ -14,7 +14,6 @@ import { mockJobsService } from "./jobs";
 import { mockRcaService } from "./rca";
 import { mockReportsService } from "./reports";
 import { mockUtilitiesService } from "./utilitiesTools";
-import { mockDebugAgentService } from "./debugAgent";
 import { mockJiraService } from "./jira";
 import { mockAuthService, mockUsersService } from "./users";
 
@@ -23,7 +22,6 @@ export function createMockApi(): LogIQApi {
     jobs: mockJobsService,
     anomalies: mockAnomaliesService,
     rca: mockRcaService,
-    debugAgent: mockDebugAgentService,
     reports: mockReportsService,
     insights: mockInsightsService,
     dashboard: mockDashboardService,

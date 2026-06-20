@@ -1,16 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  getDemoAnomalies,
-  shouldUseDemoData,
-} from "@/api/demo/demoDataProvider";
+import { API_BASE_URL } from "@/api/config";
 import { getApi } from "@/api/client";
+import { joinApiUrl } from "@/api/http/apiUrl";
 import {
   AnomalyStatusBadge,
   SeverityBadge,
 } from "@/components/ui/StatusBadge";
 import { PageLoading } from "@/components/ui/PageLoading";
-import { DEMO_MODE } from "@/lib/demoMode";
 import { formatDateTime } from "@/lib/utils";
 import type { Anomaly } from "@/types";
 
@@ -67,10 +64,8 @@ function fromDomainAnomaly(a: Anomaly): UiAnomaly {
 
 export function Anomalies() {
   const navigate = useNavigate();
-  const [anomalies, setAnomalies] = useState<UiAnomaly[]>(() =>
-    shouldUseDemoData() ? getDemoAnomalies().map(fromDomainAnomaly) : []
-  );
-  const [loading, setLoading] = useState(() => !shouldUseDemoData());
+  const [anomalies, setAnomalies] = useState<UiAnomaly[]>([]);
+  const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [creating, setCreating] = useState(false);
@@ -87,13 +82,6 @@ export function Anomalies() {
   };
 
   const fetchAnomalies = async () => {
-    if (shouldUseDemoData()) {
-      setAnomalies(getDemoAnomalies().map(fromDomainAnomaly));
-      setLoading(false);
-      setLoadError(null);
-      return;
-    }
-
     setLoading(true);
     setLoadError(null);
     try {
@@ -109,12 +97,6 @@ export function Anomalies() {
   };
 
   useEffect(() => {
-    if (shouldUseDemoData()) {
-      setAnomalies(getDemoAnomalies().map(fromDomainAnomaly));
-      setLoading(false);
-      setLoadError(null);
-      return;
-    }
     void fetchAnomalies();
   }, []);
 
@@ -130,23 +112,11 @@ export function Anomalies() {
     setCreating(true);
     setFormError(null);
     try {
-      if (DEMO_MODE) {
-        const newRow: UiAnomaly = {
-          id: anomalyId,
-          service,
-          severity: normalizeSeverity(form.severity),
-          status: "open",
-          detectedAt: new Date().toISOString(),
-          summary,
-          signalType: "manual",
-        };
-        setAnomalies((prev) => [newRow, ...prev]);
-        setToastMessage("Anomaly recorded (demo mode).");
-        setShowModal(false);
-        setForm(EMPTY_FORM);
-        return;
+      if (!API_BASE_URL) {
+        throw new Error("API base URL is not configured.");
       }
-      const res = await fetch("http://localhost:8000/api/v1/anomalies", {
+      const url = joinApiUrl(API_BASE_URL, "/api/v1/anomalies");
+      const res = await fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -163,8 +133,6 @@ export function Anomalies() {
         const body = await res.text().catch(() => "");
         throw new Error(body || `Failed to create anomaly (${res.status})`);
       }
-      const data = await res.json();
-      console.log("Created anomaly:", data);
       setShowModal(false);
       setForm(EMPTY_FORM);
       setToastMessage("Anomaly created");
@@ -182,7 +150,7 @@ export function Anomalies() {
     return <PageLoading message="Loading anomalies…" />;
   }
 
-  if (loadError && !shouldUseDemoData()) {
+  if (loadError) {
     return (
       <div className="rounded-card border border-red-500/20 bg-red-500/5 p-6 text-sm text-red-300">
         {loadError}

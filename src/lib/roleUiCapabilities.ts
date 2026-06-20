@@ -9,7 +9,7 @@ import type { User, UserRole } from "@/types";
 export interface RoleUiCapabilities {
   /** POST /api/v1/jobs — create flow on Jobs + modals */
   canCreateJob: boolean;
-  /** Job detail: run debug-agent / RCA pipeline */
+  /** Job detail: run RCA pipeline */
   canRunInvestigationPipeline: boolean;
   /** Dashboard + Jobs hero “Run Debug Agent” shortcut */
   canUseRunDebugShortcut: boolean;

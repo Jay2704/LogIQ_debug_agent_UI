@@ -24,7 +24,7 @@ import {
 } from "./parseUserApi";
 
 /**
- * “Hybrid” HTTP client: real `fetch` calls for backend-supported routes (jobs, RCA, debug-agent,
+ * “Hybrid” HTTP client: real `fetch` calls for backend-supported routes (jobs, RCA, auth, Jira,
  * users), while anomalies, reports, insights, dashboard, and utilities delegate to the in-memory
  * mock implementation until those APIs exist — keeps Insights/Reports/Utilities pages working
  * in HTTP mode.
@@ -297,20 +297,18 @@ export function createHttpApi(): LogIQApi {
       },
     },
     anomalies: mocks.anomalies,
-    debugAgent: {
+    rca: {
       run: async (anomalyId: string) => {
-        const url = joinApiUrl(baseUrl, "/debug-agent/run");
+        const url = joinApiUrl(baseUrl, "/api/v1/rca/run");
         const body = { anomaly_id: anomalyId };
-        logApiDebug("debug-agent/run", { url, body });
+        logApiDebug("rca/run", { url, body });
         const res = await fetchNetwork(url, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body),
         });
-        if (!res.ok) await httpError(res, "POST /debug-agent/run");
+        if (!res.ok) await httpError(res, "POST /api/v1/rca/run");
       },
-    },
-    rca: {
       getByJobIdMap: () => mocks.rca.getByJobIdMap(),
       getResultsByAnomalyId: async (anomalyId: string, jobId: string) => {
         const url = joinApiUrl(

@@ -1,10 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getApi } from "@/api/client";
 import { USE_HTTP_API } from "@/api/config";
-import {
-  getDemoJobDetailBundle,
-  shouldUseDemoData,
-} from "@/api/demo/demoDataProvider";
 import { logApiDebug } from "@/api/http/debugLog";
 import type { JobDetailBundle, ReportArtifact } from "@/types";
 
@@ -26,31 +22,15 @@ export interface JobDetailState {
 const SOFT_RETRY_ATTEMPTS = 6;
 const softRetryDelayMs = (attemptIndex: number) => 350 * attemptIndex;
 
-function demoDetailState(jobId: string): JobDetailState {
-  const bundle = getDemoJobDetailBundle(jobId);
-  return {
-    bundle,
-    report: undefined,
-    jobRowSource: "mock",
-    loading: false,
-    error: null,
-    notFoundReason: bundle ? null : "unknown_job",
-  };
-}
-
 export function useJobDetailData(jobId: string | undefined) {
-  const id = jobId?.trim() ?? "";
-  const [state, setState] = useState<JobDetailState>(() => {
-    if (shouldUseDemoData() && id) return demoDetailState(id);
-    return {
-      bundle: undefined,
-      report: undefined,
-      jobRowSource: undefined,
-      loading: Boolean(id),
-      error: null,
-      notFoundReason: null,
-    };
-  });
+  const [state, setState] = useState<JobDetailState>(() => ({
+    bundle: undefined,
+    report: undefined,
+    jobRowSource: undefined,
+    loading: Boolean(jobId?.trim()),
+    error: null,
+    notFoundReason: null,
+  }));
   const [refreshKey, setRefreshKey] = useState(0);
   const silentRefetchRef = useRef(false);
 
@@ -70,11 +50,6 @@ export function useJobDetailData(jobId: string | undefined) {
         error: null,
         notFoundReason: "missing_job_id",
       });
-      return;
-    }
-
-    if (shouldUseDemoData()) {
-      setState(demoDetailState(routeId));
       return;
     }
 

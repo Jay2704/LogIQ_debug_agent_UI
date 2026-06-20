@@ -24,8 +24,6 @@ import {
   loadRecentInvestigations,
   type RecentInvestigationEntry,
 } from "@/lib/recentInvestigations";
-import { getRcaJiraDemoPreloadState } from "@/data/demo/rcaJiraDemoPreload";
-import { DEMO_MODE } from "@/lib/demoMode";
 import { cn, formatDateTime, formatRelativeShort } from "@/lib/utils";
 import type { JiraRcaResult, JiraTicketSummary } from "@/types";
 
@@ -127,48 +125,37 @@ interface DashboardHomeHeroProps {
   showHero?: boolean;
   showWorkflow?: boolean;
   showPreviewCard?: boolean;
-  /** When true and DEMO_MODE, auto-populates ticket, logs, RCA result, and history. */
-  preloadDemoInvestigation?: boolean;
 }
 
 export function DashboardHomeHero({
   showHero = true,
   showWorkflow = true,
   showPreviewCard = true,
-  preloadDemoInvestigation = false,
 }: DashboardHomeHeroProps) {
-  const demoPreload =
-    preloadDemoInvestigation && DEMO_MODE ? getRcaJiraDemoPreloadState() : null;
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const investigationResultsRef = useRef<HTMLDivElement | null>(null);
   const scrollRestoredInvestigationRef = useRef(false);
-  const [ticketKey, setTicketKey] = useState(() => demoPreload?.ticketKey ?? "");
+  const [ticketKey, setTicketKey] = useState("");
   const [ticketLoading, setTicketLoading] = useState(false);
   const [ticketError, setTicketError] = useState<string | null>(null);
-  const [ticket, setTicket] = useState<JiraTicketSummary | null>(() => demoPreload?.ticket ?? null);
-  const [ticketTitle, setTicketTitle] = useState(() => demoPreload?.ticket.summary ?? "");
-  const [ticketDescription, setTicketDescription] = useState(
-    () => demoPreload?.ticket.cleanedDescription ?? ""
-  );
-  const [ticketLabelsInput, setTicketLabelsInput] = useState(
-    () => demoPreload?.ticket.labels.join(", ") ?? ""
-  );
-  const [ticketStatus, setTicketStatus] = useState(() => demoPreload?.ticket.status ?? "");
-  const [ticketPriority, setTicketPriority] = useState(() => demoPreload?.ticket.priority ?? "");
-  const [logName, setLogName] = useState<string | null>(() => demoPreload?.logFileName ?? null);
-  const [logContent, setLogContent] = useState(() => demoPreload?.logContent ?? "");
-  const [logLines, setLogLines] = useState<string[]>(() => demoPreload?.logLines ?? []);
+  const [ticket, setTicket] = useState<JiraTicketSummary | null>(null);
+  const [ticketTitle, setTicketTitle] = useState("");
+  const [ticketDescription, setTicketDescription] = useState("");
+  const [ticketLabelsInput, setTicketLabelsInput] = useState("");
+  const [ticketStatus, setTicketStatus] = useState("");
+  const [ticketPriority, setTicketPriority] = useState("");
+  const [logName, setLogName] = useState<string | null>(null);
+  const [logContent, setLogContent] = useState("");
+  const [logLines, setLogLines] = useState<string[]>([]);
   const [logError, setLogError] = useState<string | null>(null);
-  const [confirmedLogInput, setConfirmedLogInput] = useState(() => Boolean(demoPreload));
+  const [confirmedLogInput, setConfirmedLogInput] = useState(false);
   const [rcaLoading, setRcaLoading] = useState(false);
   const [rcaError, setRcaError] = useState<string | null>(null);
   const [rcaExplanationToast, setRcaExplanationToast] = useState<string | null>(null);
   /** Soft info banner (weak RCA, restored session, etc.) — not a hard failure */
   const [workflowInfo, setWorkflowInfo] = useState<string | null>(null);
-  const [rcaResult, setRcaResult] = useState<JiraRcaResult | null>(() => demoPreload?.rcaResult ?? null);
-  const [recentInvestigations, setRecentInvestigations] = useState<RecentInvestigationEntry[]>(
-    () => demoPreload?.recentInvestigations ?? []
-  );
+  const [rcaResult, setRcaResult] = useState<JiraRcaResult | null>(null);
+  const [recentInvestigations, setRecentInvestigations] = useState<RecentInvestigationEntry[]>([]);
 
   const manualTicket = buildTicketFromFields({
     key: ticketKey,
@@ -232,9 +219,8 @@ export function DashboardHomeHero({
         : null;
 
   useEffect(() => {
-    if (preloadDemoInvestigation && DEMO_MODE) return;
     setRecentInvestigations(loadRecentInvestigations());
-  }, [preloadDemoInvestigation]);
+  }, []);
 
   useEffect(() => {
     if (!scrollRestoredInvestigationRef.current || !rcaResult) return;

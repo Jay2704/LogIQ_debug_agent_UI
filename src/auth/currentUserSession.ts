@@ -3,8 +3,6 @@
  * Replace with server-backed auth; keep call sites on these helpers so swapping is localized.
  */
 import type { User, UserRole } from "@/types";
-import { DEMO_MODE } from "@/lib/demoMode";
-import { DEMO_USER } from "@/lib/demoUser";
 import {
   clearPersistedUser,
   loadPersistedUser,
@@ -58,19 +56,16 @@ export function toCurrentUserSnapshot(user: User): CurrentUserSnapshot {
 
 /** Synchronous read from localStorage — same source as React context after hydration. */
 export function getCurrentUser(): User | null {
-  if (DEMO_MODE) return DEMO_USER;
   return loadPersistedUser();
 }
 
 /** Persists and notifies listeners (same tab + optional cross-tab via `storage`). */
 export function setCurrentUser(user: User | CurrentUserSnapshot): void {
-  if (DEMO_MODE) return;
   persistUser(normalizeToUser(user));
   dispatchCurrentUserChanged();
 }
 
 export function clearCurrentUser(): void {
-  if (DEMO_MODE) return;
   clearPersistedUser();
   dispatchCurrentUserChanged();
 }

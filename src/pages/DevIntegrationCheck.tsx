@@ -326,8 +326,8 @@ export function DevIntegrationCheck() {
       </Section>
 
       <Section
-        title="POST /debug-agent/run"
-        subtitle="api.debugAgent.run(anomaly_id)"
+        title="POST /api/v1/rca/run"
+        subtitle="api.rca.run(anomaly_id)"
         headerRight={
           <div className="flex flex-wrap items-center gap-2">
             <StatusBadge status={debugRun.status} />
@@ -344,11 +344,11 @@ export function DevIntegrationCheck() {
                 void runBlock(
                   setDebugRun,
                   {
-                    method: "api.debugAgent.run",
+                    method: "api.rca.run",
                     anomaly_id: anomalyForAgent.trim(),
                   },
                   async () => {
-                    await api.debugAgent.run(anomalyForAgent.trim());
+                    await api.rca.run(anomalyForAgent.trim());
                     return { ok: true, message: "No JSON body (204 / empty)" };
                   }
                 )

@@ -12,7 +12,6 @@ export type {
   JobsService,
   AnomaliesService,
   RcaService,
-  DebugAgentService,
   ReportsService,
   InsightsService,
   DashboardService,

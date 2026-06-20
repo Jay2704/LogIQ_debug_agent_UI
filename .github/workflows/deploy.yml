@@ -35,8 +35,8 @@ jobs:
         env:
           # Project-site base path — assets and router resolve under /REPO_NAME/
           VITE_BASE_PATH: /${{ github.event.repository.name }}/
-          # Conference demo — bypass auth; set to false or remove after demo
-          VITE_DEMO_MODE: "true"
+          VITE_USE_HTTP: "true"
+          VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL }}
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

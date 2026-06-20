@@ -36,8 +36,6 @@ import {
   getRunInvestigationDisabledTitle,
   useRoleUiCapabilities,
 } from "@/lib/roleUiCapabilities";
-import { getDemoJobDetailBundle } from "@/api/demo/demoDataProvider";
-import { DEMO_MODE } from "@/lib/demoMode";
 import { cn, formatDateTime } from "@/lib/utils";
 
 const triggerLabels = {
@@ -148,7 +146,7 @@ export function JobDetail() {
     );
   }
 
-  if (error && !DEMO_MODE) {
+  if (error) {
     return (
       <div className="space-y-6 pb-16">
         {createdBannerEl}
@@ -189,11 +187,7 @@ export function JobDetail() {
     );
   }
 
-  const activeBundle =
-    bundle ??
-    (DEMO_MODE && jobId?.trim() ? getDemoJobDetailBundle(jobId.trim()) : undefined);
-
-  if (!activeBundle) {
+  if (!bundle) {
     const isMissingParam = notFoundReason === "missing_job_id";
     const isUnknownJob = notFoundReason === "unknown_job";
     const syncLikely = isUnknownJob && showCreatedBanner;
@@ -276,7 +270,7 @@ export function JobDetail() {
     similarIncidents,
     confidenceNote,
     limitationsNote,
-  } = activeBundle;
+  } = bundle;
 
   const routeJobId = getJobRouteId(job);
 
@@ -384,7 +378,7 @@ export function JobDetail() {
               Pipeline control
             </p>
             <p className="mt-1 text-sm text-slate-500">
-              Run the debug agent, then fetch ranked deterministic RCA and the assistive
+              Run the RCA pipeline, then fetch ranked deterministic RCA and the assistive
               narrative. The ranked file path always wins over LLM text.
             </p>
           </div>
@@ -487,13 +481,13 @@ export function JobDetail() {
           </div>
         ) : null}
 
-        {investigationPhase === "error" && investigationError && !DEMO_MODE ? (
+        {investigationPhase === "error" && investigationError ? (
           <div className="mt-4">
             <FeedbackNotice tone="error" title="Investigation failed">
               <p className="text-red-100/90">{investigationError}</p>
               <p className="mt-3 text-xs leading-relaxed text-red-200/75">
                 Check your connection, then verify this job and anomaly id. If it keeps
-                failing, confirm the debug-agent and RCA services are reachable from the
+                failing, confirm the RCA services are reachable from the
                 browser.
               </p>
             </FeedbackNotice>
@@ -630,7 +624,7 @@ export function JobDetail() {
                               </li>
                               <li className="flex gap-2">
                                 <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-amber-400/80" />
-                                Re-run after the debug agent completes new correlation.
+                                Re-run after the RCA pipeline completes new correlation.
                               </li>
                               <li className="flex gap-2">
                                 <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-amber-400/80" />

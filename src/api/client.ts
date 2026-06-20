@@ -1,27 +1,19 @@
 import type { LogIQApi } from "@/api/contracts";
 import { USE_HTTP_API } from "@/api/config";
-import { createConferenceDemoApi } from "@/api/demo/createConferenceDemoApi";
 import { createHttpApi } from "@/api/http/createHttpApi";
 import { createMockApi } from "@/api/mock/mockApi";
-import { DEMO_MODE } from "@/lib/demoMode";
 
 let cachedClient: LogIQApi | null = null;
-let cachedDemoFlag: boolean | null = null;
 
-/**
- * Factory for the active API implementation.
- * When {@link DEMO_MODE} is enabled, always returns conference fixtures (no network).
- */
+/** Factory for the active API implementation. */
 export function createApiClient(): LogIQApi {
-  if (DEMO_MODE) return createConferenceDemoApi();
   return USE_HTTP_API ? createHttpApi() : createMockApi();
 }
 
-/** Resolves the active API client (rebuilt if demo flag changes). */
+/** Resolves the active API client (lazy singleton). */
 export function getApi(): LogIQApi {
-  if (cachedClient === null || cachedDemoFlag !== DEMO_MODE) {
+  if (cachedClient === null) {
     cachedClient = createApiClient();
-    cachedDemoFlag = DEMO_MODE;
   }
   return cachedClient;
 }

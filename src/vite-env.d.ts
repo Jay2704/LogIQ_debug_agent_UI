@@ -15,8 +15,6 @@ interface ImportMetaEnv {
   readonly VITE_USE_HTTP?: string;
   /** Vite `base` for GitHub Pages — e.g. `/LogIQ_debug_agent_UI/` (set in CI). */
   readonly VITE_BASE_PATH?: string;
-  /** Temporary conference demo — bypasses auth when `true`. */
-  readonly VITE_DEMO_MODE?: string;
 }
 
 interface ImportMeta {
