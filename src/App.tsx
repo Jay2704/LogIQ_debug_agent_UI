@@ -7,9 +7,11 @@ import { About } from "@/pages/About";
 import { Faq } from "@/pages/Faq";
 import { Anomalies } from "@/pages/Anomalies";
 import { Dashboard } from "@/pages/Dashboard";
+import { DemoCenter } from "@/pages/DemoCenter";
 import { Insights } from "@/pages/Insights";
 import { InvestigationGraph } from "@/pages/InvestigationGraph";
 import { InvestigationTimeline } from "@/pages/InvestigationTimeline";
+import { MultiAgentInvestigation } from "@/pages/MultiAgentInvestigation";
 import { JobDetail } from "@/pages/JobDetail";
 import { Jobs } from "@/pages/Jobs";
 import { ForgotPassword } from "@/pages/ForgotPassword";
@@ -52,10 +54,12 @@ export default function App() {
         <Route element={<AppLayout />}>
           <Route index element={<Dashboard />} />
           <Route path="dashboard" element={<Dashboard />} />
+          <Route path="demo" element={<DemoCenter />} />
           <Route path="jobs" element={<Jobs />} />
           <Route path="jobs/:jobId" element={<JobDetail />} />
           <Route path="jobs/:jobId/graph" element={<InvestigationGraph />} />
           <Route path="jobs/:jobId/timeline" element={<InvestigationTimeline />} />
+          <Route path="jobs/:jobId/multi-agent" element={<MultiAgentInvestigation />} />
           <Route path="anomalies" element={<Anomalies />} />
           <Route path="insights" element={<Insights />} />
           <Route path="reports" element={<Reports />} />

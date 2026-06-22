@@ -7,6 +7,7 @@ import type {
   InvestigationGraph,
   InvestigationTimeline,
   SimilarInvestigationsResult,
+  MultiAgentInvestigationReport,
   Job,
   JobDetailBundle,
   LoginInput,
@@ -32,6 +33,9 @@ import type {
   UnifiedInvestigationContext,
   UtilityRunRecord,
   UtilityToolDefinition,
+  DemoScenario,
+  DemoLaunchInput,
+  DemoLaunchResult,
 } from "@/types";
 
 /**
@@ -122,6 +126,12 @@ export interface InvestigationsService {
   getSimilarIncidents(investigationId: string): Promise<SimilarInvestigationsResult>;
   /** GET /api/v1/investigations/{id}/timeline */
   getTimeline(investigationId: string): Promise<InvestigationTimeline>;
+  /** GET /api/v1/investigations/{id}/multi-agent */
+  getMultiAgentReport(investigationId: string): Promise<MultiAgentInvestigationReport>;
+  /** POST /api/v1/investigations/{id}/multi-agent/run */
+  runMultiAgentInvestigation(
+    investigationId: string
+  ): Promise<MultiAgentInvestigationReport>;
 }
 
 /** RCA reviewer feedback — confirm, reject, or override outcomes. */
@@ -130,6 +140,14 @@ export interface RcaFeedbackService {
   getFeedback(jobId: string): Promise<RcaFeedbackSummary>;
   /** POST /api/v1/jobs/{job_id}/rca/feedback */
   submitFeedback(jobId: string, input: RcaFeedbackSubmitInput): Promise<RcaFeedbackSummary>;
+}
+
+/** Demo Center — curated scenarios for guided investigation walkthroughs. */
+export interface DemoService {
+  /** GET /api/v1/demo/scenarios */
+  listScenarios(): Promise<DemoScenario[]>;
+  /** POST /api/v1/demo/scenarios/{id}/launch */
+  launchScenario(scenarioId: string, input: DemoLaunchInput): Promise<DemoLaunchResult>;
 }
 
 /** RCA evaluation dashboard aggregates. */
@@ -185,6 +203,7 @@ export interface LogIQApi {
   investigations: InvestigationsService;
   rcaFeedback: RcaFeedbackService;
   evaluation: EvaluationService;
+  demo: DemoService;
   users: UsersService;
   auth: AuthService;
 }

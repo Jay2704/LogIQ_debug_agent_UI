@@ -33,6 +33,7 @@ import {
 } from "./parseMcpApi";
 import { parseInvestigationGraphJson } from "./parseInvestigationGraphApi";
 import { parseInvestigationTimelineJson } from "./parseInvestigationTimelineApi";
+import { parseMultiAgentReportJson } from "./parseMultiAgentApi";
 import { parseSimilarInvestigationsJson } from "./parseSimilarInvestigationsApi";
 import {
   parseRcaFeedbackSummaryJson,
@@ -583,6 +584,38 @@ export function createHttpApi(): LogIQApi {
         const json: unknown = await readJsonOrNull(res);
         return parseInvestigationTimelineJson(json, id);
       },
+      getMultiAgentReport: async (investigationId: string) => {
+        const id = investigationId.trim();
+        const url = joinApiUrl(
+          baseUrl,
+          `/api/v1/investigations/${encodeURIComponent(id)}/multi-agent`
+        );
+        const res = await fetchNetwork(url);
+        if (res.status === 404) {
+          return mocks.investigations.getMultiAgentReport(id);
+        }
+        if (!res.ok) {
+          await httpError(res, "GET /api/v1/investigations/:id/multi-agent");
+        }
+        const json: unknown = await readJsonOrNull(res);
+        return parseMultiAgentReportJson(json, id);
+      },
+      runMultiAgentInvestigation: async (investigationId: string) => {
+        const id = investigationId.trim();
+        const url = joinApiUrl(
+          baseUrl,
+          `/api/v1/investigations/${encodeURIComponent(id)}/multi-agent/run`
+        );
+        const res = await fetchNetwork(url, { method: "POST" });
+        if (res.status === 404 || res.status === 405) {
+          return mocks.investigations.runMultiAgentInvestigation(id);
+        }
+        if (!res.ok) {
+          await httpError(res, "POST /api/v1/investigations/:id/multi-agent/run");
+        }
+        const json: unknown = await readJsonOrNull(res);
+        return parseMultiAgentReportJson(json, id);
+      },
     },
     rcaFeedback: {
       getFeedback: async (jobId: string) => {
@@ -644,6 +677,66 @@ export function createHttpApi(): LogIQApi {
         if (!res.ok) await httpError(res, "GET /api/v1/evaluation/rca/trends");
         const json: unknown = await readJsonOrNull(res);
         return parseRcaEvaluationTrendsJson(json);
+      },
+    },
+    demo: {
+      listScenarios: () => mocks.demo.listScenarios(),
+      launchScenario: async (scenarioId, input) => {
+        const scenarios = await mocks.demo.listScenarios();
+        const scenario = scenarios.find((row) => row.id === scenarioId);
+        if (!scenario) {
+          throw new Error(`[LogIQ API] Unknown demo scenario: ${scenarioId}`);
+        }
+        const triggeredByUserId = input.triggeredByUserId.trim();
+        if (!triggeredByUserId) {
+          throw new Error("[LogIQ API] launchScenario: triggeredByUserId is required");
+        }
+        const url = joinApiUrl(
+          baseUrl,
+          `/api/v1/demo/scenarios/${encodeURIComponent(scenarioId)}/launch`
+        );
+        const res = await fetchNetwork(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            triggered_by_user_id: triggeredByUserId,
+            job_type: "debug_investigation",
+            anomaly_id: scenario.anomalyId,
+            run_id: scenario.runId,
+            trigger_source: "demo",
+          }),
+        });
+        if (res.status === 404 || res.status === 405) {
+          const jobsUrl = joinApiUrl(baseUrl, "/api/v1/jobs");
+          const jobsRes = await fetchNetwork(jobsUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              job_type: "debug_investigation",
+              anomaly_id: scenario.anomalyId,
+              run_id: scenario.runId,
+              triggered_by_user_id: triggeredByUserId,
+              trigger_source: "demo",
+            }),
+          });
+          if (!jobsRes.ok) await httpError(jobsRes, "POST /api/v1/jobs");
+          const jobsJson: unknown = await readJsonOrNull(jobsRes);
+          if (jobsJson === null || jobsJson === undefined) {
+            throw new Error("[LogIQ API] POST /api/v1/jobs: empty response body");
+          }
+          return { job: parseApiJobJson(jobsJson) };
+        }
+        if (!res.ok) {
+          await httpError(res, "POST /api/v1/demo/scenarios/:id/launch");
+        }
+        const json: unknown = await readJsonOrNull(res);
+        if (json === null || json === undefined) {
+          throw new Error("[LogIQ API] demo launch: empty response body");
+        }
+        if (typeof json === "object" && json !== null && "job" in json) {
+          return { job: parseApiJobJson((json as { job: unknown }).job) };
+        }
+        return { job: parseApiJobJson(json) };
       },
     },
     auth: {

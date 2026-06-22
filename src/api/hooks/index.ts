@@ -28,6 +28,8 @@ export { useMcpContextPreview } from "./useMcpContextPreview";
 export { useMcpConnections } from "./useMcpConnections";
 export { useInvestigationGraph } from "./useInvestigationGraph";
 export { useInvestigationTimeline } from "./useInvestigationTimeline";
+export { useMultiAgentInvestigation } from "./useMultiAgentInvestigation";
 export { useSimilarIncidents } from "./useSimilarIncidents";
 export { useRcaFeedback } from "./useRcaFeedback";
 export { useRcaEvaluation } from "./useRcaEvaluation";
+export { useDemoScenarios } from "./useDemoScenarios";

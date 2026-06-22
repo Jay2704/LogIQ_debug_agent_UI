@@ -9,6 +9,7 @@ import {
   GitBranchPlus,
   LayoutDashboard,
   ListTodo,
+  PlayCircle,
   Settings2,
   Wrench,
 } from "lucide-react";
@@ -34,6 +35,12 @@ export const MAIN_NAV_ITEMS: MainNavItem[] = [
     label: "Jobs",
     icon: ListTodo,
     description: "Create and manage investigations",
+  },
+  {
+    to: "/demo",
+    label: "Demo Center",
+    icon: PlayCircle,
+    description: "Launch curated demo investigations with one click",
   },
   {
     to: "/anomalies",

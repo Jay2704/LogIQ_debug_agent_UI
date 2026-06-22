@@ -2,6 +2,10 @@ import type { InvestigationsService } from "@/api/contracts";
 import type { InvestigationGraph, SimilarHistoricalInvestigation } from "@/types";
 import type { InvestigationTimeline } from "@/types";
 import { sortSimilarInvestigations } from "@/api/http/parseSimilarInvestigationsApi";
+import {
+  getMockMultiAgentReport,
+  runMockMultiAgentInvestigation,
+} from "./multiAgent";
 
 function buildSampleGraph(investigationId: string): InvestigationGraph {
   const rootId = `inv-${investigationId}`;
@@ -247,5 +251,23 @@ export const mockInvestigationsService: InvestigationsService = {
     }
     await new Promise((r) => setTimeout(r, 160));
     return buildSampleTimeline(id);
+  },
+
+  async getMultiAgentReport(investigationId: string) {
+    const id = investigationId.trim();
+    if (!id) {
+      throw new Error("[LogIQ investigations] getMultiAgentReport: investigation id is required");
+    }
+    return getMockMultiAgentReport(id);
+  },
+
+  async runMultiAgentInvestigation(investigationId: string) {
+    const id = investigationId.trim();
+    if (!id) {
+      throw new Error(
+        "[LogIQ investigations] runMultiAgentInvestigation: investigation id is required"
+      );
+    }
+    return runMockMultiAgentInvestigation(id);
   },
 };

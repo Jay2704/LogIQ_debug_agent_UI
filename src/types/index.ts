@@ -65,6 +65,19 @@ export type {
   TimelineFilters,
 } from "./domain/investigationTimeline";
 export type {
+  InvestigationAgentId,
+  MultiAgentRunStatus,
+  AgentRunStatus,
+  AgentFinding,
+  MultiAgentPanel,
+  MultiAgentInvestigationSummary,
+  MultiAgentInvestigationReport,
+} from "./domain/multiAgent";
+export {
+  INVESTIGATION_AGENT_LABELS,
+  INVESTIGATION_AGENT_ORDER,
+} from "./domain/multiAgent";
+export type {
   SimilarHistoricalInvestigation,
   SimilarInvestigationsResult,
 } from "./domain/similarInvestigation";
@@ -84,6 +97,11 @@ export type {
   RcaCandidateRow,
   RcaEvaluationTrends,
 } from "./domain/rcaEvaluation";
+export type {
+  DemoScenario,
+  DemoLaunchInput,
+  DemoLaunchResult,
+} from "./domain/demo";
 export type { UserRole, User, CreateUserInput } from "./domain/user";
 export { SIGNUP_ROLE_OPTIONS } from "./domain/user";
 

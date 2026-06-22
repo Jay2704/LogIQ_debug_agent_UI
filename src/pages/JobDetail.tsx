@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   ArrowLeft,
+  Bot,
   CalendarClock,
   GitBranch,
   Loader2,
@@ -370,6 +371,13 @@ export function JobDetail() {
           </div>
         </div>
         <div className="flex flex-wrap gap-3 lg:justify-end">
+          <Link
+            to={`/jobs/${encodeURIComponent(routeJobId)}/multi-agent`}
+            className="inline-flex items-center gap-2 self-start rounded-xl border border-cyan-500/30 bg-cyan-500/[0.08] px-4 py-2.5 text-sm font-semibold text-cyan-200 transition hover:border-cyan-400/45 hover:bg-cyan-500/15 hover:text-white"
+          >
+            <Bot className="h-4 w-4" aria-hidden />
+            Multi-agent
+          </Link>
           <Link
             to={`/jobs/${encodeURIComponent(routeJobId)}/timeline`}
             className="inline-flex items-center gap-2 self-start rounded-xl border border-violet-500/30 bg-violet-500/[0.08] px-4 py-2.5 text-sm font-semibold text-violet-200 transition hover:border-violet-400/45 hover:bg-violet-500/15 hover:text-white"
