@@ -78,6 +78,13 @@ export {
   INVESTIGATION_AGENT_ORDER,
 } from "./domain/multiAgent";
 export type {
+  InvestigationReport,
+  InvestigationReportSimilarIncident,
+  InvestigationReportFeedbackEntry,
+  InvestigationReportMultiAgentFinding,
+  InvestigationReportRunbook,
+} from "./domain/investigationReport";
+export type {
   SimilarHistoricalInvestigation,
   SimilarInvestigationsResult,
 } from "./domain/similarInvestigation";

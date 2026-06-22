@@ -34,6 +34,7 @@ import {
 import { parseInvestigationGraphJson } from "./parseInvestigationGraphApi";
 import { parseInvestigationTimelineJson } from "./parseInvestigationTimelineApi";
 import { parseMultiAgentReportJson } from "./parseMultiAgentApi";
+import { parseInvestigationReportJson } from "./parseInvestigationReportApi";
 import { parseSimilarInvestigationsJson } from "./parseSimilarInvestigationsApi";
 import {
   parseRcaFeedbackSummaryJson,
@@ -615,6 +616,38 @@ export function createHttpApi(): LogIQApi {
         }
         const json: unknown = await readJsonOrNull(res);
         return parseMultiAgentReportJson(json, id);
+      },
+      getInvestigationReport: async (investigationId: string) => {
+        const id = investigationId.trim();
+        const url = joinApiUrl(
+          baseUrl,
+          `/api/v1/investigations/${encodeURIComponent(id)}/report`
+        );
+        const res = await fetchNetwork(url);
+        if (res.status === 404) {
+          return mocks.investigations.getInvestigationReport(id);
+        }
+        if (!res.ok) {
+          await httpError(res, "GET /api/v1/investigations/:id/report");
+        }
+        const json: unknown = await readJsonOrNull(res);
+        return parseInvestigationReportJson(json, id);
+      },
+      refreshInvestigationReport: async (investigationId: string) => {
+        const id = investigationId.trim();
+        const url = joinApiUrl(
+          baseUrl,
+          `/api/v1/investigations/${encodeURIComponent(id)}/report/refresh`
+        );
+        const res = await fetchNetwork(url, { method: "POST" });
+        if (res.status === 404 || res.status === 405) {
+          return mocks.investigations.refreshInvestigationReport(id);
+        }
+        if (!res.ok) {
+          await httpError(res, "POST /api/v1/investigations/:id/report/refresh");
+        }
+        const json: unknown = await readJsonOrNull(res);
+        return parseInvestigationReportJson(json, id);
       },
     },
     rcaFeedback: {

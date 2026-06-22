@@ -8,6 +8,7 @@ import type {
   InvestigationTimeline,
   SimilarInvestigationsResult,
   MultiAgentInvestigationReport,
+  InvestigationReport,
   Job,
   JobDetailBundle,
   LoginInput,
@@ -132,6 +133,10 @@ export interface InvestigationsService {
   runMultiAgentInvestigation(
     investigationId: string
   ): Promise<MultiAgentInvestigationReport>;
+  /** GET /api/v1/investigations/{id}/report */
+  getInvestigationReport(investigationId: string): Promise<InvestigationReport>;
+  /** POST /api/v1/investigations/{id}/report/refresh */
+  refreshInvestigationReport(investigationId: string): Promise<InvestigationReport>;
 }
 
 /** RCA reviewer feedback — confirm, reject, or override outcomes. */

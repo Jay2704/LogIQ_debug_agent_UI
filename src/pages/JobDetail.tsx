@@ -4,6 +4,7 @@ import {
   ArrowLeft,
   Bot,
   CalendarClock,
+  FileText,
   GitBranch,
   Loader2,
   MessageSquareWarning,
@@ -371,6 +372,13 @@ export function JobDetail() {
           </div>
         </div>
         <div className="flex flex-wrap gap-3 lg:justify-end">
+          <Link
+            to={`/jobs/${encodeURIComponent(routeJobId)}/report`}
+            className="inline-flex items-center gap-2 self-start rounded-xl border border-indigo-500/30 bg-indigo-500/[0.08] px-4 py-2.5 text-sm font-semibold text-indigo-200 transition hover:border-indigo-400/45 hover:bg-indigo-500/15 hover:text-white"
+          >
+            <FileText className="h-4 w-4" aria-hidden />
+            Report
+          </Link>
           <Link
             to={`/jobs/${encodeURIComponent(routeJobId)}/multi-agent`}
             className="inline-flex items-center gap-2 self-start rounded-xl border border-cyan-500/30 bg-cyan-500/[0.08] px-4 py-2.5 text-sm font-semibold text-cyan-200 transition hover:border-cyan-400/45 hover:bg-cyan-500/15 hover:text-white"

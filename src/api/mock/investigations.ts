@@ -6,6 +6,10 @@ import {
   getMockMultiAgentReport,
   runMockMultiAgentInvestigation,
 } from "./multiAgent";
+import {
+  getMockInvestigationReport,
+  refreshMockInvestigationReport,
+} from "./investigationReport";
 
 function buildSampleGraph(investigationId: string): InvestigationGraph {
   const rootId = `inv-${investigationId}`;
@@ -134,7 +138,7 @@ function buildSampleSimilarIncidents(
   ].filter((row) => row.investigationId !== investigationId));
 }
 
-function buildSampleTimeline(investigationId: string): InvestigationTimeline {
+export function buildSampleTimeline(investigationId: string): InvestigationTimeline {
   return {
     investigationId,
     events: [
@@ -269,5 +273,23 @@ export const mockInvestigationsService: InvestigationsService = {
       );
     }
     return runMockMultiAgentInvestigation(id);
+  },
+
+  async getInvestigationReport(investigationId: string) {
+    const id = investigationId.trim();
+    if (!id) {
+      throw new Error("[LogIQ investigations] getInvestigationReport: investigation id is required");
+    }
+    return getMockInvestigationReport(id);
+  },
+
+  async refreshInvestigationReport(investigationId: string) {
+    const id = investigationId.trim();
+    if (!id) {
+      throw new Error(
+        "[LogIQ investigations] refreshInvestigationReport: investigation id is required"
+      );
+    }
+    return refreshMockInvestigationReport(id);
   },
 };

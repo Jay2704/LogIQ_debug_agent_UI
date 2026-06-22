@@ -1,5 +1,5 @@
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, Clock, MessageSquareWarning, Network, RefreshCw } from "lucide-react";
+import { ArrowLeft, Clock, FileText, MessageSquareWarning, Network, RefreshCw } from "lucide-react";
 import { useInvestigationTimeline } from "@/api/hooks";
 import { TimelineWorkspace } from "@/components/timeline/TimelineWorkspace";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -127,6 +127,13 @@ export function InvestigationTimeline() {
           <p className="mt-1 text-xs text-slate-500">{data.events.length} events indexed</p>
         </div>
         <div className="flex flex-wrap gap-2">
+          <Link
+            to={`/jobs/${encodeURIComponent(jobId)}/report`}
+            className="inline-flex items-center gap-2 rounded-xl border border-indigo-500/30 bg-indigo-500/[0.08] px-4 py-2.5 text-sm font-semibold text-indigo-200 transition hover:border-indigo-400/45 hover:bg-indigo-500/15 hover:text-white"
+          >
+            <FileText className="h-4 w-4" aria-hidden />
+            Report
+          </Link>
           <Link
             to={`/jobs/${encodeURIComponent(jobId)}/graph`}
             className="inline-flex items-center gap-2 rounded-xl border border-sky-500/30 bg-sky-500/[0.08] px-4 py-2.5 text-sm font-semibold text-sky-200 transition hover:border-sky-400/45 hover:bg-sky-500/15 hover:text-white"

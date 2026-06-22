@@ -29,6 +29,7 @@ export { useMcpConnections } from "./useMcpConnections";
 export { useInvestigationGraph } from "./useInvestigationGraph";
 export { useInvestigationTimeline } from "./useInvestigationTimeline";
 export { useMultiAgentInvestigation } from "./useMultiAgentInvestigation";
+export { useInvestigationReport } from "./useInvestigationReport";
 export { useSimilarIncidents } from "./useSimilarIncidents";
 export { useRcaFeedback } from "./useRcaFeedback";
 export { useRcaEvaluation } from "./useRcaEvaluation";
