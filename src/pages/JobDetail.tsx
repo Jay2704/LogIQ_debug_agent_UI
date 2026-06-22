@@ -24,12 +24,15 @@ import { InvestigationProgressBanner } from "@/components/job/InvestigationProgr
 import { RemediationChecklist } from "@/components/job/RemediationChecklist";
 import { SimilarIncidentsPanel } from "@/components/job/SimilarIncidentsPanel";
 import { SimilarIncidentList } from "@/components/similar-incidents/SimilarIncidentList";
+import { FeedbackPanel } from "@/components/feedback/FeedbackPanel";
+import { FeedbackHistory } from "@/components/feedback/FeedbackHistory";
 import { JobReportSummaryCard } from "@/components/job/JobReportSummaryCard";
 import { PageLoading } from "@/components/ui/PageLoading";
 import { FeedbackNotice } from "@/components/ui/FeedbackNotice";
 import {
   useJobDetailData,
   useRcaInvestigation,
+  useRcaFeedback,
   useSimilarIncidents,
   type InvestigationPhase,
 } from "@/api/hooks";
@@ -121,6 +124,14 @@ export function JobDetail() {
     error: similarHistoricalError,
     refetch: refetchSimilarHistorical,
   } = useSimilarIncidents(jobId);
+
+  const {
+    summary: rcaFeedbackSummary,
+    loading: rcaFeedbackLoading,
+    submitting: rcaFeedbackSubmitting,
+    error: rcaFeedbackError,
+    submit: submitRcaFeedback,
+  } = useRcaFeedback(jobId);
 
   const roleCaps = useRoleUiCapabilities();
   const { user: sessionUser } = useCurrentUser();
@@ -705,6 +716,20 @@ export function JobDetail() {
                   </div>
                 )}
               </aside>
+            </div>
+
+            <div className="space-y-4">
+              <FeedbackPanel
+                summary={rcaFeedbackSummary}
+                loading={rcaFeedbackLoading}
+                submitting={rcaFeedbackSubmitting}
+                error={rcaFeedbackError?.message ?? null}
+                onSubmit={submitRcaFeedback}
+              />
+              <FeedbackHistory
+                history={rcaFeedbackSummary?.history ?? []}
+                loading={rcaFeedbackLoading}
+              />
             </div>
           </div>
         ) : null}

@@ -31,6 +31,10 @@ import {
 } from "./parseMcpApi";
 import { parseInvestigationGraphJson } from "./parseInvestigationGraphApi";
 import { parseSimilarInvestigationsJson } from "./parseSimilarInvestigationsApi";
+import {
+  parseRcaFeedbackSummaryJson,
+  serializeRcaFeedbackBody,
+} from "./parseRcaFeedbackApi";
 
 /**
  * “Hybrid” HTTP client: real `fetch` calls for backend-supported routes (jobs, RCA, auth, Jira,
@@ -532,6 +536,38 @@ export function createHttpApi(): LogIQApi {
         }
         const json: unknown = await readJsonOrNull(res);
         return parseSimilarInvestigationsJson(json, id);
+      },
+    },
+    rcaFeedback: {
+      getFeedback: async (jobId: string) => {
+        const id = jobId.trim();
+        const url = joinApiUrl(
+          baseUrl,
+          `/api/v1/jobs/${encodeURIComponent(id)}/rca/feedback`
+        );
+        const res = await fetchNetwork(url);
+        if (!res.ok) {
+          await httpError(res, "GET /api/v1/jobs/:job_id/rca/feedback");
+        }
+        const json: unknown = await readJsonOrNull(res);
+        return parseRcaFeedbackSummaryJson(json, id);
+      },
+      submitFeedback: async (jobId, input) => {
+        const id = jobId.trim();
+        const url = joinApiUrl(
+          baseUrl,
+          `/api/v1/jobs/${encodeURIComponent(id)}/rca/feedback`
+        );
+        const res = await fetchNetwork(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(serializeRcaFeedbackBody(input)),
+        });
+        if (!res.ok) {
+          await httpError(res, "POST /api/v1/jobs/:job_id/rca/feedback");
+        }
+        const json: unknown = await readJsonOrNull(res);
+        return parseRcaFeedbackSummaryJson(json, id);
       },
     },
     auth: {

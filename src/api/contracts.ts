@@ -11,6 +11,8 @@ import type {
   LoginInput,
   RcaAssistiveExplanation,
   RcaResult,
+  RcaFeedbackSubmitInput,
+  RcaFeedbackSummary,
   ReportArtifact,
   TopRootCauseFileRow,
   User,
@@ -106,6 +108,14 @@ export interface InvestigationsService {
   getSimilarIncidents(investigationId: string): Promise<SimilarInvestigationsResult>;
 }
 
+/** RCA reviewer feedback — confirm, reject, or override outcomes. */
+export interface RcaFeedbackService {
+  /** GET /api/v1/jobs/{job_id}/rca/feedback */
+  getFeedback(jobId: string): Promise<RcaFeedbackSummary>;
+  /** POST /api/v1/jobs/{job_id}/rca/feedback */
+  submitFeedback(jobId: string, input: RcaFeedbackSubmitInput): Promise<RcaFeedbackSummary>;
+}
+
 /** User CRUD-style helpers for signup / lookup (no token auth in this layer yet). */
 export interface UsersService {
   create(input: CreateUserInput): Promise<User>;
@@ -145,6 +155,7 @@ export interface LogIQApi {
   jira: JiraService;
   mcp: McpService;
   investigations: InvestigationsService;
+  rcaFeedback: RcaFeedbackService;
   users: UsersService;
   auth: AuthService;
 }

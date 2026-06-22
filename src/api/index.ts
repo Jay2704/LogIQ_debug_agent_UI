@@ -20,6 +20,7 @@ export type {
   JiraService,
   McpService,
   InvestigationsService,
+  RcaFeedbackService,
   UsersService,
   LoginResult,
   AuthService,

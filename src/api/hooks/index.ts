@@ -27,3 +27,4 @@ export { useMcpStatus } from "./useMcpStatus";
 export { useMcpContextPreview } from "./useMcpContextPreview";
 export { useInvestigationGraph } from "./useInvestigationGraph";
 export { useSimilarIncidents } from "./useSimilarIncidents";
+export { useRcaFeedback } from "./useRcaFeedback";

@@ -57,6 +57,12 @@ export type {
   SimilarHistoricalInvestigation,
   SimilarInvestigationsResult,
 } from "./domain/similarInvestigation";
+export type {
+  RcaFeedbackAction,
+  RcaFeedbackEntry,
+  RcaFeedbackSummary,
+  RcaFeedbackSubmitInput,
+} from "./domain/rcaFeedback";
 export type { UserRole, User, CreateUserInput } from "./domain/user";
 export { SIGNUP_ROLE_OPTIONS } from "./domain/user";
 
