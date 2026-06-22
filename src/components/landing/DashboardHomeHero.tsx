@@ -9,10 +9,15 @@ import {
   Loader2,
   PlayCircle,
   SearchCheck,
+  Sparkles,
   Upload,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { api } from "@/api";
+import { MCP_UI_ENABLED } from "@/api/config";
+import { useMcpContextPreview, useMcpStatus } from "@/api/hooks";
+import { McpContextPreviewPanel } from "@/components/mcp/McpContextPreviewPanel";
+import { McpProviderStatusGrid } from "@/components/mcp/McpProviderStatusGrid";
 import { ProductPreviewCard } from "@/components/landing/ProductPreviewCard";
 import { SplineScene } from "@/components/ui/splite";
 import { Spotlight } from "@/components/ui/spotlight";
@@ -125,12 +130,15 @@ interface DashboardHomeHeroProps {
   showHero?: boolean;
   showWorkflow?: boolean;
   showPreviewCard?: boolean;
+  /** When true (and `VITE_MCP_UI_ENABLED`), inserts MCP context preview before investigation. */
+  enableMcpPreview?: boolean;
 }
 
 export function DashboardHomeHero({
   showHero = true,
   showWorkflow = true,
   showPreviewCard = true,
+  enableMcpPreview = false,
 }: DashboardHomeHeroProps) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const investigationResultsRef = useRef<HTMLDivElement | null>(null);
@@ -157,6 +165,21 @@ export function DashboardHomeHero({
   const [rcaResult, setRcaResult] = useState<JiraRcaResult | null>(null);
   const [recentInvestigations, setRecentInvestigations] = useState<RecentInvestigationEntry[]>([]);
 
+  const mcpWorkflowActive = enableMcpPreview && MCP_UI_ENABLED;
+  const {
+    data: mcpProviders,
+    loading: mcpStatusLoading,
+    error: mcpStatusError,
+    refetch: refetchMcpStatus,
+  } = useMcpStatus(mcpWorkflowActive);
+  const {
+    data: mcpContext,
+    loading: mcpPreviewLoading,
+    error: mcpPreviewError,
+    preview: previewMcpContext,
+    reset: resetMcpContext,
+  } = useMcpContextPreview();
+
   const manualTicket = buildTicketFromFields({
     key: ticketKey,
     title: ticketTitle,
@@ -171,7 +194,16 @@ export function DashboardHomeHero({
   const hasFetchedTicket = Boolean(ticket?.key.trim());
   const hasManualTicket = Boolean(hasValidTicketKey && ticketTitle.trim());
   const canUploadLogs = hasFetchedTicket || hasManualTicket;
-  const canRunRca = Boolean(hasValidTicketKey && effectiveTicket && logContent.trim());
+  const canPreviewContext = Boolean(
+    mcpWorkflowActive && hasValidTicketKey && effectiveTicket && logContent.trim()
+  );
+  const hasMcpContext = Boolean(mcpContext);
+  const canRunRca = Boolean(
+    hasValidTicketKey &&
+      effectiveTicket &&
+      logContent.trim() &&
+      (!mcpWorkflowActive || hasMcpContext)
+  );
   const confidencePct =
     typeof rcaResult?.confidence === "number"
       ? Math.round(Math.max(0, Math.min(1, rcaResult.confidence)) * 100)
@@ -192,7 +224,11 @@ export function DashboardHomeHero({
           : "RCA complete"
         : hasFetchedTicket || hasManualTicket
           ? logContent.trim()
-            ? "Ready to run RCA"
+            ? mcpWorkflowActive
+              ? hasMcpContext
+                ? "Ready to run investigation"
+                : "Preview external context"
+              : "Ready to run RCA"
             : "Ticket ready — upload logs"
           : ticketKey.trim()
             ? "Fetch ticket or fill fields manually"
@@ -205,6 +241,8 @@ export function DashboardHomeHero({
         ? "Enter a ticket key, then fetch or fill title and other fields manually."
         : !logContent.trim()
           ? "Upload a log file (.log, .txt, or .csv)."
+          : mcpWorkflowActive && !hasMcpContext
+            ? "Preview Jira, GitHub, and GitLab context before running the investigation."
           : rcaLoading
             ? "Analysis in progress — results appear in Step 5."
             : rcaResult
@@ -216,6 +254,8 @@ export function DashboardHomeHero({
       ? "Fetch ticket or enter title manually"
       : !logContent.trim()
         ? "Upload logs first"
+        : mcpWorkflowActive && !hasMcpContext
+          ? "Preview external context first"
         : null;
 
   useEffect(() => {
@@ -255,6 +295,7 @@ export function DashboardHomeHero({
       setRcaResult(null);
       setRcaError(null);
       setWorkflowInfo(null);
+      resetMcpContext();
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
       setTicket(null);
@@ -300,6 +341,7 @@ export function DashboardHomeHero({
         setRcaResult(null);
         setRcaError(null);
         setWorkflowInfo(null);
+        resetMcpContext();
         if (parsed.lines.length === 0) {
           setLogError("This file is empty. Choose a different file.");
         }
@@ -315,6 +357,38 @@ export function DashboardHomeHero({
         event.target.value = "";
       });
   };
+
+  async function handlePreviewContext() {
+    const ticketForPreview =
+      ticket ??
+      buildTicketFromFields({
+        key: ticketKey,
+        title: ticketTitle,
+        description: ticketDescription,
+        labelsInput: ticketLabelsInput,
+        status: ticketStatus,
+        priority: ticketPriority,
+      });
+    if (!ticketForPreview) {
+      return;
+    }
+    if (!logContent.trim()) {
+      return;
+    }
+
+    try {
+      await previewMcpContext({
+        ticketKey: ticketForPreview.key,
+        ticket: ticketForPreview,
+        logContent,
+      });
+      setWorkflowInfo(null);
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      setWorkflowInfo(null);
+      console.warn("[LogIQ MCP] preview failed:", msg);
+    }
+  }
 
   async function handleRunRca() {
     const ticketForRca =
@@ -491,6 +565,19 @@ export function DashboardHomeHero({
             Current stage: {workflowStageLabel}
           </div>
           <p className="mb-4 text-xs text-slate-400">{nextActionHint}</p>
+          {mcpWorkflowActive ? (
+            <div className="mb-4 space-y-2">
+              <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
+                MCP providers
+              </p>
+              <McpProviderStatusGrid
+                providers={mcpProviders}
+                loading={mcpStatusLoading}
+                error={mcpStatusError?.message ?? null}
+                onRetry={refetchMcpStatus}
+              />
+            </div>
+          ) : null}
           <div className="mb-4 flex flex-wrap gap-2">
             {[
               {
@@ -500,14 +587,35 @@ export function DashboardHomeHero({
                 active: ticketLoading,
               },
               { k: "02", label: "Upload logs", done: Boolean(logContent.trim()), active: false },
+              ...(mcpWorkflowActive
+                ? [
+                    {
+                      k: "03",
+                      label: "Preview context",
+                      done: hasMcpContext,
+                      active: mcpPreviewLoading,
+                    },
+                  ]
+                : [
+                    {
+                      k: "03",
+                      label: "Preview logs",
+                      done: Boolean(logContent.trim()),
+                      active: false,
+                    },
+                  ]),
               {
-                k: "03",
-                label: "Preview logs",
-                done: Boolean(logContent.trim()),
+                k: mcpWorkflowActive ? "04" : "04",
+                label: mcpWorkflowActive ? "Run investigation" : "Run RCA",
+                done: Boolean(rcaResult),
+                active: rcaLoading,
+              },
+              {
+                k: mcpWorkflowActive ? "05" : "05",
+                label: "Review result",
+                done: Boolean(rcaResult),
                 active: false,
               },
-              { k: "04", label: "Run RCA", done: Boolean(rcaResult), active: rcaLoading },
-              { k: "05", label: "Review result", done: Boolean(rcaResult), active: false },
             ].map((step) => (
               <span
                 key={step.k}
@@ -751,15 +859,72 @@ export function DashboardHomeHero({
             ) : null}
           </div>
 
+          {mcpWorkflowActive ? (
+            <div className="mt-5 rounded-xl border border-white/[0.08] bg-black/[0.82] p-4">
+              <div className="flex items-center gap-2">
+                <span className="rounded-full border border-white/[0.16] bg-white/[0.03] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-300">
+                  Step 3
+                </span>
+                <p className="text-sm font-semibold text-white">Preview external context</p>
+              </div>
+              <p className="mt-2 text-xs text-slate-500">
+                Gather Jira, GitHub, and GitLab signals linked to this ticket before running the
+                investigation.
+              </p>
+              <button
+                type="button"
+                disabled={!canPreviewContext || mcpPreviewLoading}
+                onClick={() => void handlePreviewContext()}
+                title={
+                  !canPreviewContext
+                    ? "Upload logs and confirm ticket details first"
+                    : undefined
+                }
+                className={cn(
+                  "mt-3 inline-flex min-w-[10rem] items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-60",
+                  ctaButtonGradient,
+                  ctaGlowBlueOnly,
+                  "ring-1 ring-blue-400/35"
+                )}
+              >
+                {mcpPreviewLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Sparkles className="h-4 w-4" />
+                )}
+                {mcpPreviewLoading ? "Previewing context…" : "Preview Context"}
+              </button>
+              {mcpPreviewError ? (
+                <div className="mt-3 inline-flex items-start gap-2 rounded-lg border border-red-500/25 bg-red-500/[0.08] px-3 py-2 text-xs text-red-100/90">
+                  <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-red-300" />
+                  <span>{mcpPreviewError.message}</span>
+                </div>
+              ) : null}
+              {mcpContext ? (
+                <div className="mt-4">
+                  <McpContextPreviewPanel context={mcpContext} />
+                </div>
+              ) : !mcpPreviewLoading && canPreviewContext ? (
+                <p className="mt-3 text-xs text-slate-500">
+                  Context preview will show Jira details, GitHub commits and PRs, and GitLab merge
+                  requests.
+                </p>
+              ) : null}
+            </div>
+          ) : null}
+
           <div className="mt-5 rounded-xl border border-white/[0.08] bg-black/[0.82] p-4">
             <div className="flex items-center gap-2">
               <span className="rounded-full border border-white/[0.16] bg-white/[0.03] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-300">
-                Step 4
+                {mcpWorkflowActive ? "Step 4" : "Step 4"}
               </span>
-              <p className="text-sm font-semibold text-white">Run RCA</p>
+              <p className="text-sm font-semibold text-white">
+                {mcpWorkflowActive ? "Run investigation" : "Run RCA"}
+              </p>
             </div>
             <p className="mt-2 text-xs text-slate-500">
-              Uses the ticket key, ticket fields above, and the uploaded log file.
+              Uses the ticket key, ticket fields above, and the uploaded log file
+              {mcpWorkflowActive ? " plus the previewed external context" : ""}.
             </p>
             <button
               type="button"
@@ -774,7 +939,13 @@ export function DashboardHomeHero({
               )}
             >
               {rcaLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <PlayCircle className="h-4 w-4" />}
-              {rcaLoading ? "Running RCA..." : "Run RCA"}
+              {rcaLoading
+                ? mcpWorkflowActive
+                  ? "Running investigation..."
+                  : "Running RCA..."
+                : mcpWorkflowActive
+                  ? "Run Investigation"
+                  : "Run RCA"}
             </button>
             {rcaError ? (
               <div className="mt-3 inline-flex items-start gap-2 rounded-lg border border-red-500/25 bg-red-500/[0.08] px-3 py-2 text-xs text-red-100/90">

@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { api } from "@/api";
+import { MCP_UI_ENABLED } from "@/api/config";
 import { DashboardHomeHero } from "@/components/landing/DashboardHomeHero";
 
 export function RCAWithJira() {
@@ -63,7 +64,11 @@ export function RCAWithJira() {
       </div>
       ) : null}
       <div className="mt-6">
-        <DashboardHomeHero showHero={false} showWorkflow />
+        <DashboardHomeHero
+          showHero={false}
+          showWorkflow
+          enableMcpPreview={MCP_UI_ENABLED}
+        />
       </div>
     </div>
   );

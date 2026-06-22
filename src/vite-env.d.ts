@@ -15,6 +15,8 @@ interface ImportMetaEnv {
   readonly VITE_USE_HTTP?: string;
   /** Vite `base` for GitHub Pages — e.g. `/LogIQ_debug_agent_UI/` (set in CI). */
   readonly VITE_BASE_PATH?: string;
+  /** When `true`, show MCP provider status and external context preview in the RCA workflow. */
+  readonly VITE_MCP_UI_ENABLED?: string;
 }
 
 interface ImportMeta {

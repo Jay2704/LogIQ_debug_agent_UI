@@ -24,6 +24,11 @@ import {
   parseUserListJson,
   serializeCreateUserBody,
 } from "./parseUserApi";
+import {
+  parseMcpContextPreviewJson,
+  parseMcpStatusJson,
+  serializeMcpPreviewBody,
+} from "./parseMcpApi";
 
 /**
  * “Hybrid” HTTP client: real `fetch` calls for backend-supported routes (jobs, RCA, auth, Jira,
@@ -473,6 +478,30 @@ export function createHttpApi(): LogIQApi {
           explanation: typeof data.explanation === "string" ? data.explanation : undefined,
           remediationSuggestions,
         };
+      },
+    },
+    mcp: {
+      getStatus: async () => {
+        const url = joinApiUrl(baseUrl, "/api/v1/mcp/status");
+        const res = await fetchNetwork(url);
+        if (!res.ok) await httpError(res, "GET /api/v1/mcp/status");
+        const json: unknown = await readJsonOrNull(res);
+        return parseMcpStatusJson(json);
+      },
+      previewContext: async (input) => {
+        const ticketKey = input.ticketKey.trim().toUpperCase();
+        if (!ticketKey) {
+          throw new Error("[LogIQ API] previewContext: ticket_key is required");
+        }
+        const url = joinApiUrl(baseUrl, "/api/v1/mcp/context/preview");
+        const res = await fetchNetwork(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(serializeMcpPreviewBody({ ...input, ticketKey })),
+        });
+        if (!res.ok) await httpError(res, "POST /api/v1/mcp/context/preview");
+        const json: unknown = await readJsonOrNull(res);
+        return parseMcpContextPreviewJson(json);
       },
     },
     auth: {

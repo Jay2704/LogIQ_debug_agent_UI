@@ -15,6 +15,9 @@ import type {
   JiraRcaResult,
   JiraTicketSearchHit,
   JiraTicketSummary,
+  McpPreviewContextInput,
+  McpProviderStatus,
+  UnifiedInvestigationContext,
   UtilityRunRecord,
   UtilityToolDefinition,
 } from "@/types";
@@ -85,6 +88,14 @@ export interface JiraService {
   }): Promise<JiraRcaResult>;
 }
 
+/** MCP-powered external investigation context (Jira, GitHub, GitLab). */
+export interface McpService {
+  /** GET /api/v1/mcp/status — connectivity for phase-1 providers. */
+  getStatus(): Promise<McpProviderStatus[]>;
+  /** POST /api/v1/mcp/context/preview — aggregate context before RCA. */
+  previewContext(input: McpPreviewContextInput): Promise<UnifiedInvestigationContext>;
+}
+
 /** User CRUD-style helpers for signup / lookup (no token auth in this layer yet). */
 export interface UsersService {
   create(input: CreateUserInput): Promise<User>;
@@ -122,6 +133,7 @@ export interface LogIQApi {
   dashboard: DashboardService;
   utilities: UtilitiesService;
   jira: JiraService;
+  mcp: McpService;
   users: UsersService;
   auth: AuthService;
 }

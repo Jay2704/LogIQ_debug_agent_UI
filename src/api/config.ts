@@ -79,3 +79,12 @@ export const USE_HTTP_API = HTTP_MODE_FLAG && Boolean(API_BASE_URL);
 
 /** Convenience: explicit name for “fixtures only” mode. */
 export const USE_MOCK_API = !USE_HTTP_API;
+
+/**
+ * When `true`, the RCA-with-Jira workflow exposes MCP provider status and external context preview.
+ * Gated separately from API mode so mock/offline demos can exercise the UI.
+ */
+export const MCP_UI_ENABLED =
+  String(import.meta.env.VITE_MCP_UI_ENABLED ?? "")
+    .trim()
+    .toLowerCase() === "true";

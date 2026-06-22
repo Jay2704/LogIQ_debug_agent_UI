@@ -38,6 +38,15 @@ export type {
   JiraRcaResult,
   JiraTicketSearchHit,
 } from "./domain/jira";
+export type {
+  McpProviderId,
+  McpProviderStatus,
+  CommitEvent,
+  PullRequestEvent,
+  MergeRequestEvent,
+  UnifiedInvestigationContext,
+  McpPreviewContextInput,
+} from "./domain/mcp";
 export type { UserRole, User, CreateUserInput } from "./domain/user";
 export { SIGNUP_ROLE_OPTIONS } from "./domain/user";
 
