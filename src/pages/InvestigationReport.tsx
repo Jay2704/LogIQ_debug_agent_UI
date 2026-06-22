@@ -1,5 +1,5 @@
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, MessageSquareWarning } from "lucide-react";
+import { ArrowLeft, MessageSquareWarning, RotateCcw } from "lucide-react";
 import { useInvestigationReport } from "@/api/hooks";
 import { ExportActions } from "@/components/report/ExportActions";
 import { ReportSection } from "@/components/report/ReportSection";
@@ -98,6 +98,14 @@ export function InvestigationReport() {
       </Link>
 
       <ReportSummary report={data} />
+
+      <Link
+        to={`/jobs/${encodeURIComponent(jobId)}/replay`}
+        className="inline-flex items-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/[0.08] px-4 py-2.5 text-sm font-semibold text-emerald-200 transition hover:border-emerald-400/45 hover:bg-emerald-500/15 hover:text-white"
+      >
+        <RotateCcw className="h-4 w-4" aria-hidden />
+        Replay
+      </Link>
 
       <ExportActions
         report={data}

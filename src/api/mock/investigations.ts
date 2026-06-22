@@ -10,6 +10,7 @@ import {
   getMockInvestigationReport,
   refreshMockInvestigationReport,
 } from "./investigationReport";
+import { getMockInvestigationReplay } from "./investigationReplay";
 
 function buildSampleGraph(investigationId: string): InvestigationGraph {
   const rootId = `inv-${investigationId}`;
@@ -291,5 +292,13 @@ export const mockInvestigationsService: InvestigationsService = {
       );
     }
     return refreshMockInvestigationReport(id);
+  },
+
+  async getReplay(investigationId: string) {
+    const id = investigationId.trim();
+    if (!id) {
+      throw new Error("[LogIQ investigations] getReplay: investigation id is required");
+    }
+    return getMockInvestigationReplay(id);
   },
 };

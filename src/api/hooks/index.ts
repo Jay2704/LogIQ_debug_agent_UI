@@ -30,6 +30,7 @@ export { useInvestigationGraph } from "./useInvestigationGraph";
 export { useInvestigationTimeline } from "./useInvestigationTimeline";
 export { useMultiAgentInvestigation } from "./useMultiAgentInvestigation";
 export { useInvestigationReport } from "./useInvestigationReport";
+export { useInvestigationReplay } from "./useInvestigationReplay";
 export { useSimilarIncidents } from "./useSimilarIncidents";
 export { useRcaFeedback } from "./useRcaFeedback";
 export { useRcaEvaluation } from "./useRcaEvaluation";

@@ -9,6 +9,7 @@ import type {
   SimilarInvestigationsResult,
   MultiAgentInvestigationReport,
   InvestigationReport,
+  InvestigationReplay,
   Job,
   JobDetailBundle,
   LoginInput,
@@ -137,6 +138,8 @@ export interface InvestigationsService {
   getInvestigationReport(investigationId: string): Promise<InvestigationReport>;
   /** POST /api/v1/investigations/{id}/report/refresh */
   refreshInvestigationReport(investigationId: string): Promise<InvestigationReport>;
+  /** GET /api/v1/investigations/{id}/replay */
+  getReplay(investigationId: string): Promise<InvestigationReplay>;
 }
 
 /** RCA reviewer feedback — confirm, reject, or override outcomes. */

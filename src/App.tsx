@@ -12,6 +12,7 @@ import { Insights } from "@/pages/Insights";
 import { InvestigationGraph } from "@/pages/InvestigationGraph";
 import { InvestigationTimeline } from "@/pages/InvestigationTimeline";
 import { InvestigationReport } from "@/pages/InvestigationReport";
+import { InvestigationReplay } from "@/pages/InvestigationReplay";
 import { MultiAgentInvestigation } from "@/pages/MultiAgentInvestigation";
 import { JobDetail } from "@/pages/JobDetail";
 import { Jobs } from "@/pages/Jobs";
@@ -62,6 +63,7 @@ export default function App() {
           <Route path="jobs/:jobId/timeline" element={<InvestigationTimeline />} />
           <Route path="jobs/:jobId/multi-agent" element={<MultiAgentInvestigation />} />
           <Route path="jobs/:jobId/report" element={<InvestigationReport />} />
+          <Route path="jobs/:jobId/replay" element={<InvestigationReplay />} />
           <Route path="anomalies" element={<Anomalies />} />
           <Route path="insights" element={<Insights />} />
           <Route path="reports" element={<Reports />} />

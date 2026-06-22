@@ -35,6 +35,7 @@ import { parseInvestigationGraphJson } from "./parseInvestigationGraphApi";
 import { parseInvestigationTimelineJson } from "./parseInvestigationTimelineApi";
 import { parseMultiAgentReportJson } from "./parseMultiAgentApi";
 import { parseInvestigationReportJson } from "./parseInvestigationReportApi";
+import { parseInvestigationReplayJson } from "./parseInvestigationReplayApi";
 import { parseSimilarInvestigationsJson } from "./parseSimilarInvestigationsApi";
 import {
   parseRcaFeedbackSummaryJson,
@@ -648,6 +649,22 @@ export function createHttpApi(): LogIQApi {
         }
         const json: unknown = await readJsonOrNull(res);
         return parseInvestigationReportJson(json, id);
+      },
+      getReplay: async (investigationId: string) => {
+        const id = investigationId.trim();
+        const url = joinApiUrl(
+          baseUrl,
+          `/api/v1/investigations/${encodeURIComponent(id)}/replay`
+        );
+        const res = await fetchNetwork(url);
+        if (res.status === 404) {
+          return mocks.investigations.getReplay(id);
+        }
+        if (!res.ok) {
+          await httpError(res, "GET /api/v1/investigations/:id/replay");
+        }
+        const json: unknown = await readJsonOrNull(res);
+        return parseInvestigationReplayJson(json, id);
       },
     },
     rcaFeedback: {

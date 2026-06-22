@@ -78,6 +78,15 @@ export {
   INVESTIGATION_AGENT_ORDER,
 } from "./domain/multiAgent";
 export type {
+  InvestigationReplay,
+  InvestigationReplayEvent,
+  ReplaySpeed,
+} from "./domain/investigationReplay";
+export {
+  REPLAY_SPEED_OPTIONS,
+  REPLAY_STEP_MS,
+} from "./domain/investigationReplay";
+export type {
   InvestigationReport,
   InvestigationReportSimilarIncident,
   InvestigationReportFeedbackEntry,
