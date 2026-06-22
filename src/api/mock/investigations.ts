@@ -1,5 +1,6 @@
 import type { InvestigationsService } from "@/api/contracts";
 import type { InvestigationGraph, SimilarHistoricalInvestigation } from "@/types";
+import type { InvestigationTimeline } from "@/types";
 import { sortSimilarInvestigations } from "@/api/http/parseSimilarInvestigationsApi";
 
 function buildSampleGraph(investigationId: string): InvestigationGraph {
@@ -129,6 +130,94 @@ function buildSampleSimilarIncidents(
   ].filter((row) => row.investigationId !== investigationId));
 }
 
+function buildSampleTimeline(investigationId: string): InvestigationTimeline {
+  return {
+    investigationId,
+    events: [
+      {
+        id: `${investigationId}-tl-01`,
+        timestamp: "2026-03-29T14:25:00.000Z",
+        eventType: "feedback_confirm",
+        group: "feedback",
+        source: "rca.reviewer",
+        title: "RCA confirmed by on-call",
+        description: "Reviewer validated deterministic path against MFA timeout signals.",
+        severity: "info",
+      },
+      {
+        id: `${investigationId}-tl-02`,
+        timestamp: "2026-03-29T14:22:11.000Z",
+        eventType: "rca_complete",
+        group: "rca",
+        source: "logiq.rca",
+        title: "Deterministic RCA completed",
+        description: "Primary candidate ranked: session_validator.py:142 with 0.87 confidence.",
+        severity: "medium",
+      },
+      {
+        id: `${investigationId}-tl-03`,
+        timestamp: "2026-03-29T14:20:00.000Z",
+        eventType: "incident_opened",
+        group: "incidents",
+        source: "pagerduty",
+        title: "INC-1192 opened",
+        description: "Checkout degradation escalated to active incident.",
+        severity: "high",
+      },
+      {
+        id: `${investigationId}-tl-04`,
+        timestamp: "2026-03-29T14:18:00.000Z",
+        eventType: "alert_fired",
+        group: "observability",
+        source: "datadog",
+        title: "P99 latency breach",
+        description: "checkout-service p99 exceeded 850ms for 5 minutes.",
+        severity: "critical",
+      },
+      {
+        id: `${investigationId}-tl-05`,
+        timestamp: "2026-03-29T14:15:00.000Z",
+        eventType: "metric_anomaly",
+        group: "observability",
+        source: "prometheus",
+        title: "auth.session.timeout_rate spike",
+        description: "Timeout ratio crossed 0.18 during peak traffic.",
+        severity: "high",
+      },
+      {
+        id: `${investigationId}-tl-06`,
+        timestamp: "2026-03-28T17:42:00.000Z",
+        eventType: "deployment",
+        group: "deployments",
+        source: "github.actions",
+        title: "Deploy prod-us-east-1",
+        description: "Revision v2.4.18 rolled out to production.",
+        severity: "medium",
+      },
+      {
+        id: `${investigationId}-tl-07`,
+        timestamp: "2026-03-28T16:40:00.000Z",
+        eventType: "commit",
+        group: "code_changes",
+        source: "github",
+        title: "a1b2c3d · fix(auth): session timeout",
+        description: "Tightened MFA session timeout handling in session_validator.",
+        severity: "low",
+      },
+      {
+        id: `${investigationId}-tl-08`,
+        timestamp: "2026-03-28T15:10:00.000Z",
+        eventType: "infra_scale",
+        group: "infrastructure",
+        source: "kubernetes",
+        title: "HPA scaled auth pods",
+        description: "Replica count increased from 6 to 10 during promotion window.",
+        severity: "info",
+      },
+    ],
+  };
+}
+
 export const mockInvestigationsService: InvestigationsService = {
   async getGraph(investigationId: string) {
     const id = investigationId.trim();
@@ -149,5 +238,14 @@ export const mockInvestigationsService: InvestigationsService = {
       investigationId: id,
       incidents: buildSampleSimilarIncidents(id),
     };
+  },
+
+  async getTimeline(investigationId: string) {
+    const id = investigationId.trim();
+    if (!id) {
+      throw new Error("[LogIQ investigations] getTimeline: investigation id is required");
+    }
+    await new Promise((r) => setTimeout(r, 160));
+    return buildSampleTimeline(id);
   },
 };

@@ -2,10 +2,14 @@ import type {
   CommitEvent,
   JiraTicketSummary,
   MergeRequestEvent,
+  McpConnection,
+  McpConnectionStatus,
+  McpProviderId,
   McpProviderStatus,
   PullRequestEvent,
   UnifiedInvestigationContext,
 } from "@/types";
+import { resolveMcpConnectionStatus } from "@/types";
 
 function readString(value: unknown, fallback = ""): string {
   return typeof value === "string" ? value : fallback;
@@ -220,4 +224,67 @@ export function serializeMcpPreviewBody(input: {
     payload.log_content = log;
   }
   return payload;
+}
+
+function parseConnectionStatus(value: unknown): McpConnectionStatus | undefined {
+  const status = readString(value).toLowerCase();
+  if (
+    status === "healthy" ||
+    status === "unhealthy" ||
+    status === "not_configured" ||
+    status === "failed"
+  ) {
+    return status;
+  }
+  return undefined;
+}
+
+function parseConnectionRow(row: unknown): McpConnection | null {
+  if (!row || typeof row !== "object") return null;
+  const r = row as Record<string, unknown>;
+  const provider = readString(r.provider);
+  if (provider !== "jira" && provider !== "github" && provider !== "gitlab") {
+    return null;
+  }
+
+  const configured = Boolean(r.configured);
+  const healthy = Boolean(r.healthy);
+  const errorMessage = readString(r.error_message) || readString(r.errorMessage) || undefined;
+  const status =
+    parseConnectionStatus(r.status) ??
+    resolveMcpConnectionStatus({ configured, healthy, errorMessage });
+
+  return {
+    provider: provider as McpProviderId,
+    label: readString(r.label, provider),
+    configured,
+    healthy,
+    lastCheckedAt:
+      readString(r.last_checked_at) ||
+      readString(r.lastCheckedAt) ||
+      readString(r.last_checked) ||
+      undefined,
+    errorMessage,
+    status,
+  };
+}
+
+export function parseMcpConnectionsJson(json: unknown): McpConnection[] {
+  const rows = Array.isArray(json)
+    ? json
+    : json && typeof json === "object" && Array.isArray((json as Record<string, unknown>).connections)
+      ? ((json as Record<string, unknown>).connections as unknown[])
+      : [];
+
+  return rows
+    .map(parseConnectionRow)
+    .filter((row): row is McpConnection => row !== null);
+}
+
+export function parseMcpConnectionJson(json: unknown): McpConnection {
+  const row = parseConnectionRow(json);
+  if (!row) {
+    throw new Error("[LogIQ API] MCP connection: invalid connection payload");
+  }
+  return row;
 }

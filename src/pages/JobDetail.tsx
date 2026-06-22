@@ -12,6 +12,7 @@ import {
   Route,
   Search,
   Sparkles,
+  Clock,
 } from "lucide-react";
 import { RcaResultCard } from "@/components/ui/RcaResultCard";
 import { StepProgressBar } from "@/components/ui/StepProgressBar";
@@ -369,6 +370,13 @@ export function JobDetail() {
           </div>
         </div>
         <div className="flex flex-wrap gap-3 lg:justify-end">
+          <Link
+            to={`/jobs/${encodeURIComponent(routeJobId)}/timeline`}
+            className="inline-flex items-center gap-2 self-start rounded-xl border border-violet-500/30 bg-violet-500/[0.08] px-4 py-2.5 text-sm font-semibold text-violet-200 transition hover:border-violet-400/45 hover:bg-violet-500/15 hover:text-white"
+          >
+            <Clock className="h-4 w-4" aria-hidden />
+            Timeline
+          </Link>
           <Link
             to={`/jobs/${encodeURIComponent(routeJobId)}/graph`}
             className="inline-flex items-center gap-2 self-start rounded-xl border border-sky-500/30 bg-sky-500/[0.08] px-4 py-2.5 text-sm font-semibold text-sky-200 transition hover:border-sky-400/45 hover:bg-sky-500/15 hover:text-white"

@@ -1,7 +1,10 @@
 import type { McpService } from "@/api/contracts";
 import type {
   JiraTicketSummary,
+  McpConnection,
+  McpConnectionsResult,
   McpPreviewContextInput,
+  McpProviderId,
   McpProviderStatus,
   UnifiedInvestigationContext,
 } from "@/types";
@@ -29,6 +32,86 @@ const MOCK_PROVIDER_STATUS: McpProviderStatus[] = [
     message: "Merge requests available",
   },
 ];
+
+let mockConnections: McpConnection[] = [
+  {
+    provider: "jira",
+    label: "Jira",
+    configured: true,
+    healthy: true,
+    lastCheckedAt: "2026-03-29T10:00:00.000Z",
+    status: "healthy",
+  },
+  {
+    provider: "github",
+    label: "GitHub",
+    configured: true,
+    healthy: false,
+    lastCheckedAt: "2026-03-29T09:45:00.000Z",
+    errorMessage: "Token expired — re-authenticate GitHub App installation.",
+    status: "unhealthy",
+  },
+  {
+    provider: "gitlab",
+    label: "GitLab",
+    configured: false,
+    healthy: false,
+    lastCheckedAt: "2026-03-28T16:20:00.000Z",
+    errorMessage: "Missing GITLAB_TOKEN in server configuration.",
+    status: "not_configured",
+  },
+];
+
+function cloneConnections(): McpConnection[] {
+  return mockConnections.map((row) => ({ ...row }));
+}
+
+function validateProviderMock(provider: McpProviderId): McpConnection {
+  const now = new Date().toISOString();
+  mockConnections = mockConnections.map((row) => {
+    if (row.provider !== provider) return row;
+    if (!row.configured) {
+      return {
+        ...row,
+        lastCheckedAt: now,
+        healthy: false,
+        status: "failed",
+        errorMessage: "Validation failed — provider is not configured.",
+      };
+    }
+    if (row.provider === "github") {
+      return {
+        ...row,
+        lastCheckedAt: now,
+        healthy: true,
+        status: "healthy",
+        errorMessage: undefined,
+      };
+    }
+    if (row.provider === "gitlab") {
+      return {
+        ...row,
+        lastCheckedAt: now,
+        healthy: false,
+        status: "failed",
+        errorMessage: "Validation failed — missing required credentials.",
+      };
+    }
+    return {
+      ...row,
+      lastCheckedAt: now,
+      healthy: true,
+      status: "healthy",
+      errorMessage: undefined,
+    };
+  });
+
+  const updated = mockConnections.find((row) => row.provider === provider);
+  if (!updated) {
+    throw new Error(`[LogIQ MCP] validateConnection: unknown provider ${provider}`);
+  }
+  return { ...updated };
+}
 
 function buildMockContext(
   ticket: JiraTicketSummary,
@@ -140,5 +223,23 @@ export const mockMcpService: McpService = {
 
     await new Promise((r) => setTimeout(r, 350));
     return buildMockContext(ticket, ticketKey);
+  },
+
+  async getConnections() {
+    await new Promise((r) => setTimeout(r, 120));
+    return { connections: cloneConnections() } satisfies McpConnectionsResult;
+  },
+
+  async validateConnection(provider: McpProviderId) {
+    await new Promise((r) => setTimeout(r, 280));
+    return validateProviderMock(provider);
+  },
+
+  async validateAllConnections() {
+    await new Promise((r) => setTimeout(r, 400));
+    for (const row of mockConnections) {
+      validateProviderMock(row.provider);
+    }
+    return { connections: cloneConnections() };
   },
 };

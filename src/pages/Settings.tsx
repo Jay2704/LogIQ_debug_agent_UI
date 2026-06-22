@@ -116,9 +116,17 @@ export function Settings() {
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-black/[0.7] text-slate-400">
                 <s.icon className="h-5 w-5" strokeWidth={1.75} />
               </div>
-              <div>
+              <div className="min-w-0 flex-1">
                 <h2 className="text-sm font-semibold text-slate-200">{s.title}</h2>
                 <p className="mt-2 text-sm text-slate-500">{s.description}</p>
+                {s.title === "Integrations" ? (
+                  <Link
+                    to="/settings/mcp-connections"
+                    className="mt-3 inline-flex text-sm font-semibold text-sky-400 transition hover:text-sky-300"
+                  >
+                    Open MCP Connection Center →
+                  </Link>
+                ) : null}
               </div>
             </div>
           </div>

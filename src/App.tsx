@@ -9,10 +9,12 @@ import { Anomalies } from "@/pages/Anomalies";
 import { Dashboard } from "@/pages/Dashboard";
 import { Insights } from "@/pages/Insights";
 import { InvestigationGraph } from "@/pages/InvestigationGraph";
+import { InvestigationTimeline } from "@/pages/InvestigationTimeline";
 import { JobDetail } from "@/pages/JobDetail";
 import { Jobs } from "@/pages/Jobs";
 import { ForgotPassword } from "@/pages/ForgotPassword";
 import { Login } from "@/pages/Login";
+import { McpConnections } from "@/pages/McpConnections";
 import { NotFound } from "@/pages/NotFound";
 import { ResetPassword } from "@/pages/ResetPassword";
 import { VerifyEmail } from "@/pages/VerifyEmail";
@@ -53,6 +55,7 @@ export default function App() {
           <Route path="jobs" element={<Jobs />} />
           <Route path="jobs/:jobId" element={<JobDetail />} />
           <Route path="jobs/:jobId/graph" element={<InvestigationGraph />} />
+          <Route path="jobs/:jobId/timeline" element={<InvestigationTimeline />} />
           <Route path="anomalies" element={<Anomalies />} />
           <Route path="insights" element={<Insights />} />
           <Route path="reports" element={<Reports />} />
@@ -62,6 +65,7 @@ export default function App() {
           <Route path="utilities" element={<Utilities />} />
           <Route path="utilities/:toolId" element={<UtilityDetail />} />
           <Route path="settings" element={<Settings />} />
+          <Route path="settings/mcp-connections" element={<McpConnections />} />
           <Route path="about" element={<About />} />
           <Route path="faq" element={<Faq />} />
           {import.meta.env.DEV ? (

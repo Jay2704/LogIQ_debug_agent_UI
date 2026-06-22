@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, MessageSquareWarning, RefreshCw } from "lucide-react";
+import { ArrowLeft, Clock, MessageSquareWarning, RefreshCw } from "lucide-react";
 import { useInvestigationGraph } from "@/api/hooks";
 import { GraphCanvas } from "@/components/graph/GraphCanvas";
 import { PageLoading } from "@/components/ui/PageLoading";
@@ -168,9 +168,17 @@ export function InvestigationGraph() {
             {data.nodes.length} nodes · {data.edges.length} edges
           </p>
         </div>
-        <button
-          type="button"
-          onClick={() => refetch()}
+        <div className="flex flex-wrap gap-2">
+          <Link
+            to={`/jobs/${encodeURIComponent(jobId)}/timeline`}
+            className="inline-flex items-center gap-2 rounded-xl border border-violet-500/30 bg-violet-500/[0.08] px-4 py-2.5 text-sm font-semibold text-violet-200 transition hover:border-violet-400/45 hover:bg-violet-500/15 hover:text-white"
+          >
+            <Clock className="h-4 w-4" aria-hidden />
+            Timeline
+          </Link>
+          <button
+            type="button"
+            onClick={() => refetch()}
           className={cn(
             "inline-flex items-center gap-2 self-start rounded-xl px-4 py-2.5 text-sm font-semibold text-white ring-1 ring-blue-400/35",
             ctaButtonGradient,
@@ -180,6 +188,7 @@ export function InvestigationGraph() {
           <RefreshCw className="h-4 w-4" />
           Refresh graph
         </button>
+        </div>
       </header>
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_20rem]">

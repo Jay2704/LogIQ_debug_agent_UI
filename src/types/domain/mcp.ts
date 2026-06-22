@@ -61,3 +61,37 @@ export interface McpPreviewContextInput {
   ticket?: JiraTicketSummary;
   logContent?: string;
 }
+
+/** Connection health for the MCP Connection Center. */
+export type McpConnectionStatus =
+  | "healthy"
+  | "unhealthy"
+  | "not_configured"
+  | "failed";
+
+export interface McpConnection {
+  provider: McpProviderId;
+  label: string;
+  configured: boolean;
+  healthy: boolean;
+  lastCheckedAt?: string;
+  errorMessage?: string;
+  status: McpConnectionStatus;
+}
+
+export interface McpConnectionsResult {
+  connections: McpConnection[];
+}
+
+export function resolveMcpConnectionStatus(input: {
+  configured: boolean;
+  healthy: boolean;
+  errorMessage?: string;
+  status?: McpConnectionStatus;
+}): McpConnectionStatus {
+  if (input.status) return input.status;
+  if (!input.configured) return "not_configured";
+  if (input.errorMessage?.toLowerCase().includes("fail")) return "failed";
+  if (input.healthy) return "healthy";
+  return "unhealthy";
+}

@@ -26,10 +26,13 @@ import {
 } from "./parseUserApi";
 import {
   parseMcpContextPreviewJson,
+  parseMcpConnectionJson,
+  parseMcpConnectionsJson,
   parseMcpStatusJson,
   serializeMcpPreviewBody,
 } from "./parseMcpApi";
 import { parseInvestigationGraphJson } from "./parseInvestigationGraphApi";
+import { parseInvestigationTimelineJson } from "./parseInvestigationTimelineApi";
 import { parseSimilarInvestigationsJson } from "./parseSimilarInvestigationsApi";
 import {
   parseRcaFeedbackSummaryJson,
@@ -515,6 +518,30 @@ export function createHttpApi(): LogIQApi {
         const json: unknown = await readJsonOrNull(res);
         return parseMcpContextPreviewJson(json);
       },
+      getConnections: async () => {
+        const url = joinApiUrl(baseUrl, "/api/v1/mcp/connections");
+        const res = await fetchNetwork(url);
+        if (!res.ok) await httpError(res, "GET /api/v1/mcp/connections");
+        const json: unknown = await readJsonOrNull(res);
+        return { connections: parseMcpConnectionsJson(json) };
+      },
+      validateConnection: async (provider) => {
+        const url = joinApiUrl(
+          baseUrl,
+          `/api/v1/mcp/connections/${encodeURIComponent(provider)}/validate`
+        );
+        const res = await fetchNetwork(url, { method: "POST" });
+        if (!res.ok) await httpError(res, "POST /api/v1/mcp/connections/:provider/validate");
+        const json: unknown = await readJsonOrNull(res);
+        return parseMcpConnectionJson(json);
+      },
+      validateAllConnections: async () => {
+        const url = joinApiUrl(baseUrl, "/api/v1/mcp/connections/validate-all");
+        const res = await fetchNetwork(url, { method: "POST" });
+        if (!res.ok) await httpError(res, "POST /api/v1/mcp/connections/validate-all");
+        const json: unknown = await readJsonOrNull(res);
+        return { connections: parseMcpConnectionsJson(json) };
+      },
     },
     investigations: {
       getGraph: async (investigationId: string) => {
@@ -542,6 +569,19 @@ export function createHttpApi(): LogIQApi {
         }
         const json: unknown = await readJsonOrNull(res);
         return parseSimilarInvestigationsJson(json, id);
+      },
+      getTimeline: async (investigationId: string) => {
+        const id = investigationId.trim();
+        const url = joinApiUrl(
+          baseUrl,
+          `/api/v1/investigations/${encodeURIComponent(id)}/timeline`
+        );
+        const res = await fetchNetwork(url);
+        if (!res.ok) {
+          await httpError(res, "GET /api/v1/investigations/:id/timeline");
+        }
+        const json: unknown = await readJsonOrNull(res);
+        return parseInvestigationTimelineJson(json, id);
       },
     },
     rcaFeedback: {

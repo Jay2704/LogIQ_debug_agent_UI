@@ -5,6 +5,7 @@ import type {
   CreateUserInput,
   InsightMetrics,
   InvestigationGraph,
+  InvestigationTimeline,
   SimilarInvestigationsResult,
   Job,
   JobDetailBundle,
@@ -25,6 +26,9 @@ import type {
   JiraTicketSummary,
   McpPreviewContextInput,
   McpProviderStatus,
+  McpConnection,
+  McpConnectionsResult,
+  McpProviderId,
   UnifiedInvestigationContext,
   UtilityRunRecord,
   UtilityToolDefinition,
@@ -102,6 +106,12 @@ export interface McpService {
   getStatus(): Promise<McpProviderStatus[]>;
   /** POST /api/v1/mcp/context/preview — aggregate context before RCA. */
   previewContext(input: McpPreviewContextInput): Promise<UnifiedInvestigationContext>;
+  /** GET /api/v1/mcp/connections */
+  getConnections(): Promise<McpConnectionsResult>;
+  /** POST /api/v1/mcp/connections/{provider}/validate */
+  validateConnection(provider: McpProviderId): Promise<McpConnection>;
+  /** POST /api/v1/mcp/connections/validate-all */
+  validateAllConnections(): Promise<McpConnectionsResult>;
 }
 
 /** Investigation graph visualization for job detail workspace. */
@@ -110,6 +120,8 @@ export interface InvestigationsService {
   getGraph(investigationId: string): Promise<InvestigationGraph>;
   /** GET /api/v1/investigations/{id}/similar */
   getSimilarIncidents(investigationId: string): Promise<SimilarInvestigationsResult>;
+  /** GET /api/v1/investigations/{id}/timeline */
+  getTimeline(investigationId: string): Promise<InvestigationTimeline>;
 }
 
 /** RCA reviewer feedback — confirm, reject, or override outcomes. */

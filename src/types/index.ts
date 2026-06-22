@@ -46,13 +46,24 @@ export type {
   MergeRequestEvent,
   UnifiedInvestigationContext,
   McpPreviewContextInput,
+  McpConnection,
+  McpConnectionStatus,
+  McpConnectionsResult,
 } from "./domain/mcp";
+export { resolveMcpConnectionStatus } from "./domain/mcp";
 export type {
   InvestigationGraphNodeType,
   InvestigationGraphNode,
   InvestigationGraphEdge,
   InvestigationGraph,
 } from "./domain/investigationGraph";
+export type {
+  TimelineEventGroup,
+  TimelineEventSeverity,
+  InvestigationTimelineEvent,
+  InvestigationTimeline,
+  TimelineFilters,
+} from "./domain/investigationTimeline";
 export type {
   SimilarHistoricalInvestigation,
   SimilarInvestigationsResult,
