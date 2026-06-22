@@ -8,6 +8,7 @@ import { Faq } from "@/pages/Faq";
 import { Anomalies } from "@/pages/Anomalies";
 import { Dashboard } from "@/pages/Dashboard";
 import { Insights } from "@/pages/Insights";
+import { InvestigationGraph } from "@/pages/InvestigationGraph";
 import { JobDetail } from "@/pages/JobDetail";
 import { Jobs } from "@/pages/Jobs";
 import { ForgotPassword } from "@/pages/ForgotPassword";
@@ -50,6 +51,7 @@ export default function App() {
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="jobs" element={<Jobs />} />
           <Route path="jobs/:jobId" element={<JobDetail />} />
+          <Route path="jobs/:jobId/graph" element={<InvestigationGraph />} />
           <Route path="anomalies" element={<Anomalies />} />
           <Route path="insights" element={<Insights />} />
           <Route path="reports" element={<Reports />} />

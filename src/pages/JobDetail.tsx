@@ -6,9 +6,11 @@ import {
   GitBranch,
   Loader2,
   MessageSquareWarning,
+  Network,
   Play,
   RefreshCw,
   Route,
+  Search,
   Sparkles,
 } from "lucide-react";
 import { RcaResultCard } from "@/components/ui/RcaResultCard";
@@ -21,12 +23,14 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { InvestigationProgressBanner } from "@/components/job/InvestigationProgressBanner";
 import { RemediationChecklist } from "@/components/job/RemediationChecklist";
 import { SimilarIncidentsPanel } from "@/components/job/SimilarIncidentsPanel";
+import { SimilarIncidentList } from "@/components/similar-incidents/SimilarIncidentList";
 import { JobReportSummaryCard } from "@/components/job/JobReportSummaryCard";
 import { PageLoading } from "@/components/ui/PageLoading";
 import { FeedbackNotice } from "@/components/ui/FeedbackNotice";
 import {
   useJobDetailData,
   useRcaInvestigation,
+  useSimilarIncidents,
   type InvestigationPhase,
 } from "@/api/hooks";
 import { ctaButtonGradient, ctaGlowBlueOnly } from "@/lib/ctaTheme";
@@ -110,6 +114,13 @@ export function JobDetail() {
     clearWarning,
     getPipelineSteps,
   } = useRcaInvestigation(routeJobIdForInv, anomalyIdForInv);
+
+  const {
+    data: similarHistoricalIncidents,
+    loading: similarHistoricalLoading,
+    error: similarHistoricalError,
+    refetch: refetchSimilarHistorical,
+  } = useSimilarIncidents(jobId);
 
   const roleCaps = useRoleUiCapabilities();
   const { user: sessionUser } = useCurrentUser();
@@ -347,6 +358,13 @@ export function JobDetail() {
           </div>
         </div>
         <div className="flex flex-wrap gap-3 lg:justify-end">
+          <Link
+            to={`/jobs/${encodeURIComponent(routeJobId)}/graph`}
+            className="inline-flex items-center gap-2 self-start rounded-xl border border-sky-500/30 bg-sky-500/[0.08] px-4 py-2.5 text-sm font-semibold text-sky-200 transition hover:border-sky-400/45 hover:bg-sky-500/15 hover:text-white"
+          >
+            <Network className="h-4 w-4" aria-hidden />
+            Graph view
+          </Link>
           <div className="rounded-xl border border-violet-500/20 bg-violet-500/[0.06] px-4 py-3 text-right shadow-inner ring-1 ring-inset ring-violet-400/10">
             <p className="text-[10px] font-bold uppercase tracking-wide text-violet-300/90">
               Architecture
@@ -841,6 +859,30 @@ export function JobDetail() {
             </div>
 
             <SimilarIncidentsPanel incidents={similarIncidents} />
+
+            <div className="rounded-2xl border border-violet-500/20 bg-black/[0.94] p-6 shadow-card">
+              <div className="flex items-start gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-500/15 ring-1 ring-violet-500/30">
+                  <Search className="h-5 w-5 text-violet-400" strokeWidth={2} />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white">
+                    Similar Historical Investigations
+                  </h3>
+                  <p className="mt-1 text-sm text-slate-500">
+                    Ranked by similarity score — review how past investigations were resolved.
+                  </p>
+                </div>
+              </div>
+              <div className="mt-6">
+                <SimilarIncidentList
+                  incidents={similarHistoricalIncidents}
+                  loading={similarHistoricalLoading}
+                  error={similarHistoricalError?.message ?? null}
+                  onRetry={refetchSimilarHistorical}
+                />
+              </div>
+            </div>
 
             <div className="rounded-2xl border border-dashed border-slate-700/60 bg-black/[0.94] p-6">
               <h3 className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-600">

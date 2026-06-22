@@ -47,6 +47,16 @@ export type {
   UnifiedInvestigationContext,
   McpPreviewContextInput,
 } from "./domain/mcp";
+export type {
+  InvestigationGraphNodeType,
+  InvestigationGraphNode,
+  InvestigationGraphEdge,
+  InvestigationGraph,
+} from "./domain/investigationGraph";
+export type {
+  SimilarHistoricalInvestigation,
+  SimilarInvestigationsResult,
+} from "./domain/similarInvestigation";
 export type { UserRole, User, CreateUserInput } from "./domain/user";
 export { SIGNUP_ROLE_OPTIONS } from "./domain/user";
 

@@ -29,6 +29,8 @@ import {
   parseMcpStatusJson,
   serializeMcpPreviewBody,
 } from "./parseMcpApi";
+import { parseInvestigationGraphJson } from "./parseInvestigationGraphApi";
+import { parseSimilarInvestigationsJson } from "./parseSimilarInvestigationsApi";
 
 /**
  * “Hybrid” HTTP client: real `fetch` calls for backend-supported routes (jobs, RCA, auth, Jira,
@@ -502,6 +504,34 @@ export function createHttpApi(): LogIQApi {
         if (!res.ok) await httpError(res, "POST /api/v1/mcp/context/preview");
         const json: unknown = await readJsonOrNull(res);
         return parseMcpContextPreviewJson(json);
+      },
+    },
+    investigations: {
+      getGraph: async (investigationId: string) => {
+        const id = investigationId.trim();
+        const url = joinApiUrl(
+          baseUrl,
+          `/api/v1/investigations/${encodeURIComponent(id)}/graph`
+        );
+        const res = await fetchNetwork(url);
+        if (!res.ok) {
+          await httpError(res, "GET /api/v1/investigations/:id/graph");
+        }
+        const json: unknown = await readJsonOrNull(res);
+        return parseInvestigationGraphJson(json, id);
+      },
+      getSimilarIncidents: async (investigationId: string) => {
+        const id = investigationId.trim();
+        const url = joinApiUrl(
+          baseUrl,
+          `/api/v1/investigations/${encodeURIComponent(id)}/similar`
+        );
+        const res = await fetchNetwork(url);
+        if (!res.ok) {
+          await httpError(res, "GET /api/v1/investigations/:id/similar");
+        }
+        const json: unknown = await readJsonOrNull(res);
+        return parseSimilarInvestigationsJson(json, id);
       },
     },
     auth: {

@@ -19,6 +19,7 @@ export type {
   UtilitiesService,
   JiraService,
   McpService,
+  InvestigationsService,
   UsersService,
   LoginResult,
   AuthService,

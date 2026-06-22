@@ -4,6 +4,8 @@ import type {
   CreateJobInput,
   CreateUserInput,
   InsightMetrics,
+  InvestigationGraph,
+  SimilarInvestigationsResult,
   Job,
   JobDetailBundle,
   LoginInput,
@@ -96,6 +98,14 @@ export interface McpService {
   previewContext(input: McpPreviewContextInput): Promise<UnifiedInvestigationContext>;
 }
 
+/** Investigation graph visualization for job detail workspace. */
+export interface InvestigationsService {
+  /** GET /api/v1/investigations/{id}/graph */
+  getGraph(investigationId: string): Promise<InvestigationGraph>;
+  /** GET /api/v1/investigations/{id}/similar */
+  getSimilarIncidents(investigationId: string): Promise<SimilarInvestigationsResult>;
+}
+
 /** User CRUD-style helpers for signup / lookup (no token auth in this layer yet). */
 export interface UsersService {
   create(input: CreateUserInput): Promise<User>;
@@ -134,6 +144,7 @@ export interface LogIQApi {
   utilities: UtilitiesService;
   jira: JiraService;
   mcp: McpService;
+  investigations: InvestigationsService;
   users: UsersService;
   auth: AuthService;
 }
