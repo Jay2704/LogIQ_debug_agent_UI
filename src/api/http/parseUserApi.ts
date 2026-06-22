@@ -51,6 +51,54 @@ function unwrapUserRowJson(json: unknown): unknown {
   return json;
 }
 
+/**
+ * Parses JSON detail from login error responses (`{ detail: { code, message } }`).
+ */
+export function parseLoginErrorDetail(text: string): {
+  code?: string;
+  message?: string;
+} {
+  if (!text.trim()) return {};
+  try {
+    const j = JSON.parse(text) as unknown;
+    if (!j || typeof j !== "object") return {};
+    const o = j as Record<string, unknown>;
+    const detail = o.detail;
+    if (detail && typeof detail === "object" && !Array.isArray(detail)) {
+      const d = detail as Record<string, unknown>;
+      return {
+        code: typeof d.code === "string" ? d.code : undefined,
+        message: typeof d.message === "string" ? d.message : undefined,
+      };
+    }
+    if (typeof o.code === "string") {
+      return {
+        code: o.code,
+        message: typeof o.message === "string" ? o.message : undefined,
+      };
+    }
+  } catch {
+    /* non-JSON */
+  }
+  return {};
+}
+
+/**
+ * Successful login: flat `LoginResponse` with user fields plus `access_token` at the top level.
+ */
+export function parseLoginResponse(json: unknown): { user: User; accessToken: string } {
+  if (!json || typeof json !== "object" || Array.isArray(json)) {
+    throw new Error("[LogIQ API] Invalid login JSON");
+  }
+  const o = json as Record<string, unknown>;
+  const accessToken =
+    pickString(o, ["access_token", "accessToken", "token"]) ?? "";
+  if (!accessToken) {
+    throw new Error("[LogIQ API] Login response missing access_token");
+  }
+  return { user: parseUserJson(json), accessToken };
+}
+
 export function parseUserJson(json: unknown): User {
   const row = unwrapUserRowJson(json);
   if (!row || typeof row !== "object" || Array.isArray(row)) {

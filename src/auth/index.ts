@@ -25,3 +25,9 @@ export {
   persistUser,
   clearPersistedUser,
 } from "./prototypeSessionStorage";
+export {
+  ACCESS_TOKEN_STORAGE_KEY,
+  clearAccessToken,
+  getAccessToken,
+  setAccessToken,
+} from "./tokenStorage";

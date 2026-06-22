@@ -84,7 +84,7 @@ export function Login() {
     setResendNote(null);
     const result = await submitLogin(values.email, values.password);
     if (result.status === "success" && result.user) {
-      setCurrentUser(result.user);
+      setCurrentUser(result.user, result.accessToken);
       setValues((v) => ({ ...v, password: "" }));
       navigate("/", { replace: true });
       return;
@@ -111,7 +111,7 @@ export function Login() {
   return (
     <AuthLayout
       cardTitle="Login"
-      cardDescription="Enter your email and password. Your password is not stored in the browser — only the returned user profile is saved for this session."
+      cardDescription="Enter your email and password to sign in."
     >
       <form onSubmit={handleSubmit} className="space-y-5" noValidate>
         {unverified && banner ? (

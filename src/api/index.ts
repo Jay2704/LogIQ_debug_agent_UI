@@ -18,6 +18,7 @@ export type {
   UtilitiesService,
   JiraService,
   UsersService,
+  LoginResult,
   AuthService,
 } from "./contracts";
 export type * from "./types";

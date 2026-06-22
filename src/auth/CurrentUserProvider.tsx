@@ -20,9 +20,9 @@ import {
 export interface CurrentUserContextValue {
   /** Full domain user from storage, or null. */
   user: User | null;
-  /** Binds UI to a user row; persists to localStorage. */
-  setCurrentUser: (user: User | CurrentUserSnapshot) => void;
-  /** Clears prototype session (not a secure server logout). */
+  /** Binds UI to a user row; persists user and optional JWT to localStorage. */
+  setCurrentUser: (user: User | CurrentUserSnapshot, accessToken?: string) => void;
+  /** Clears session user and JWT. */
   clearCurrentUser: () => void;
 }
 
@@ -37,9 +37,12 @@ export function CurrentUserProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => subscribeCurrentUserChanged(syncFromStorage), [syncFromStorage]);
 
-  const setUser = useCallback((next: User | CurrentUserSnapshot) => {
-    persistCurrentUser(next);
-  }, []);
+  const setUser = useCallback(
+    (next: User | CurrentUserSnapshot, accessToken?: string) => {
+      persistCurrentUser(next, accessToken);
+    },
+    []
+  );
 
   const clear = useCallback(() => {
     clearPersistedSession();

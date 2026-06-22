@@ -1,5 +1,6 @@
 import type { AuthService, UsersService } from "@/api/contracts";
 import type { CreateUserInput, LoginInput, User } from "@/types";
+import { setAccessToken } from "@/auth/tokenStorage";
 
 /** In-memory users for mock mode and dev without a backend. */
 const store = new Map<string, User>();
@@ -54,7 +55,7 @@ export const mockUsersService: UsersService = {
 };
 
 export const mockAuthService: AuthService = {
-  async login(input: LoginInput): Promise<User> {
+  async login(input: LoginInput) {
     const emailKey = input.email.trim().toLowerCase();
     const user = await mockUsersService.getUserByEmail(input.email);
     if (!user) {
@@ -64,7 +65,9 @@ export const mockAuthService: AuthService = {
     if (!stored || stored !== input.password) {
       throw new Error("[LogIQ API] LOGIN_STATUS 401");
     }
-    return user;
+    const accessToken = `mock.${user.userId}.${Date.now()}`;
+    setAccessToken(accessToken);
+    return { user, accessToken };
   },
 
   async verifyEmail(_token: string): Promise<void> {

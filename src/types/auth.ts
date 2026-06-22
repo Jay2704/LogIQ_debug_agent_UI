@@ -22,6 +22,7 @@ export interface LoginSubmitResult {
   status: "success" | "error";
   message?: string;
   user?: User;
+  accessToken?: string;
   /** Set when the server rejects login because the email is not verified yet. */
   reason?: "unverified";
 }

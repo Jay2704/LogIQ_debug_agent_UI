@@ -3,12 +3,19 @@
  * Replace with server-backed auth; keep call sites on these helpers so swapping is localized.
  */
 import type { User, UserRole } from "@/types";
+import { USE_HTTP_API } from "@/api/config";
 import {
   clearPersistedUser,
   loadPersistedUser,
   persistUser,
   PROTOTYPE_SESSION_STORAGE_KEY,
 } from "./prototypeSessionStorage";
+import {
+  clearAccessToken,
+  getAccessToken,
+  setAccessToken,
+  ACCESS_TOKEN_STORAGE_KEY,
+} from "./tokenStorage";
 
 /** Plain fields (snake_case) for interchange with backends or non-React code. */
 export interface CurrentUserSnapshot {
@@ -56,17 +63,30 @@ export function toCurrentUserSnapshot(user: User): CurrentUserSnapshot {
 
 /** Synchronous read from localStorage — same source as React context after hydration. */
 export function getCurrentUser(): User | null {
-  return loadPersistedUser();
+  const user = loadPersistedUser();
+  if (!user) return null;
+  if (USE_HTTP_API && !getAccessToken()) {
+    clearPersistedUser();
+    return null;
+  }
+  return user;
 }
 
-/** Persists and notifies listeners (same tab + optional cross-tab via `storage`). */
-export function setCurrentUser(user: User | CurrentUserSnapshot): void {
+/** Persists user + optional JWT and notifies listeners. */
+export function setCurrentUser(
+  user: User | CurrentUserSnapshot,
+  accessToken?: string
+): void {
   persistUser(normalizeToUser(user));
+  if (accessToken?.trim()) {
+    setAccessToken(accessToken);
+  }
   dispatchCurrentUserChanged();
 }
 
 export function clearCurrentUser(): void {
   clearPersistedUser();
+  clearAccessToken();
   dispatchCurrentUserChanged();
 }
 
@@ -83,7 +103,12 @@ export function subscribeCurrentUserChanged(handler: () => void): () => void {
   }
   const onCustom = () => handler();
   const onStorage = (e: StorageEvent) => {
-    if (e.key === PROTOTYPE_SESSION_STORAGE_KEY) handler();
+    if (
+      e.key === PROTOTYPE_SESSION_STORAGE_KEY ||
+      e.key === ACCESS_TOKEN_STORAGE_KEY
+    ) {
+      handler();
+    }
   };
   window.addEventListener(CURRENT_USER_CHANGED_EVENT, onCustom);
   window.addEventListener("storage", onStorage);

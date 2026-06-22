@@ -93,9 +93,15 @@ export interface UsersService {
   listUsers(): Promise<User[]>;
 }
 
-/** POST /api/v1/auth/login — returns a safe user row; no JWT in this UI yet. */
+/** Successful login — user profile plus JWT from `POST /api/v1/auth/login`. */
+export interface LoginResult {
+  user: User;
+  accessToken: string;
+}
+
+/** POST /api/v1/auth/login — returns user profile and JWT access token. */
 export interface AuthService {
-  login(input: LoginInput): Promise<User>;
+  login(input: LoginInput): Promise<LoginResult>;
   /** POST /api/v1/auth/verify-email — body `{ token }`. */
   verifyEmail(token: string): Promise<void>;
   /** POST /api/v1/auth/forgot-password — body `{ email }`; do not leak existence of account. */

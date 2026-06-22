@@ -7,10 +7,10 @@ import type {
   JiraTicketSearchHit,
   JiraTicketSummary,
   LoginInput,
-  User,
 } from "@/types";
 import { logApiDebug } from "./debugLog";
 import { joinApiUrl } from "./apiUrl";
+import { getAccessToken } from "@/auth/tokenStorage";
 import { buildJobDetailBundleFromApiJob } from "./jobDetailMerge";
 import {
   parseApiJobJson,
@@ -18,6 +18,8 @@ import {
 } from "./parseApiJob";
 import { parseRcaExplanationJson, parseRcaResultsJson } from "./parseRcaApi";
 import {
+  parseLoginErrorDetail,
+  parseLoginResponse,
   parseUserJson,
   parseUserListJson,
   serializeCreateUserBody,
@@ -118,11 +120,17 @@ function parseJiraSearchHitsJson(json: unknown): JiraTicketSearchHit[] {
  */
 async function fetchNetwork(url: string, init?: RequestInit): Promise<Response> {
   const method = init?.method ?? "GET";
+  const headers = new Headers(init?.headers);
+  const token = getAccessToken();
+  if (token && !headers.has("Authorization")) {
+    headers.set("Authorization", `Bearer ${token}`);
+  }
+  const requestInit: RequestInit = { ...init, headers };
   if (import.meta.env.DEV) {
     console.info("[LogIQ API] request", method, url);
   }
   try {
-    const res = await fetch(url, init);
+    const res = await fetch(url, requestInit);
     if (import.meta.env.DEV && !res.ok) {
       const text = await res.clone().text().catch(() => "");
       console.warn("[LogIQ API] response error", {
@@ -161,10 +169,14 @@ export function createHttpApi(): LogIQApi {
   const baseUrl = API_BASE_URL;
   const mocks = createMockApi();
 
-  async function postAuthLogin(input: LoginInput): Promise<User> {
-    const url = `${baseUrl}/api/v1/auth/login`;
-    console.log("Login API URL:", `${baseUrl}/api/v1/auth/login`);
-    const res = await fetch(url, {
+  async function postAuthLogin(input: LoginInput) {
+    const url = joinApiUrl(baseUrl, "/api/v1/auth/login");
+    if (import.meta.env.DEV) {
+      console.info("[LogIQ Auth] login endpoint:", url);
+      console.info("[LogIQ Auth] API base URL:", baseUrl);
+    }
+    logApiDebug("auth/login", { url, email: input.email.trim() });
+    const res = await fetchNetwork(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -172,40 +184,46 @@ export function createHttpApi(): LogIQApi {
         password: input.password,
       }),
     });
-    if (res.status === 401) {
+    const bodyText = await res.text();
+    const detail = parseLoginErrorDetail(bodyText);
+
+    if (res.status === 401 || detail.code === "invalid_credentials") {
       throw new Error("[LogIQ API] LOGIN_STATUS 401");
     }
-    if (res.status === 403) {
-      const text = await res.text();
-      let code: string | undefined;
-      try {
-        const j = JSON.parse(text) as { code?: unknown };
-        if (typeof j.code === "string") code = j.code;
-      } catch {
-        /* non-JSON body */
-      }
-      const isEmailNotVerified =
-        code === "email_not_verified" ||
-        /email_not_verified/i.test(text) ||
-        /verify your email before logging in/i.test(text);
-      if (isEmailNotVerified) {
-        throw new Error("[LogIQ API] LOGIN_STATUS 403_UNVERIFIED");
-      }
-      const reason = res.statusText?.trim() || "Error";
-      const slice = text.slice(0, 280);
-      throw new Error(
-        `[LogIQ API] POST /api/v1/auth/login 403 ${reason}${slice ? `: ${slice}` : ""}`
-      );
+    if (
+      res.status === 403 &&
+      (detail.code === "email_not_verified" ||
+        /email_not_verified|verify your email before logging in/i.test(bodyText))
+    ) {
+      throw new Error("[LogIQ API] LOGIN_STATUS 403_UNVERIFIED");
     }
-    if (res.status === 404) {
+    if (
+      res.status === 400 ||
+      res.status === 404 ||
+      detail.code === "user_not_found"
+    ) {
       throw new Error("[LogIQ API] LOGIN_STATUS 404");
     }
-    if (!res.ok) await httpError(res, "POST /api/v1/auth/login");
-    const json: unknown = await readJsonOrNull(res);
+    if (res.status === 429 || detail.code === "rate_limit_exceeded") {
+      throw new Error("[LogIQ API] LOGIN_STATUS 429");
+    }
+    if (!res.ok) {
+      const reason = res.statusText?.trim() || "Error";
+      const slice = bodyText.slice(0, 280);
+      throw new Error(
+        `[LogIQ API] POST /api/v1/auth/login ${res.status} ${reason}${slice ? `: ${slice}` : ""}`
+      );
+    }
+    let json: unknown;
+    try {
+      json = bodyText.trim() ? (JSON.parse(bodyText) as unknown) : null;
+    } catch {
+      throw new Error("[LogIQ API] POST /api/v1/auth/login: invalid JSON response");
+    }
     if (json === null || json === undefined) {
       throw new Error("[LogIQ API] POST /api/v1/auth/login: empty response body");
     }
-    return parseUserJson(json);
+    return parseLoginResponse(json);
   }
 
   async function postVerifyEmail(token: string): Promise<void> {

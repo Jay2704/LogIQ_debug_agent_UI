@@ -187,6 +187,9 @@ function loginErrorMessage(error: unknown): string {
   if (/\[LogIQ API\] LOGIN_STATUS 404\b/.test(raw)) {
     return "User not found";
   }
+  if (/\[LogIQ API\] LOGIN_STATUS 429\b/.test(raw)) {
+    return "Too many login attempts. Please try again later.";
+  }
   if (isLogiqFetchNetworkError(raw)) {
     return networkFailureUserMessage(raw);
   }
@@ -206,11 +209,12 @@ export async function submitLogin(
 ): Promise<LoginSubmitResult> {
   const input: LoginInput = { email: email.trim(), password };
   try {
-    const user = await api.auth.login(input);
+    const { user, accessToken } = await api.auth.login(input);
     return {
       status: "success",
-      message: "You’re logged in for this session (user saved locally — no JWT yet).",
+      message: "You're logged in.",
       user,
+      accessToken,
     };
   } catch (e) {
     if (loginIsUnverifiedError(e)) {
