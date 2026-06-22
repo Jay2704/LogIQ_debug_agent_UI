@@ -13,6 +13,10 @@ import type {
   RcaResult,
   RcaFeedbackSubmitInput,
   RcaFeedbackSummary,
+  RcaEvaluationSummary,
+  RcaServiceAccuracyResult,
+  RcaConfidenceEvaluation,
+  RcaEvaluationTrends,
   ReportArtifact,
   TopRootCauseFileRow,
   User,
@@ -116,6 +120,18 @@ export interface RcaFeedbackService {
   submitFeedback(jobId: string, input: RcaFeedbackSubmitInput): Promise<RcaFeedbackSummary>;
 }
 
+/** RCA evaluation dashboard aggregates. */
+export interface EvaluationService {
+  /** GET /api/v1/evaluation/rca/summary */
+  getRcaSummary(): Promise<RcaEvaluationSummary>;
+  /** GET /api/v1/evaluation/rca/services */
+  getRcaServices(): Promise<RcaServiceAccuracyResult>;
+  /** GET /api/v1/evaluation/rca/confidence */
+  getRcaConfidence(): Promise<RcaConfidenceEvaluation>;
+  /** GET /api/v1/evaluation/rca/trends */
+  getRcaTrends(): Promise<RcaEvaluationTrends>;
+}
+
 /** User CRUD-style helpers for signup / lookup (no token auth in this layer yet). */
 export interface UsersService {
   create(input: CreateUserInput): Promise<User>;
@@ -156,6 +172,7 @@ export interface LogIQApi {
   mcp: McpService;
   investigations: InvestigationsService;
   rcaFeedback: RcaFeedbackService;
+  evaluation: EvaluationService;
   users: UsersService;
   auth: AuthService;
 }

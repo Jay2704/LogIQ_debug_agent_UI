@@ -35,6 +35,12 @@ import {
   parseRcaFeedbackSummaryJson,
   serializeRcaFeedbackBody,
 } from "./parseRcaFeedbackApi";
+import {
+  parseRcaConfidenceEvaluationJson,
+  parseRcaEvaluationSummaryJson,
+  parseRcaEvaluationTrendsJson,
+  parseRcaServiceAccuracyJson,
+} from "./parseRcaEvaluationApi";
 
 /**
  * “Hybrid” HTTP client: real `fetch` calls for backend-supported routes (jobs, RCA, auth, Jira,
@@ -568,6 +574,36 @@ export function createHttpApi(): LogIQApi {
         }
         const json: unknown = await readJsonOrNull(res);
         return parseRcaFeedbackSummaryJson(json, id);
+      },
+    },
+    evaluation: {
+      getRcaSummary: async () => {
+        const url = joinApiUrl(baseUrl, "/api/v1/evaluation/rca/summary");
+        const res = await fetchNetwork(url);
+        if (!res.ok) await httpError(res, "GET /api/v1/evaluation/rca/summary");
+        const json: unknown = await readJsonOrNull(res);
+        return parseRcaEvaluationSummaryJson(json);
+      },
+      getRcaServices: async () => {
+        const url = joinApiUrl(baseUrl, "/api/v1/evaluation/rca/services");
+        const res = await fetchNetwork(url);
+        if (!res.ok) await httpError(res, "GET /api/v1/evaluation/rca/services");
+        const json: unknown = await readJsonOrNull(res);
+        return parseRcaServiceAccuracyJson(json);
+      },
+      getRcaConfidence: async () => {
+        const url = joinApiUrl(baseUrl, "/api/v1/evaluation/rca/confidence");
+        const res = await fetchNetwork(url);
+        if (!res.ok) await httpError(res, "GET /api/v1/evaluation/rca/confidence");
+        const json: unknown = await readJsonOrNull(res);
+        return parseRcaConfidenceEvaluationJson(json);
+      },
+      getRcaTrends: async () => {
+        const url = joinApiUrl(baseUrl, "/api/v1/evaluation/rca/trends");
+        const res = await fetchNetwork(url);
+        if (!res.ok) await httpError(res, "GET /api/v1/evaluation/rca/trends");
+        const json: unknown = await readJsonOrNull(res);
+        return parseRcaEvaluationTrendsJson(json);
       },
     },
     auth: {

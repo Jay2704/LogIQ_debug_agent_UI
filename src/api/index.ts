@@ -21,6 +21,7 @@ export type {
   McpService,
   InvestigationsService,
   RcaFeedbackService,
+  EvaluationService,
   UsersService,
   LoginResult,
   AuthService,

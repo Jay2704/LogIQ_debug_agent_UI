@@ -23,6 +23,7 @@ import { Utilities } from "@/pages/Utilities";
 import { UtilityDetail } from "@/pages/UtilityDetail";
 import { DevIntegrationCheck } from "@/pages/DevIntegrationCheck";
 import { RCAWithJira } from "@/pages/RCAWithJira";
+import { RcaEvaluation } from "@/pages/RcaEvaluation";
 
 export default function App() {
   return (
@@ -55,6 +56,7 @@ export default function App() {
           <Route path="anomalies" element={<Anomalies />} />
           <Route path="insights" element={<Insights />} />
           <Route path="reports" element={<Reports />} />
+          <Route path="evaluation/rca" element={<RcaEvaluation />} />
           <Route path="rca" element={<RCAWithJira />} />
           <Route path="rca-jira" element={<RCAWithJira />} />
           <Route path="utilities" element={<Utilities />} />

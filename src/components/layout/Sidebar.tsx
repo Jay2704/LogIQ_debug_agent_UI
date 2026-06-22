@@ -10,7 +10,7 @@ const navGroups = [
   {
     label: "Workspace",
     items: MAIN_NAV_ITEMS.filter((i) =>
-      ["/", "/jobs", "/anomalies", "/insights", "/reports", "/rca-jira"].includes(i.to)
+      ["/", "/jobs", "/anomalies", "/insights", "/reports", "/evaluation/rca", "/rca-jira"].includes(i.to)
     ),
   },
   {

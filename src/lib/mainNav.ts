@@ -4,6 +4,7 @@ import {
   BarChart3,
   BadgeInfo,
   CircleHelp,
+  ClipboardCheck,
   FileStack,
   GitBranchPlus,
   LayoutDashboard,
@@ -51,6 +52,12 @@ export const MAIN_NAV_ITEMS: MainNavItem[] = [
     label: "Reports",
     icon: FileStack,
     description: "View generated summaries and incident reports",
+  },
+  {
+    to: "/evaluation/rca",
+    label: "RCA Evaluation",
+    icon: ClipboardCheck,
+    description: "Review RCA accuracy, feedback trends, and confidence calibration",
   },
   {
     to: "/rca-jira",

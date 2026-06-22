@@ -63,6 +63,16 @@ export type {
   RcaFeedbackSummary,
   RcaFeedbackSubmitInput,
 } from "./domain/rcaFeedback";
+export type {
+  RcaEvaluationSummary,
+  RcaServiceAccuracyRow,
+  RcaServiceAccuracyResult,
+  RcaConfidenceAccuracyRow,
+  RcaConfidenceEvaluation,
+  RcaFeedbackTrendPoint,
+  RcaCandidateRow,
+  RcaEvaluationTrends,
+} from "./domain/rcaEvaluation";
 export type { UserRole, User, CreateUserInput } from "./domain/user";
 export { SIGNUP_ROLE_OPTIONS } from "./domain/user";
 
