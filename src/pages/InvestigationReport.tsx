@@ -2,6 +2,7 @@ import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, MessageSquareWarning, RotateCcw } from "lucide-react";
 import { useInvestigationReport } from "@/api/hooks";
 import { ExportActions } from "@/components/report/ExportActions";
+import { EvidenceCoverageCard } from "@/components/investigation/EvidenceCoverageCard";
 import { ReportSection } from "@/components/report/ReportSection";
 import { ReportSummary } from "@/components/report/ReportSummary";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -112,6 +113,10 @@ export function InvestigationReport() {
         refreshing={refreshing}
         onRefresh={() => void refreshReport()}
       />
+
+      {data.evidenceCoverage ? (
+        <EvidenceCoverageCard coverage={data.evidenceCoverage} />
+      ) : null}
 
       {error ? (
         <FeedbackNotice tone="warning" title="Report refresh issue">

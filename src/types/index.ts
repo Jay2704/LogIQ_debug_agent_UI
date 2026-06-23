@@ -87,6 +87,11 @@ export {
   REPLAY_STEP_MS,
 } from "./domain/investigationReplay";
 export type {
+  EvidenceCoverage,
+  EvidenceCoverageLevel,
+} from "./domain/evidenceCoverage";
+export { EVIDENCE_COVERAGE_LEVEL_LABELS } from "./domain/evidenceCoverage";
+export type {
   InvestigationReport,
   InvestigationReportSimilarIncident,
   InvestigationReportFeedbackEntry,

@@ -1,18 +1,31 @@
+import { useMemo } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, Bot, Loader2, MessageSquareWarning, Play, RefreshCw } from "lucide-react";
-import { useMultiAgentInvestigation } from "@/api/hooks";
+import { useJobDetailData, useMultiAgentInvestigation } from "@/api/hooks";
 import { AgentPanel } from "@/components/multi-agent/AgentPanel";
 import { InvestigationSummary } from "@/components/multi-agent/InvestigationSummary";
+import { EvidenceCoverageCard } from "@/components/investigation/EvidenceCoverageCard";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { FeedbackNotice } from "@/components/ui/FeedbackNotice";
 import { PageLoading } from "@/components/ui/PageLoading";
 import { ctaButtonGradient, ctaGlowBlueOnly } from "@/lib/ctaTheme";
 import { cn, formatDateTime } from "@/lib/utils";
+import { buildEvidenceCoverage } from "@/lib/evidenceCoverage";
 
 export function MultiAgentInvestigation() {
   const { jobId } = useParams<{ jobId: string }>();
+  const { bundle } = useJobDetailData(jobId);
   const { data, loading, running, error, refetch, runInvestigation } =
     useMultiAgentInvestigation(jobId);
+
+  const evidenceCoverage = useMemo(() => {
+    if (!bundle) return null;
+    return buildEvidenceCoverage({
+      evidence: bundle.evidence,
+      limitationsNote: bundle.limitationsNote,
+      confidenceNote: bundle.confidenceNote,
+    });
+  }, [bundle]);
 
   if (!jobId?.trim()) {
     return (
@@ -151,6 +164,8 @@ export function MultiAgentInvestigation() {
       ) : null}
 
       {data?.summary ? <InvestigationSummary summary={data.summary} /> : null}
+
+      {evidenceCoverage ? <EvidenceCoverageCard coverage={evidenceCoverage} /> : null}
 
       <div className="space-y-4">
         <h2 className="text-sm font-semibold uppercase tracking-[0.16em] text-slate-500">

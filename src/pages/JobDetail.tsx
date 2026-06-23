@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   ArrowLeft,
@@ -27,6 +27,7 @@ import { InvestigationProgressBanner } from "@/components/job/InvestigationProgr
 import { RemediationChecklist } from "@/components/job/RemediationChecklist";
 import { SimilarIncidentsPanel } from "@/components/job/SimilarIncidentsPanel";
 import { SimilarIncidentList } from "@/components/similar-incidents/SimilarIncidentList";
+import { EvidenceCoverageCard } from "@/components/investigation/EvidenceCoverageCard";
 import { FeedbackPanel } from "@/components/feedback/FeedbackPanel";
 import { FeedbackHistory } from "@/components/feedback/FeedbackHistory";
 import { JobReportSummaryCard } from "@/components/job/JobReportSummaryCard";
@@ -47,6 +48,7 @@ import {
   useRoleUiCapabilities,
 } from "@/lib/roleUiCapabilities";
 import { cn, formatDateTime } from "@/lib/utils";
+import { buildEvidenceCoverage } from "@/lib/evidenceCoverage";
 
 const triggerLabels = {
   alert: "Alert",
@@ -135,6 +137,15 @@ export function JobDetail() {
     error: rcaFeedbackError,
     submit: submitRcaFeedback,
   } = useRcaFeedback(jobId);
+
+  const evidenceCoverage = useMemo(() => {
+    if (!bundle) return null;
+    return buildEvidenceCoverage({
+      evidence: bundle.evidence,
+      limitationsNote: bundle.limitationsNote,
+      confidenceNote: bundle.confidenceNote,
+    });
+  }, [bundle]);
 
   const roleCaps = useRoleUiCapabilities();
   const { user: sessionUser } = useCurrentUser();
@@ -852,6 +863,9 @@ export function JobDetail() {
             <div className="grid gap-6 lg:grid-cols-12">
               <div className="space-y-6 lg:col-span-7">
                 <JobReportSummaryCard report={report} anomalyId={job.anomalyId} />
+                {evidenceCoverage ? (
+                  <EvidenceCoverageCard coverage={evidenceCoverage} />
+                ) : null}
                 <div className="rounded-2xl border border-sky-500/20 bg-gradient-to-br from-sky-500/[0.06] to-black/[0.96] p-6 shadow-inner">
                   <h3 className="text-[10px] font-bold uppercase tracking-[0.14em] text-sky-400/90">
                     Confidence note

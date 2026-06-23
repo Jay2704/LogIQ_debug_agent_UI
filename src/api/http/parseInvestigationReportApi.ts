@@ -4,6 +4,8 @@ import type {
   InvestigationReportMultiAgentFinding,
   InvestigationReportRunbook,
   InvestigationReportSimilarIncident,
+  EvidenceCoverage,
+  EvidenceCoverageLevel,
 } from "@/types";
 
 function readString(value: unknown, fallback = ""): string {
@@ -79,6 +81,38 @@ function parseStringArray(value: unknown): string[] {
     : [];
 }
 
+function parseCoverageLevel(value: string): EvidenceCoverageLevel {
+  const normalized = value.trim().toLowerCase();
+  if (normalized === "high") return "high";
+  if (normalized === "good") return "good";
+  if (normalized === "partial") return "partial";
+  return "low";
+}
+
+function parseEvidenceCoverage(row: unknown): EvidenceCoverage | undefined {
+  if (!row || typeof row !== "object") return undefined;
+  const r = row as Record<string, unknown>;
+  const availableRaw = r.available_sources ?? r.availableSources;
+  const missingRaw = r.missing_sources ?? r.missingSources;
+  const availableSources = Array.isArray(availableRaw)
+    ? availableRaw.filter((item): item is string => typeof item === "string")
+    : [];
+  const missingSources = Array.isArray(missingRaw)
+    ? missingRaw.filter((item): item is string => typeof item === "string")
+    : [];
+  const levelRaw = readString(r.level, "low");
+  return {
+    coveragePercent: readNumber(r.coverage_percent ?? r.coveragePercent),
+    level: parseCoverageLevel(levelRaw),
+    availableSources,
+    missingSources,
+    confidenceLimitations:
+      readString(r.confidence_limitations) ||
+      readString(r.confidenceLimitations) ||
+      "",
+  };
+}
+
 export function parseInvestigationReportJson(
   json: unknown,
   investigationId: string
@@ -145,5 +179,6 @@ export function parseInvestigationReportJson(
           .filter((item): item is InvestigationReportRunbook => item !== null)
       : [],
     recommendedActions: parseStringArray(actionsRaw),
+    evidenceCoverage: parseEvidenceCoverage(r.evidence_coverage ?? r.evidenceCoverage),
   };
 }

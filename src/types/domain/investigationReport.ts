@@ -1,3 +1,5 @@
+import type { EvidenceCoverage } from "./evidenceCoverage";
+
 export interface InvestigationReportSimilarIncident {
   id: string;
   title: string;
@@ -38,4 +40,5 @@ export interface InvestigationReport {
   multiAgentFindings: InvestigationReportMultiAgentFinding[];
   runbooks: InvestigationReportRunbook[];
   recommendedActions: string[];
+  evidenceCoverage?: EvidenceCoverage;
 }

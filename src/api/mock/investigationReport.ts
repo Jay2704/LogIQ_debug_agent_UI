@@ -4,6 +4,7 @@ import { mockRcaFeedbackService } from "./rcaFeedback";
 import { getMockMultiAgentReport } from "./multiAgent";
 import { buildSampleTimeline } from "./investigations";
 import type { InvestigationReport } from "@/types";
+import { buildEvidenceCoverage } from "@/lib/evidenceCoverage";
 
 const reportCache = new Map<string, InvestigationReport>();
 
@@ -85,6 +86,11 @@ async function composeReport(investigationId: string): Promise<InvestigationRepo
       },
     ],
     recommendedActions,
+    evidenceCoverage: buildEvidenceCoverage({
+      evidence: bundle?.evidence ?? [],
+      limitationsNote: bundle?.limitationsNote,
+      confidenceNote: bundle?.confidenceNote,
+    }),
   };
 }
 
