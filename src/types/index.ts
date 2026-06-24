@@ -125,6 +125,21 @@ export type {
 } from "./domain/demo";
 export type { UserRole, User, CreateUserInput } from "./domain/user";
 export { SIGNUP_ROLE_OPTIONS } from "./domain/user";
+export type {
+  IntegrationProvider,
+  IntegrationValidationStatus,
+  IntegrationConnection,
+  JiraIntegrationConnection,
+  GitHubIntegrationConnection,
+  CreateIntegrationConnectionInput,
+  CreateJiraConnectionInput,
+  CreateGitHubConnectionInput,
+  UpdateIntegrationConnectionInput,
+  UpdateJiraConnectionInput,
+  UpdateGitHubConnectionInput,
+  ValidateIntegrationConnectionResult,
+} from "./domain/integration";
+export type { RcaRunInput } from "./domain/rcaRun";
 
 export type {
   LoginInput,

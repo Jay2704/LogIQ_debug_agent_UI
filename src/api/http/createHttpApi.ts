@@ -25,9 +25,9 @@ import {
   serializeCreateUserBody,
 } from "./parseUserApi";
 import {
-  parseMcpContextPreviewJson,
   parseMcpConnectionJson,
   parseMcpConnectionsJson,
+  parseMcpContextPreviewJson,
   parseMcpStatusJson,
   serializeMcpPreviewBody,
 } from "./parseMcpApi";
@@ -47,6 +47,19 @@ import {
   parseRcaEvaluationTrendsJson,
   parseRcaServiceAccuracyJson,
 } from "./parseRcaEvaluationApi";
+import {
+  parseIntegrationConnectionJson,
+  parseIntegrationConnectionsJson,
+  parseValidateIntegrationConnectionJson,
+  serializeCreateIntegrationBody,
+  serializeUpdateIntegrationBody,
+} from "./parseIntegrationsApi";
+import {
+  integrationConnectionsToMcpConnections,
+  integrationConnectionsToProviderStatus,
+  integrationConnectionToMcpConnection,
+} from "@/lib/mapIntegrationToMcp";
+import type { RcaRunInput } from "@/types";
 
 /**
  * “Hybrid” HTTP client: real `fetch` calls for backend-supported routes (jobs, RCA, auth, Jira,
@@ -339,9 +352,15 @@ export function createHttpApi(): LogIQApi {
     },
     anomalies: mocks.anomalies,
     rca: {
-      run: async (anomalyId: string) => {
+      run: async (input: RcaRunInput) => {
         const url = joinApiUrl(baseUrl, "/api/v1/rca/run");
-        const body = { anomaly_id: anomalyId };
+        const body: Record<string, string> = {
+          anomaly_id: input.anomalyId.trim(),
+          workspace_id: input.workspaceId.trim(),
+        };
+        if (input.repoName?.trim()) {
+          body.repo_name = input.repoName.trim();
+        }
         logApiDebug("rca/run", { url, body });
         const res = await fetchNetwork(url, {
           method: "POST",
@@ -499,12 +518,32 @@ export function createHttpApi(): LogIQApi {
       },
     },
     mcp: {
-      getStatus: async () => {
-        const url = joinApiUrl(baseUrl, "/api/v1/mcp/status");
+      getStatus: async (workspaceId: string) => {
+        const id = workspaceId.trim();
+        const statusUrl = joinApiUrl(
+          baseUrl,
+          `/api/v1/mcp/status?workspace_id=${encodeURIComponent(id)}`
+        );
+        const statusRes = await fetchNetwork(statusUrl);
+        if (statusRes.ok) {
+          const json: unknown = await readJsonOrNull(statusRes);
+          const parsed = parseMcpStatusJson(json);
+          if (parsed.length > 0) return parsed;
+        }
+
+        const url = joinApiUrl(
+          baseUrl,
+          `/api/v1/integrations/connections?workspace_id=${encodeURIComponent(id)}`
+        );
         const res = await fetchNetwork(url);
-        if (!res.ok) await httpError(res, "GET /api/v1/mcp/status");
+        if (res.status === 404) {
+          return integrationConnectionsToProviderStatus(
+            await mocks.integrations.listConnections(id)
+          );
+        }
+        if (!res.ok) await httpError(res, "GET /api/v1/integrations/connections");
         const json: unknown = await readJsonOrNull(res);
-        return parseMcpStatusJson(json);
+        return integrationConnectionsToProviderStatus(parseIntegrationConnectionsJson(json));
       },
       previewContext: async (input) => {
         const ticketKey = input.ticketKey.trim().toUpperCase();
@@ -521,29 +560,123 @@ export function createHttpApi(): LogIQApi {
         const json: unknown = await readJsonOrNull(res);
         return parseMcpContextPreviewJson(json);
       },
-      getConnections: async () => {
-        const url = joinApiUrl(baseUrl, "/api/v1/mcp/connections");
-        const res = await fetchNetwork(url);
-        if (!res.ok) await httpError(res, "GET /api/v1/mcp/connections");
-        const json: unknown = await readJsonOrNull(res);
-        return { connections: parseMcpConnectionsJson(json) };
-      },
-      validateConnection: async (provider) => {
+      getConnections: async (workspaceId: string) => {
+        const id = workspaceId.trim();
+        const mcpUrl = joinApiUrl(
+          baseUrl,
+          `/api/v1/mcp/connections?workspace_id=${encodeURIComponent(id)}`
+        );
+        const mcpRes = await fetchNetwork(mcpUrl);
+        if (mcpRes.ok) {
+          const json: unknown = await readJsonOrNull(mcpRes);
+          const connections = parseMcpConnectionsJson(json);
+          if (connections.length > 0) {
+            return { connections };
+          }
+        }
+
         const url = joinApiUrl(
           baseUrl,
-          `/api/v1/mcp/connections/${encodeURIComponent(provider)}/validate`
+          `/api/v1/integrations/connections?workspace_id=${encodeURIComponent(id)}`
+        );
+        const res = await fetchNetwork(url);
+        if (res.status === 404) {
+          const rows = await mocks.integrations.listConnections(id);
+          return { connections: integrationConnectionsToMcpConnections(rows) };
+        }
+        if (!res.ok) await httpError(res, "GET /api/v1/integrations/connections");
+        const json: unknown = await readJsonOrNull(res);
+        return {
+          connections: integrationConnectionsToMcpConnections(
+            parseIntegrationConnectionsJson(json)
+          ),
+        };
+      },
+      validateConnection: async (workspaceId: string, connectionId: string) => {
+        const ws = workspaceId.trim();
+        const cid = connectionId.trim();
+        const mcpUrl = joinApiUrl(
+          baseUrl,
+          `/api/v1/mcp/connections/by-id/${encodeURIComponent(cid)}/validate?workspace_id=${encodeURIComponent(ws)}`
+        );
+        const mcpRes = await fetchNetwork(mcpUrl, { method: "POST" });
+        if (mcpRes.ok) {
+          const json: unknown = await readJsonOrNull(mcpRes);
+          return parseMcpConnectionJson(json);
+        }
+
+        const url = joinApiUrl(
+          baseUrl,
+          `/api/v1/integrations/connections/${encodeURIComponent(cid)}/validate`
         );
         const res = await fetchNetwork(url, { method: "POST" });
-        if (!res.ok) await httpError(res, "POST /api/v1/mcp/connections/:provider/validate");
-        const json: unknown = await readJsonOrNull(res);
-        return parseMcpConnectionJson(json);
+        if (res.status === 404 || res.status === 405) {
+          await mocks.integrations.validateConnection(cid);
+          const rows = await mocks.integrations.listConnections(ws);
+          const row = rows.find((r) => r.id === cid);
+          if (!row) throw new Error(`[LogIQ API] Connection not found: ${cid}`);
+          return integrationConnectionToMcpConnection(row);
+        }
+        if (!res.ok) {
+          await httpError(res, "POST /api/v1/integrations/connections/:id/validate");
+        }
+        await parseValidateIntegrationConnectionJson(await readJsonOrNull(res), cid);
+        const listUrl = joinApiUrl(
+          baseUrl,
+          `/api/v1/integrations/connections?workspace_id=${encodeURIComponent(ws)}`
+        );
+        const listRes = await fetchNetwork(listUrl);
+        if (!listRes.ok) await httpError(listRes, "GET /api/v1/integrations/connections");
+        const row = parseIntegrationConnectionsJson(await readJsonOrNull(listRes)).find(
+          (r) => r.id === cid
+        );
+        if (!row) throw new Error(`[LogIQ API] Connection not found after validate: ${cid}`);
+        return integrationConnectionToMcpConnection(row);
       },
-      validateAllConnections: async () => {
-        const url = joinApiUrl(baseUrl, "/api/v1/mcp/connections/validate-all");
-        const res = await fetchNetwork(url, { method: "POST" });
-        if (!res.ok) await httpError(res, "POST /api/v1/mcp/connections/validate-all");
-        const json: unknown = await readJsonOrNull(res);
-        return { connections: parseMcpConnectionsJson(json) };
+      validateAllConnections: async (workspaceId: string) => {
+        const id = workspaceId.trim();
+        const mcpUrl = joinApiUrl(
+          baseUrl,
+          `/api/v1/mcp/connections/validate-all?workspace_id=${encodeURIComponent(id)}`
+        );
+        const mcpRes = await fetchNetwork(mcpUrl, { method: "POST" });
+        if (mcpRes.ok) {
+          const json: unknown = await readJsonOrNull(mcpRes);
+          return { connections: parseMcpConnectionsJson(json) };
+        }
+
+        const listUrl = joinApiUrl(
+          baseUrl,
+          `/api/v1/integrations/connections?workspace_id=${encodeURIComponent(id)}`
+        );
+        const listRes = await fetchNetwork(listUrl);
+        if (listRes.status === 404) {
+          const rows = await mocks.integrations.listConnections(id);
+          for (const row of rows.filter((r) => r.enabled)) {
+            await mocks.integrations.validateConnection(row.id);
+          }
+          const refreshed = await mocks.integrations.listConnections(id);
+          return { connections: integrationConnectionsToMcpConnections(refreshed) };
+        }
+        if (!listRes.ok) await httpError(listRes, "GET /api/v1/integrations/connections");
+        const rows = parseIntegrationConnectionsJson(await readJsonOrNull(listRes));
+        for (const row of rows.filter((r) => r.enabled)) {
+          const validateUrl = joinApiUrl(
+            baseUrl,
+            `/api/v1/integrations/connections/${encodeURIComponent(row.id)}/validate`
+          );
+          const validateRes = await fetchNetwork(validateUrl, { method: "POST" });
+          if (!validateRes.ok) {
+            await httpError(validateRes, "POST /api/v1/integrations/connections/:id/validate");
+          }
+        }
+        const refreshedRes = await fetchNetwork(listUrl);
+        if (!refreshedRes.ok) await httpError(refreshedRes, "GET /api/v1/integrations/connections");
+        return {
+          connections: integrationConnectionsToMcpConnections(
+            parseIntegrationConnectionsJson(await readJsonOrNull(refreshedRes))
+          ),
+        };
       },
     },
     investigations: {
@@ -787,6 +920,85 @@ export function createHttpApi(): LogIQApi {
           return { job: parseApiJobJson((json as { job: unknown }).job) };
         }
         return { job: parseApiJobJson(json) };
+      },
+    },
+    integrations: {
+      listConnections: async (workspaceId: string) => {
+        const id = workspaceId.trim();
+        const url = joinApiUrl(
+          baseUrl,
+          `/api/v1/integrations/connections?workspace_id=${encodeURIComponent(id)}`
+        );
+        const res = await fetchNetwork(url);
+        if (res.status === 404) {
+          return mocks.integrations.listConnections(id);
+        }
+        if (!res.ok) await httpError(res, "GET /api/v1/integrations/connections");
+        const json: unknown = await readJsonOrNull(res);
+        return parseIntegrationConnectionsJson(json);
+      },
+      createConnection: async (payload) => {
+        const url = joinApiUrl(baseUrl, "/api/v1/integrations/connections");
+        const res = await fetchNetwork(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(serializeCreateIntegrationBody(payload)),
+        });
+        if (res.status === 404 || res.status === 405) {
+          return mocks.integrations.createConnection(payload);
+        }
+        if (!res.ok) await httpError(res, "POST /api/v1/integrations/connections");
+        const json: unknown = await readJsonOrNull(res);
+        const parsed = parseIntegrationConnectionJson(json);
+        if (!parsed) {
+          throw new Error("[LogIQ API] POST /api/v1/integrations/connections: invalid body");
+        }
+        return parsed;
+      },
+      updateConnection: async (id, payload) => {
+        const url = joinApiUrl(
+          baseUrl,
+          `/api/v1/integrations/connections/${encodeURIComponent(id)}`
+        );
+        const res = await fetchNetwork(url, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(serializeUpdateIntegrationBody(payload)),
+        });
+        if (res.status === 404 || res.status === 405) {
+          return mocks.integrations.updateConnection(id, payload);
+        }
+        if (!res.ok) await httpError(res, "PATCH /api/v1/integrations/connections/:id");
+        const json: unknown = await readJsonOrNull(res);
+        const parsed = parseIntegrationConnectionJson(json);
+        if (!parsed) {
+          throw new Error("[LogIQ API] PATCH /api/v1/integrations/connections/:id: invalid body");
+        }
+        return parsed;
+      },
+      deleteConnection: async (id) => {
+        const url = joinApiUrl(
+          baseUrl,
+          `/api/v1/integrations/connections/${encodeURIComponent(id)}`
+        );
+        const res = await fetchNetwork(url, { method: "DELETE" });
+        if (res.status === 404 || res.status === 405) {
+          return mocks.integrations.deleteConnection(id);
+        }
+        if (!res.ok) await httpError(res, "DELETE /api/v1/integrations/connections/:id");
+      },
+      validateConnection: async (id) => {
+        const url = joinApiUrl(
+          baseUrl,
+          `/api/v1/integrations/connections/${encodeURIComponent(id)}/validate`
+        );
+        const res = await fetchNetwork(url, { method: "POST" });
+        if (res.status === 404 || res.status === 405) {
+          return mocks.integrations.validateConnection(id);
+        }
+        if (!res.ok) await httpError(res, "POST /api/v1/integrations/connections/:id/validate");
+        const json: unknown = await readJsonOrNull(res);
+        return parseValidateIntegrationConnectionJson(json, id);
       },
     },
     auth: {

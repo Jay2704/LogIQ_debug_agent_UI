@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getApi } from "@/api/client";
 import { logApiDebug } from "@/api/http/debugLog";
+import { buildRcaRunInput } from "@/lib/buildRcaRunInput";
+import { useCurrentUser } from "@/auth";
 import type { RcaAssistiveExplanation, RcaResult } from "@/types";
 
 export type InvestigationPhase =
@@ -72,6 +74,7 @@ export function useRcaInvestigation(
   jobId: string,
   anomalyId: string
 ): UseRcaInvestigationResult {
+  const { user } = useCurrentUser();
   const [phase, setPhase] = useState<InvestigationPhase>("idle");
   const [liveRca, setLiveRca] = useState<RcaResult | null | undefined>(
     undefined
@@ -164,8 +167,9 @@ export function useRcaInvestigation(
     setLiveExplanation(undefined);
 
     try {
-      logApiDebug("runInvestigation start", { anomalyId: aid, jobId: jid });
-      await getApi().rca.run(aid);
+      const runInput = await buildRcaRunInput(aid, user);
+      logApiDebug("runInvestigation start", { ...runInput, jobId: jid });
+      await getApi().rca.run(runInput);
       setPhase("fetching");
 
       const [rcaSettled, exSettled] = await Promise.allSettled([
@@ -235,7 +239,7 @@ export function useRcaInvestigation(
     } finally {
       inFlightRef.current = false;
     }
-  }, [anomalyId, jobId]);
+  }, [anomalyId, jobId, user]);
 
   const clearSuccess = useCallback(() => setSuccessMessage(null), []);
   const clearWarning = useCallback(() => setWarning(null), []);

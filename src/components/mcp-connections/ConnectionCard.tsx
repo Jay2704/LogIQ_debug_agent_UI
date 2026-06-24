@@ -1,12 +1,12 @@
 import { Loader2, RefreshCw } from "lucide-react";
-import type { McpConnection, McpProviderId } from "@/types";
+import type { McpConnection } from "@/types";
 import { cn, formatDateTime } from "@/lib/utils";
 import { ConnectionStatusBadge } from "./ConnectionStatusBadge";
 
 interface ConnectionCardProps {
   connection: McpConnection;
   validating?: boolean;
-  onValidate: (provider: McpProviderId) => void;
+  onValidate: (connectionId: string) => void;
 }
 
 export function ConnectionCard({
@@ -19,7 +19,9 @@ export function ConnectionCard({
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-lg font-semibold text-white">{connection.label}</p>
-          <p className="mt-1 font-mono text-xs text-slate-500">{connection.provider}</p>
+          <p className="mt-1 font-mono text-xs text-slate-500">
+            {connection.provider} · {connection.id}
+          </p>
         </div>
         <ConnectionStatusBadge status={connection.status} />
       </div>
@@ -61,8 +63,8 @@ export function ConnectionCard({
 
       <button
         type="button"
-        disabled={validating}
-        onClick={() => onValidate(connection.provider)}
+        disabled={validating || !connection.configured}
+        onClick={() => onValidate(connection.id)}
         className={cn(
           "mt-4 inline-flex items-center gap-2 rounded-xl border border-sky-500/30 bg-sky-500/10 px-4 py-2 text-xs font-semibold text-sky-200 transition hover:border-sky-400/45 hover:bg-sky-500/15 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
         )}

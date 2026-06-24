@@ -22,6 +22,7 @@ export type {
   InvestigationsService,
   RcaFeedbackService,
   EvaluationService,
+  IntegrationsService,
   UsersService,
   LoginResult,
   AuthService,

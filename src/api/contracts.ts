@@ -31,13 +31,17 @@ import type {
   McpProviderStatus,
   McpConnection,
   McpConnectionsResult,
-  McpProviderId,
   UnifiedInvestigationContext,
   UtilityRunRecord,
   UtilityToolDefinition,
   DemoScenario,
   DemoLaunchInput,
   DemoLaunchResult,
+  IntegrationConnection,
+  CreateIntegrationConnectionInput,
+  UpdateIntegrationConnectionInput,
+  ValidateIntegrationConnectionResult,
+  RcaRunInput,
 } from "@/types";
 
 /**
@@ -68,7 +72,26 @@ export interface RcaService {
     anomalyId: string
   ): Promise<RcaAssistiveExplanation>;
   /** POST /api/v1/rca/run — triggers deterministic RCA pipeline for an anomaly. */
-  run(anomalyId: string): Promise<void>;
+  run(input: RcaRunInput): Promise<void>;
+}
+
+/** Workspace integration connections (Jira, GitHub). */
+export interface IntegrationsService {
+  /** GET /api/v1/integrations/connections?workspace_id=… */
+  listConnections(workspaceId: string): Promise<IntegrationConnection[]>;
+  /** POST /api/v1/integrations/connections */
+  createConnection(
+    payload: CreateIntegrationConnectionInput
+  ): Promise<IntegrationConnection>;
+  /** PATCH /api/v1/integrations/connections/:id */
+  updateConnection(
+    id: string,
+    payload: UpdateIntegrationConnectionInput
+  ): Promise<IntegrationConnection>;
+  /** DELETE /api/v1/integrations/connections/:id */
+  deleteConnection(id: string): Promise<void>;
+  /** POST /api/v1/integrations/connections/:id/validate */
+  validateConnection(id: string): Promise<ValidateIntegrationConnectionResult>;
 }
 
 export interface ReportsService {
@@ -108,16 +131,16 @@ export interface JiraService {
 
 /** MCP-powered external investigation context (Jira, GitHub, GitLab). */
 export interface McpService {
-  /** GET /api/v1/mcp/status — connectivity for phase-1 providers. */
-  getStatus(): Promise<McpProviderStatus[]>;
+  /** GET /api/v1/mcp/status?workspace_id=… — backend should resolve integration_connections. */
+  getStatus(workspaceId: string): Promise<McpProviderStatus[]>;
   /** POST /api/v1/mcp/context/preview — aggregate context before RCA. */
   previewContext(input: McpPreviewContextInput): Promise<UnifiedInvestigationContext>;
-  /** GET /api/v1/mcp/connections */
-  getConnections(): Promise<McpConnectionsResult>;
-  /** POST /api/v1/mcp/connections/{provider}/validate */
-  validateConnection(provider: McpProviderId): Promise<McpConnection>;
-  /** POST /api/v1/mcp/connections/validate-all */
-  validateAllConnections(): Promise<McpConnectionsResult>;
+  /** @deprecated Use integrations.listConnections — maps integration_connections rows. */
+  getConnections(workspaceId: string): Promise<McpConnectionsResult>;
+  /** @deprecated Use integrations.validateConnection(connectionId). */
+  validateConnection(workspaceId: string, connectionId: string): Promise<McpConnection>;
+  /** @deprecated Validates each enabled integration_connections row for the workspace. */
+  validateAllConnections(workspaceId: string): Promise<McpConnectionsResult>;
 }
 
 /** Investigation graph visualization for job detail workspace. */
@@ -212,6 +235,7 @@ export interface LogIQApi {
   rcaFeedback: RcaFeedbackService;
   evaluation: EvaluationService;
   demo: DemoService;
+  integrations: IntegrationsService;
   users: UsersService;
   auth: AuthService;
 }

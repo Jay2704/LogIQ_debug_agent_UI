@@ -18,7 +18,7 @@ const sections = [
   {
     title: "Integrations",
     description:
-      "Future: connect APM, log stores, ticketing, and chat to route anomalies and reports.",
+      "Connect Jira and GitHub for investigation context, or monitor MCP provider health.",
     icon: Plug,
   },
   {
@@ -120,12 +120,20 @@ export function Settings() {
                 <h2 className="text-sm font-semibold text-slate-200">{s.title}</h2>
                 <p className="mt-2 text-sm text-slate-500">{s.description}</p>
                 {s.title === "Integrations" ? (
-                  <Link
-                    to="/settings/mcp-connections"
-                    className="mt-3 inline-flex text-sm font-semibold text-sky-400 transition hover:text-sky-300"
-                  >
-                    Open MCP Connection Center →
-                  </Link>
+                  <div className="mt-3 flex flex-wrap gap-4 text-sm">
+                    <Link
+                      to="/settings/integrations"
+                      className="font-semibold text-sky-400 transition hover:text-sky-300"
+                    >
+                      Manage Jira & GitHub →
+                    </Link>
+                    <Link
+                      to="/settings/mcp-connections"
+                      className="font-semibold text-sky-400 transition hover:text-sky-300"
+                    >
+                      MCP Connection Center →
+                    </Link>
+                  </div>
                 ) : null}
               </div>
             </div>

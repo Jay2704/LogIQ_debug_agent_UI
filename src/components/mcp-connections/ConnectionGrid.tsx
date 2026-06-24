@@ -1,33 +1,38 @@
 import { Loader2, RefreshCw } from "lucide-react";
-import type { McpConnection, McpProviderId } from "@/types";
+import type { McpConnection } from "@/types";
 import { ctaButtonGradient, ctaGlowBlueOnly } from "@/lib/ctaTheme";
 import { cn } from "@/lib/utils";
 import { ConnectionCard } from "./ConnectionCard";
 
 interface ConnectionGridProps {
   connections: McpConnection[];
-  validatingProvider: McpProviderId | null;
+  validatingId: string | null;
   validatingAll: boolean;
-  onValidate: (provider: McpProviderId) => void;
+  onValidate: (connectionId: string) => void;
   onValidateAll: () => void;
 }
 
 export function ConnectionGrid({
   connections,
-  validatingProvider,
+  validatingId,
   validatingAll,
   onValidate,
   onValidateAll,
 }: ConnectionGridProps) {
+  const enabledCount = connections.filter((row) => row.configured).length;
+
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-slate-500">
-          {connections.length} MCP provider{connections.length === 1 ? "" : "s"} registered
+          {connections.length} integration connection{connections.length === 1 ? "" : "s"}
+          {enabledCount !== connections.length
+            ? ` · ${enabledCount} enabled with credentials`
+            : ""}
         </p>
         <button
           type="button"
-          disabled={validatingAll || Boolean(validatingProvider)}
+          disabled={validatingAll || Boolean(validatingId) || enabledCount === 0}
           onClick={() => void onValidateAll()}
           className={cn(
             "inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-white ring-1 ring-blue-400/35 disabled:cursor-not-allowed disabled:opacity-60",
@@ -40,16 +45,16 @@ export function ConnectionGrid({
           ) : (
             <RefreshCw className="h-4 w-4" aria-hidden />
           )}
-          Validate all
+          Validate all enabled
         </button>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
         {connections.map((connection) => (
           <ConnectionCard
-            key={connection.provider}
+            key={connection.id}
             connection={connection}
-            validating={validatingProvider === connection.provider}
+            validating={validatingId === connection.id}
             onValidate={onValidate}
           />
         ))}

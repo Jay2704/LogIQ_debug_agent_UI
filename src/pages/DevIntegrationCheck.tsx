@@ -2,6 +2,8 @@ import { useState, type Dispatch, type ReactNode, type SetStateAction } from "re
 import { Link, Navigate } from "react-router-dom";
 import { api } from "@/api";
 import { API_BASE_URL, USE_HTTP_API } from "@/api/config";
+import { useCurrentUser } from "@/auth";
+import { buildRcaRunInput } from "@/lib/buildRcaRunInput";
 import type { CreateJobInput } from "@/types";
 
 type BlockStatus = "idle" | "loading" | "success" | "error";
@@ -157,6 +159,7 @@ function Section({
  * Internal-only integration surface. Route is registered only when `import.meta.env.DEV`.
  */
 export function DevIntegrationCheck() {
+  const { user } = useCurrentUser();
   const [listJobs, setListJobs] = useState<Block>(empty);
   const [createJob, setCreateJob] = useState<Block>(empty);
   const [jobDetail, setJobDetail] = useState<Block>(empty);
@@ -327,7 +330,7 @@ export function DevIntegrationCheck() {
 
       <Section
         title="POST /api/v1/rca/run"
-        subtitle="api.rca.run(anomaly_id)"
+        subtitle="api.rca.run({ anomalyId, workspaceId, repoName? })"
         headerRight={
           <div className="flex flex-wrap items-center gap-2">
             <StatusBadge status={debugRun.status} />
@@ -348,8 +351,9 @@ export function DevIntegrationCheck() {
                     anomaly_id: anomalyForAgent.trim(),
                   },
                   async () => {
-                    await api.rca.run(anomalyForAgent.trim());
-                    return { ok: true, message: "No JSON body (204 / empty)" };
+                    const runInput = await buildRcaRunInput(anomalyForAgent.trim(), user);
+                    await api.rca.run(runInput);
+                    return { ok: true, message: "No JSON body (204 / empty)", runInput };
                   }
                 )
               }

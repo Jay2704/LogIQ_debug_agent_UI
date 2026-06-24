@@ -16,6 +16,7 @@ import { Link } from "react-router-dom";
 import { api } from "@/api";
 import { MCP_UI_ENABLED } from "@/api/config";
 import { useMcpContextPreview, useMcpStatus } from "@/api/hooks";
+import { useCurrentUser } from "@/auth";
 import { McpContextPreviewPanel } from "@/components/mcp/McpContextPreviewPanel";
 import { McpProviderStatusGrid } from "@/components/mcp/McpProviderStatusGrid";
 import { ProductPreviewCard } from "@/components/landing/ProductPreviewCard";
@@ -30,6 +31,7 @@ import {
   type RecentInvestigationEntry,
 } from "@/lib/recentInvestigations";
 import { cn, formatDateTime, formatRelativeShort } from "@/lib/utils";
+import { resolveWorkspaceId } from "@/lib/workspaceId";
 import type { JiraRcaResult, JiraTicketSummary } from "@/types";
 
 const TICKET_KEY_PATTERN = /^[A-Z][A-Z0-9]+-\d+$/;
@@ -140,6 +142,8 @@ export function DashboardHomeHero({
   showPreviewCard = true,
   enableMcpPreview = false,
 }: DashboardHomeHeroProps) {
+  const { user } = useCurrentUser();
+  const workspaceId = resolveWorkspaceId(user);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const investigationResultsRef = useRef<HTMLDivElement | null>(null);
   const scrollRestoredInvestigationRef = useRef(false);
@@ -171,7 +175,7 @@ export function DashboardHomeHero({
     loading: mcpStatusLoading,
     error: mcpStatusError,
     refetch: refetchMcpStatus,
-  } = useMcpStatus(mcpWorkflowActive);
+  } = useMcpStatus(workspaceId, mcpWorkflowActive);
   const {
     data: mcpContext,
     loading: mcpPreviewLoading,
