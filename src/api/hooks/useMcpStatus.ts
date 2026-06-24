@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { getApi } from "@/api/client";
 import type { McpProviderStatus } from "@/types";
 
-export function useMcpStatus(enabled = true) {
+export function useMcpStatus(workspaceId: string, enabled = true) {
   const [data, setData] = useState<McpProviderStatus[] | null>(null);
   const [loading, setLoading] = useState(enabled);
   const [error, setError] = useState<Error | null>(null);
@@ -13,7 +13,7 @@ export function useMcpStatus(enabled = true) {
   }, []);
 
   useEffect(() => {
-    if (!enabled) {
+    if (!enabled || !workspaceId.trim()) {
       setData(null);
       setLoading(false);
       setError(null);
@@ -25,7 +25,7 @@ export function useMcpStatus(enabled = true) {
     setError(null);
 
     getApi()
-      .mcp.getStatus()
+      .mcp.getStatus(workspaceId)
       .then((providers) => {
         if (!cancelled) {
           setData(providers);
@@ -42,7 +42,7 @@ export function useMcpStatus(enabled = true) {
     return () => {
       cancelled = true;
     };
-  }, [enabled, refreshKey]);
+  }, [enabled, refreshKey, workspaceId]);
 
   return { data, loading, error, refetch };
 }

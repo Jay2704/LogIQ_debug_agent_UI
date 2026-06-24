@@ -70,6 +70,8 @@ export type McpConnectionStatus =
   | "failed";
 
 export interface McpConnection {
+  /** integration_connections row id */
+  id: string;
   provider: McpProviderId;
   label: string;
   configured: boolean;

@@ -3,10 +3,13 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { api } from "@/api";
 import { MCP_UI_ENABLED } from "@/api/config";
 import { DashboardHomeHero } from "@/components/landing/DashboardHomeHero";
+import { useCurrentUser } from "@/auth";
+import { buildRcaRunInput } from "@/lib/buildRcaRunInput";
 
 export function RCAWithJira() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { user } = useCurrentUser();
   const [running, setRunning] = useState(false);
   const [runError, setRunError] = useState<string | null>(null);
 
@@ -26,7 +29,8 @@ export function RCAWithJira() {
     setRunning(true);
     setRunError(null);
     try {
-      await api.rca.run(anomalyId);
+      const runInput = await buildRcaRunInput(anomalyId, user);
+      await api.rca.run(runInput);
       navigate("/jobs");
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);

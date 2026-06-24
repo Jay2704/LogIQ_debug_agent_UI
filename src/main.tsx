@@ -1,6 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { HashRouter } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 import { CurrentUserProvider } from "./auth";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import {
@@ -28,14 +28,21 @@ if (!import.meta.env.DEV && HTTP_MODE_FLAG && !API_BASE_URL) {
   );
 }
 
+/** GitHub Pages project sites use `VITE_BASE_PATH=/REPO_NAME/`; local dev uses `/`. */
+function resolveRouterBasename(): string | undefined {
+  const base = import.meta.env.BASE_URL;
+  if (!base || base === "/") return undefined;
+  return base.replace(/\/$/, "");
+}
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <HashRouter>
+    <BrowserRouter basename={resolveRouterBasename()}>
       <ThemeProvider>
         <CurrentUserProvider>
           <App />
         </CurrentUserProvider>
       </ThemeProvider>
-    </HashRouter>
+    </BrowserRouter>
   </StrictMode>
 );

@@ -19,6 +19,7 @@ import { Jobs } from "@/pages/Jobs";
 import { ForgotPassword } from "@/pages/ForgotPassword";
 import { Login } from "@/pages/Login";
 import { McpConnections } from "@/pages/McpConnections";
+import { Integrations } from "@/pages/Integrations";
 import { NotFound } from "@/pages/NotFound";
 import { ResetPassword } from "@/pages/ResetPassword";
 import { VerifyEmail } from "@/pages/VerifyEmail";
@@ -73,6 +74,7 @@ export default function App() {
           <Route path="utilities" element={<Utilities />} />
           <Route path="utilities/:toolId" element={<UtilityDetail />} />
           <Route path="settings" element={<Settings />} />
+          <Route path="settings/integrations" element={<Integrations />} />
           <Route path="settings/mcp-connections" element={<McpConnections />} />
           <Route path="about" element={<About />} />
           <Route path="faq" element={<Faq />} />

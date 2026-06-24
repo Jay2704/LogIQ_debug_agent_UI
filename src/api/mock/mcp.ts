@@ -1,117 +1,15 @@
 import type { McpService } from "@/api/contracts";
+import {
+  integrationConnectionsToMcpConnections,
+  integrationConnectionsToProviderStatus,
+  integrationConnectionToMcpConnection,
+} from "@/lib/mapIntegrationToMcp";
+import { mockIntegrationsService } from "./integrations";
 import type {
   JiraTicketSummary,
-  McpConnection,
-  McpConnectionsResult,
   McpPreviewContextInput,
-  McpProviderId,
-  McpProviderStatus,
   UnifiedInvestigationContext,
 } from "@/types";
-
-const MOCK_PROVIDER_STATUS: McpProviderStatus[] = [
-  {
-    provider: "jira",
-    label: "Jira",
-    connected: true,
-    configured: true,
-    message: "Ticket intake ready",
-  },
-  {
-    provider: "github",
-    label: "GitHub",
-    connected: true,
-    configured: true,
-    message: "Commits and pull requests available",
-  },
-  {
-    provider: "gitlab",
-    label: "GitLab",
-    connected: true,
-    configured: true,
-    message: "Merge requests available",
-  },
-];
-
-let mockConnections: McpConnection[] = [
-  {
-    provider: "jira",
-    label: "Jira",
-    configured: true,
-    healthy: true,
-    lastCheckedAt: "2026-03-29T10:00:00.000Z",
-    status: "healthy",
-  },
-  {
-    provider: "github",
-    label: "GitHub",
-    configured: true,
-    healthy: false,
-    lastCheckedAt: "2026-03-29T09:45:00.000Z",
-    errorMessage: "Token expired — re-authenticate GitHub App installation.",
-    status: "unhealthy",
-  },
-  {
-    provider: "gitlab",
-    label: "GitLab",
-    configured: false,
-    healthy: false,
-    lastCheckedAt: "2026-03-28T16:20:00.000Z",
-    errorMessage: "Missing GITLAB_TOKEN in server configuration.",
-    status: "not_configured",
-  },
-];
-
-function cloneConnections(): McpConnection[] {
-  return mockConnections.map((row) => ({ ...row }));
-}
-
-function validateProviderMock(provider: McpProviderId): McpConnection {
-  const now = new Date().toISOString();
-  mockConnections = mockConnections.map((row) => {
-    if (row.provider !== provider) return row;
-    if (!row.configured) {
-      return {
-        ...row,
-        lastCheckedAt: now,
-        healthy: false,
-        status: "failed",
-        errorMessage: "Validation failed — provider is not configured.",
-      };
-    }
-    if (row.provider === "github") {
-      return {
-        ...row,
-        lastCheckedAt: now,
-        healthy: true,
-        status: "healthy",
-        errorMessage: undefined,
-      };
-    }
-    if (row.provider === "gitlab") {
-      return {
-        ...row,
-        lastCheckedAt: now,
-        healthy: false,
-        status: "failed",
-        errorMessage: "Validation failed — missing required credentials.",
-      };
-    }
-    return {
-      ...row,
-      lastCheckedAt: now,
-      healthy: true,
-      status: "healthy",
-      errorMessage: undefined,
-    };
-  });
-
-  const updated = mockConnections.find((row) => row.provider === provider);
-  if (!updated) {
-    throw new Error(`[LogIQ MCP] validateConnection: unknown provider ${provider}`);
-  }
-  return { ...updated };
-}
 
 function buildMockContext(
   ticket: JiraTicketSummary,
@@ -141,24 +39,6 @@ function buildMockContext(
         repository: repo,
         url: `https://github.com/${repo}/commit/a1b2c3d4e5f6789012345678901234567890abcd`,
       },
-      {
-        sha: "f9e8d7c6b5a4321098765432109876543210fedc",
-        shortSha: "f9e8d7c",
-        message: "chore(obs): add structured error codes for login failures",
-        authorName: "sam.rivera",
-        committedAt: "2026-06-17T09:05:00.000Z",
-        repository: repo,
-        url: `https://github.com/${repo}/commit/f9e8d7c6b5a4321098765432109876543210fedc`,
-      },
-      {
-        sha: "1234567890abcdef1234567890abcdef12345678",
-        shortSha: "1234567",
-        message: "refactor(cache): isolate redis connection pool per tenant",
-        authorName: "jordan.lee",
-        committedAt: "2026-06-15T16:40:00.000Z",
-        repository: repo,
-        url: `https://github.com/${repo}/commit/1234567890abcdef1234567890abcdef12345678`,
-      },
     ],
     githubPullRequests: [
       {
@@ -170,15 +50,6 @@ function buildMockContext(
         mergedAt: "2026-06-18T15:10:00.000Z",
         repository: repo,
         url: `https://github.com/${repo}/pull/482`,
-      },
-      {
-        number: 479,
-        title: "Add login failure telemetry for RCA correlation",
-        state: "open",
-        author: "sam.rivera",
-        createdAt: "2026-06-14T08:30:00.000Z",
-        repository: repo,
-        url: `https://github.com/${repo}/pull/479`,
       },
     ],
     gitlabMergeRequests: [
@@ -198,9 +69,10 @@ function buildMockContext(
 }
 
 export const mockMcpService: McpService = {
-  async getStatus() {
+  async getStatus(workspaceId: string) {
     await new Promise((r) => setTimeout(r, 120));
-    return MOCK_PROVIDER_STATUS.map((row) => ({ ...row }));
+    const rows = await mockIntegrationsService.listConnections(workspaceId);
+    return integrationConnectionsToProviderStatus(rows);
   },
 
   async previewContext(input: McpPreviewContextInput) {
@@ -225,21 +97,30 @@ export const mockMcpService: McpService = {
     return buildMockContext(ticket, ticketKey);
   },
 
-  async getConnections() {
+  async getConnections(workspaceId: string) {
     await new Promise((r) => setTimeout(r, 120));
-    return { connections: cloneConnections() } satisfies McpConnectionsResult;
+    const rows = await mockIntegrationsService.listConnections(workspaceId);
+    return { connections: integrationConnectionsToMcpConnections(rows) };
   },
 
-  async validateConnection(provider: McpProviderId) {
+  async validateConnection(workspaceId: string, connectionId: string) {
     await new Promise((r) => setTimeout(r, 280));
-    return validateProviderMock(provider);
+    await mockIntegrationsService.validateConnection(connectionId);
+    const rows = await mockIntegrationsService.listConnections(workspaceId);
+    const row = rows.find((r) => r.id === connectionId);
+    if (!row) {
+      throw new Error(`[LogIQ MCP] validateConnection: unknown connection ${connectionId}`);
+    }
+    return integrationConnectionToMcpConnection(row);
   },
 
-  async validateAllConnections() {
+  async validateAllConnections(workspaceId: string) {
     await new Promise((r) => setTimeout(r, 400));
-    for (const row of mockConnections) {
-      validateProviderMock(row.provider);
+    const rows = await mockIntegrationsService.listConnections(workspaceId);
+    for (const row of rows.filter((r) => r.enabled)) {
+      await mockIntegrationsService.validateConnection(row.id);
     }
-    return { connections: cloneConnections() };
+    const refreshed = await mockIntegrationsService.listConnections(workspaceId);
+    return { connections: integrationConnectionsToMcpConnections(refreshed) };
   },
 };

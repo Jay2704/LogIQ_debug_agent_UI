@@ -1,24 +1,28 @@
 import { Link } from "react-router-dom";
 import { ArrowLeft, Loader2, PlugZap, RefreshCw } from "lucide-react";
 import { useMcpConnections } from "@/api/hooks";
+import { useCurrentUser } from "@/auth";
 import { ConnectionGrid } from "@/components/mcp-connections/ConnectionGrid";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { FeedbackNotice } from "@/components/ui/FeedbackNotice";
 import { PageLoading } from "@/components/ui/PageLoading";
 import { ctaButtonGradient, ctaGlowBlueOnly } from "@/lib/ctaTheme";
+import { resolveWorkspaceId } from "@/lib/workspaceId";
 import { cn } from "@/lib/utils";
 
 export function McpConnections() {
+  const { user } = useCurrentUser();
+  const workspaceId = resolveWorkspaceId(user);
   const {
     connections,
     loading,
     error,
-    validatingProvider,
+    validatingId,
     validatingAll,
     refetch,
     validateConnection,
     validateAllConnections,
-  } = useMcpConnections();
+  } = useMcpConnections(workspaceId);
 
   if (loading) {
     return <PageLoading message="Loading MCP connections…" />;
@@ -67,8 +71,11 @@ export function McpConnections() {
                 MCP Connection Center
               </h1>
               <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-400">
-                Monitor Jira, GitHub, and GitLab MCP providers — validate credentials and
-                connectivity before investigations use external context.
+                Monitor Jira and GitHub provider health from your workspace integration
+                connections — same records as the Integrations page.
+              </p>
+              <p className="mt-2 font-mono text-xs text-slate-500">
+                Workspace: {workspaceId}
               </p>
             </div>
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-500/15 ring-1 ring-sky-500/30">
@@ -87,29 +94,37 @@ export function McpConnections() {
       {!connections?.length ? (
         <EmptyState
           icon={PlugZap}
-          title="No MCP connections configured"
-          description="Connect Jira, GitHub, or GitLab on the backend to see provider status here."
+          title="No integration connections"
+          description="Add Jira or GitHub connections on the Integrations page. MCP health checks use those stored credentials."
           action={
-            <button
-              type="button"
-              onClick={() => refetch()}
-              className={cn(
-                "inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-white ring-1 ring-blue-400/35",
-                ctaButtonGradient,
-                ctaGlowBlueOnly
-              )}
-            >
-              <RefreshCw className="h-4 w-4" />
-              Refresh
-            </button>
+            <div className="flex flex-wrap justify-center gap-3">
+              <Link
+                to="/settings/integrations"
+                className={cn(
+                  "inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-white ring-1 ring-blue-400/35",
+                  ctaButtonGradient,
+                  ctaGlowBlueOnly
+                )}
+              >
+                Open Integrations
+              </Link>
+              <button
+                type="button"
+                onClick={() => refetch()}
+                className="inline-flex items-center gap-2 rounded-xl border border-white/10 px-5 py-2.5 text-sm font-semibold text-slate-300 transition hover:border-white/20 hover:text-white"
+              >
+                <RefreshCw className="h-4 w-4" />
+                Refresh
+              </button>
+            </div>
           }
         />
       ) : (
         <ConnectionGrid
           connections={connections}
-          validatingProvider={validatingProvider}
+          validatingId={validatingId}
           validatingAll={validatingAll}
-          onValidate={(provider) => void validateConnection(provider)}
+          onValidate={(connectionId) => void validateConnection(connectionId)}
           onValidateAll={() => void validateAllConnections()}
         />
       )}

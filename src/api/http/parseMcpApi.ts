@@ -22,16 +22,19 @@ function readStringArray(value: unknown): string[] {
 function parseProviderRow(row: unknown): McpProviderStatus | null {
   if (!row || typeof row !== "object") return null;
   const r = row as Record<string, unknown>;
-  const provider = readString(r.provider);
+  const provider = readString(r.provider) || readString(r.source);
   if (provider !== "jira" && provider !== "github" && provider !== "gitlab") {
     return null;
   }
+  const configured = Boolean(r.configured);
+  const reachable = Boolean(r.reachable ?? r.connected);
+  const detail = readString(r.detail) || readString(r.message);
   return {
     provider,
     label: readString(r.label, provider),
-    connected: Boolean(r.connected),
-    configured: Boolean(r.configured),
-    message: readString(r.message) || undefined,
+    connected: reachable && configured,
+    configured,
+    message: detail || undefined,
   };
 }
 
@@ -242,6 +245,10 @@ function parseConnectionStatus(value: unknown): McpConnectionStatus | undefined 
 function parseConnectionRow(row: unknown): McpConnection | null {
   if (!row || typeof row !== "object") return null;
   const r = row as Record<string, unknown>;
+  const id =
+    readString(r.id) ||
+    readString(r.connection_id) ||
+    readString(r.connectionId);
   const provider = readString(r.provider);
   if (provider !== "jira" && provider !== "github" && provider !== "gitlab") {
     return null;
@@ -255,8 +262,9 @@ function parseConnectionRow(row: unknown): McpConnection | null {
     resolveMcpConnectionStatus({ configured, healthy, errorMessage });
 
   return {
+    id: id || `${provider}-legacy`,
     provider: provider as McpProviderId,
-    label: readString(r.label, provider),
+    label: readString(r.display_name) || readString(r.label, provider),
     configured,
     healthy,
     lastCheckedAt:

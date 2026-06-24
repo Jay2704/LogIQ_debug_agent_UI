@@ -35,3 +35,4 @@ export { useSimilarIncidents } from "./useSimilarIncidents";
 export { useRcaFeedback } from "./useRcaFeedback";
 export { useRcaEvaluation } from "./useRcaEvaluation";
 export { useDemoScenarios } from "./useDemoScenarios";
+export { useIntegrations } from "./useIntegrations";

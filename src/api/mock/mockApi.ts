@@ -21,6 +21,7 @@ import { mockInvestigationsService } from "./investigations";
 import { mockJiraService } from "./jira";
 import { mockMcpService } from "./mcp";
 import { mockAuthService, mockUsersService } from "./users";
+import { mockIntegrationsService } from "./integrations";
 
 export function createMockApi(): LogIQApi {
   return {
@@ -37,6 +38,7 @@ export function createMockApi(): LogIQApi {
     rcaFeedback: mockRcaFeedbackService,
     evaluation: mockEvaluationService,
     demo: mockDemoService,
+    integrations: mockIntegrationsService,
     users: mockUsersService,
     auth: mockAuthService,
   };

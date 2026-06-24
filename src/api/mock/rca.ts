@@ -2,7 +2,7 @@ import type { RcaService } from "@/api/contracts";
 import { getMockExplanationTextForJob } from "@/data/mock/explanations";
 import { mockJobs } from "@/data/mock/jobs";
 import { mockRcaByJobId } from "@/data/mock/rca";
-import type { RcaAssistiveExplanation } from "@/types";
+import type { RcaAssistiveExplanation, RcaRunInput } from "@/types";
 
 export const mockRcaService: RcaService = {
   async getByJobIdMap() {
@@ -11,7 +11,7 @@ export const mockRcaService: RcaService = {
   async getResultsByAnomalyId(_anomalyId: string, jobId: string) {
     return mockRcaByJobId[jobId] ?? null;
   },
-  async run() {
+  async run(_input: RcaRunInput) {
     await new Promise((r) => setTimeout(r, 450));
   },
   async getExplanationByAnomalyId(anomalyId: string): Promise<RcaAssistiveExplanation> {
