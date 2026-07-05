@@ -72,7 +72,10 @@ export function loadPersistedUser(): User | null {
       lastName,
       email,
       role: parseRole(user.role),
-      team: typeof user.team === "string" ? user.team : "",
+      team:
+        (typeof user.team === "string" ? user.team : "") ||
+        (typeof user.workspace_id === "string" ? user.workspace_id : "") ||
+        (typeof user.workspaceId === "string" ? user.workspaceId : ""),
       createdAt:
         typeof user.createdAt === "string"
           ? user.createdAt
