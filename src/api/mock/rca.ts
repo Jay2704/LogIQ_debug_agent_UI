@@ -1,5 +1,6 @@
 import type { RcaService } from "@/api/contracts";
 import { getMockExplanationTextForJob } from "@/data/mock/explanations";
+import { MOCK_RCA_MCP_CONTEXT } from "@/data/mock/rcaMcpSample";
 import { mockJobs } from "@/data/mock/jobs";
 import { mockRcaByJobId } from "@/data/mock/rca";
 import type { RcaAssistiveExplanation, RcaRunInput } from "@/types";
@@ -9,7 +10,9 @@ export const mockRcaService: RcaService = {
     return { ...mockRcaByJobId };
   },
   async getResultsByAnomalyId(_anomalyId: string, jobId: string) {
-    return mockRcaByJobId[jobId] ?? null;
+    const rca = mockRcaByJobId[jobId];
+    if (!rca) return null;
+    return { ...rca, mcpContext: MOCK_RCA_MCP_CONTEXT };
   },
   async run(_input: RcaRunInput) {
     await new Promise((r) => setTimeout(r, 450));
@@ -41,6 +44,7 @@ export const mockRcaService: RcaService = {
       finalReportSummary: summary
         ? "Mock synthesis: use HTTP API for Ollama-backed narrative and remediation."
         : undefined,
+      mcpContext: MOCK_RCA_MCP_CONTEXT,
     };
   },
 };

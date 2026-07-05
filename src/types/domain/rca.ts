@@ -18,4 +18,6 @@ export interface RcaResult {
     explanation: "pending" | "done" | "active";
     reporting: "pending" | "done" | "active";
   };
+  /** MCP signal + artifact context when returned by RCA API */
+  mcpContext?: import("./rcaMcpSignals").RcaMcpInvestigationContext;
 }

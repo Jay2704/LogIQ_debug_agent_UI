@@ -3,6 +3,7 @@ import type {
   RcaAssistiveExplanation,
   RcaResult,
 } from "@/types";
+import { parseRcaMcpInvestigationContext } from "./parseRcaMcpApi";
 
 function pickStr(o: Record<string, unknown>, keys: string[]): string | undefined {
   for (const k of keys) {
@@ -163,6 +164,7 @@ export function parseRcaResultsJson(json: unknown, jobId: string): RcaResult | n
     evidenceRef,
     candidateStatus,
     steps: { ...DONE_STEPS },
+    mcpContext: parseRcaMcpInvestigationContext(root),
   };
 }
 
@@ -222,5 +224,6 @@ export function parseRcaExplanationJson(json: unknown): RcaAssistiveExplanation 
       "status_message",
       "user_message",
     ]),
+    mcpContext: parseRcaMcpInvestigationContext(o),
   };
 }
