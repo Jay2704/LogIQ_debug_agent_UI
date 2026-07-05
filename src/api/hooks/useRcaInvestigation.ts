@@ -3,7 +3,10 @@ import { getApi } from "@/api/client";
 import { logApiDebug } from "@/api/http/debugLog";
 import { buildRcaRunInput } from "@/lib/buildRcaRunInput";
 import { useCurrentUser } from "@/auth";
-import type { RcaAssistiveExplanation, RcaResult } from "@/types";
+import {
+  mergeRcaMcpInvestigationContexts,
+} from "@/api/http/parseRcaMcpApi";
+import type { RcaAssistiveExplanation, RcaMcpInvestigationContext, RcaResult } from "@/types";
 
 export type InvestigationPhase =
   | "idle"
@@ -57,6 +60,8 @@ export interface UseRcaInvestigationResult {
   liveRca: RcaResult | null | undefined;
   /** Populated after a successful run+fetch */
   liveExplanation: RcaAssistiveExplanation | undefined;
+  /** Merged MCP signals + artifacts from RCA results and explanation payloads */
+  liveMcpContext: RcaMcpInvestigationContext | undefined;
   error: string | null;
   /** Non-blocking issues after RCA run (e.g. results or explanation fetch failed alone) */
   warning: string | null;
@@ -255,12 +260,22 @@ export function useRcaInvestigation(
     [phase, liveRca, liveExplanation]
   );
 
+  const liveMcpContext = useMemo(
+    () =>
+      mergeRcaMcpInvestigationContexts(
+        liveRca?.mcpContext,
+        liveExplanation?.mcpContext
+      ),
+    [liveRca, liveExplanation]
+  );
+
   return useMemo(
     () => ({
       phase,
       runInvestigation,
       liveRca,
       liveExplanation,
+      liveMcpContext,
       error,
       warning,
       successMessage,
@@ -275,6 +290,7 @@ export function useRcaInvestigation(
       runInvestigation,
       liveRca,
       liveExplanation,
+      liveMcpContext,
       error,
       warning,
       successMessage,

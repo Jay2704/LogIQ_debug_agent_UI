@@ -48,4 +48,6 @@ export interface RcaAssistiveExplanation {
   llmAvailable?: boolean;
   /** Short server message for degraded assistive mode (optional). */
   assistiveNotice?: string;
+  /** MCP signals, artifacts, and GraphRAG citations when returned by explanation API */
+  mcpContext?: import("./rcaMcpSignals").RcaMcpInvestigationContext;
 }

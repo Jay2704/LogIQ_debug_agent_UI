@@ -140,6 +140,15 @@ export type {
   ValidateIntegrationConnectionResult,
 } from "./domain/integration";
 export type { RcaRunInput } from "./domain/rcaRun";
+export type {
+  McpSignalKey,
+  McpJiraArtifactRef,
+  McpGitHubArtifactRef,
+  McpArtifactRefs,
+  McpContextSummary,
+  RcaMcpInvestigationContext,
+} from "./domain/rcaMcpSignals";
+export { MCP_SIGNAL_KEYS } from "./domain/rcaMcpSignals";
 
 export type {
   LoginInput,

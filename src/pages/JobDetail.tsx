@@ -31,6 +31,7 @@ import { EvidenceCoverageCard } from "@/components/investigation/EvidenceCoverag
 import { FeedbackPanel } from "@/components/feedback/FeedbackPanel";
 import { FeedbackHistory } from "@/components/feedback/FeedbackHistory";
 import { JobReportSummaryCard } from "@/components/job/JobReportSummaryCard";
+import { RcaMcpInvestigationPanel } from "@/components/rca/mcp/RcaMcpInvestigationPanel";
 import { PageLoading } from "@/components/ui/PageLoading";
 import { FeedbackNotice } from "@/components/ui/FeedbackNotice";
 import {
@@ -49,6 +50,7 @@ import {
 } from "@/lib/roleUiCapabilities";
 import { cn, formatDateTime } from "@/lib/utils";
 import { buildEvidenceCoverage } from "@/lib/evidenceCoverage";
+import { mergeRcaMcpInvestigationContexts } from "@/api/http/parseRcaMcpApi";
 
 const triggerLabels = {
   alert: "Alert",
@@ -113,6 +115,7 @@ export function JobDetail() {
     runInvestigation,
     liveRca,
     liveExplanation,
+    liveMcpContext,
     error: investigationError,
     warning: investigationWarning,
     successMessage: investigationSuccess,
@@ -319,6 +322,16 @@ export function JobDetail() {
         ? null
         : liveRca
       : rca;
+
+  const displayMcpContext = useMemo(
+    () =>
+      mergeRcaMcpInvestigationContexts(
+        liveMcpContext,
+        liveRca !== undefined ? liveRca?.mcpContext : rca.mcpContext,
+        liveExplanation?.mcpContext
+      ),
+    [liveMcpContext, liveRca, liveExplanation, rca.mcpContext]
+  );
 
   const pipelineSteps = getPipelineSteps(rca.steps);
 
@@ -752,6 +765,17 @@ export function JobDetail() {
                 )}
               </aside>
             </div>
+
+            {!runBusy && displayMcpContext ? (
+              <RcaMcpInvestigationPanel
+                context={displayMcpContext}
+                className={cn(
+                  investigationPhase === "ready" &&
+                    liveMcpContext !== undefined &&
+                    "animate-investigation-reveal"
+                )}
+              />
+            ) : null}
 
             <div className="space-y-4">
               <FeedbackPanel
