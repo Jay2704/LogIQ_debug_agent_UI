@@ -1,6 +1,6 @@
 import type { FormEvent } from "react";
 import { useState } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { useCurrentUser } from "@/auth";
 import { AuthLayout } from "@/components/auth/AuthLayout";
@@ -12,6 +12,7 @@ import {
   validateLogin,
 } from "@/lib/authValidation";
 import { ctaButtonGradient, ctaGlowBlueOnly } from "@/lib/ctaTheme";
+import { SESSION_EXPIRED_USER_MESSAGE } from "@/lib/authSession";
 import { cn } from "@/lib/utils";
 import type { AuthSubmitStatus, LoginFormValues } from "@/types";
 
@@ -39,7 +40,10 @@ function visibleLoginError(
 
 export function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { setCurrentUser, user } = useCurrentUser();
+  const sessionExpired =
+    (location.state as { reason?: string } | null)?.reason === "session_expired";
   const [values, setValues] = useState<LoginFormValues>(initial);
   const [touched, setTouched] = useState<
     Partial<Record<keyof LoginFormValues, boolean>>
@@ -114,6 +118,14 @@ export function Login() {
       cardDescription="Enter your email and password to sign in."
     >
       <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+        {sessionExpired ? (
+          <div
+            className="rounded-xl border border-amber-500/25 bg-amber-500/[0.08] px-3 py-3 text-sm text-amber-100/95"
+            role="status"
+          >
+            {SESSION_EXPIRED_USER_MESSAGE}
+          </div>
+        ) : null}
         {unverified && banner ? (
           <div
             className="space-y-3 rounded-xl border border-amber-500/25 bg-amber-500/[0.08] px-3 py-3 text-sm text-amber-100/95"

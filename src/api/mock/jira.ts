@@ -41,7 +41,7 @@ export const mockJiraService: JiraService = {
         row.key.toLowerCase().includes(q) || row.summary.toLowerCase().includes(q)
     );
   },
-  async getTicketSummary(ticketKey: string) {
+  async getTicketSummary(ticketKey: string, _workspaceId: string) {
     const normalizedKey = ticketKey.trim().toUpperCase();
     return {
       key: normalizedKey,

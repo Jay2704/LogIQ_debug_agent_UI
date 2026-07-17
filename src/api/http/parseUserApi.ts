@@ -124,7 +124,8 @@ export function parseUserJson(json: unknown): User {
     }
   }
   const email = pickString(o, ["email"]) ?? "";
-  const team = pickString(o, ["team"]) ?? "";
+  const team =
+    pickString(o, ["team", "workspace_id", "workspaceId"]) ?? "";
   const role = normalizeRole(pickString(o, ["role"]));
   if (!userId) {
     throw new Error("[LogIQ API] User JSON missing user id");

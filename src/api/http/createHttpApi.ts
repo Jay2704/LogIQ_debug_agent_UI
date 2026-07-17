@@ -1,5 +1,5 @@
 import type { LogIQApi } from "@/api/contracts";
-import { API_BASE_URL } from "@/api/config";
+import { API_BASE_URL, USE_HTTP_API } from "@/api/config";
 import { createMockApi } from "@/api/mock/mockApi";
 import type {
   CreateJobInput,
@@ -10,7 +10,9 @@ import type {
 } from "@/types";
 import { logApiDebug } from "./debugLog";
 import { joinApiUrl } from "./apiUrl";
+import { clearCurrentUser } from "@/auth/currentUserSession";
 import { getAccessToken } from "@/auth/tokenStorage";
+import { AUTH_SESSION_EXPIRED_MARKER } from "@/lib/authSession";
 import { buildJobDetailBundleFromApiJob } from "./jobDetailMerge";
 import {
   parseApiJobJson,
@@ -90,29 +92,84 @@ async function httpError(res: Response, label: string): Promise<never> {
 }
 
 /**
- * Flat backend ticket payload from GET /api/v1/jira/ticket/:ticket_key.
+ * Unwraps ticket payloads from `{ ticket }`, `{ data }`, `{ issue }`, or flat rows.
  */
-function parseJiraTicketFlatJson(data: Record<string, unknown>): JiraTicketSummary {
-  const ticketKey =
-    typeof data.ticket_key === "string" ? data.ticket_key.trim().toUpperCase() : "";
+function unwrapJiraTicketRow(json: unknown): Record<string, unknown> {
+  if (!json || typeof json !== "object" || Array.isArray(json)) {
+    throw new Error("[LogIQ API] GET /api/v1/jira/tickets/:ticket_key: invalid JSON payload");
+  }
+  const root = json as Record<string, unknown>;
+  for (const key of ["ticket", "data", "issue"] as const) {
+    const nested = root[key];
+    if (nested && typeof nested === "object" && !Array.isArray(nested)) {
+      return nested as Record<string, unknown>;
+    }
+  }
+  return root;
+}
+
+/**
+ * Flat backend ticket payload from GET /api/v1/jira/tickets/:ticket_key.
+ */
+function parseJiraTicketFlatJson(json: unknown): JiraTicketSummary {
+  const source = unwrapJiraTicketRow(json);
+  const fields =
+    source.fields && typeof source.fields === "object" && !Array.isArray(source.fields)
+      ? (source.fields as Record<string, unknown>)
+      : null;
+
+  const ticketKeyRaw =
+    (typeof source.ticket_key === "string" ? source.ticket_key : "") ||
+    (typeof source.key === "string" ? source.key : "") ||
+    (typeof source.issue_key === "string" ? source.issue_key : "") ||
+    (typeof source.issueKey === "string" ? source.issueKey : "");
+  const ticketKey = ticketKeyRaw.trim().toUpperCase();
   if (!ticketKey) {
-    throw new Error("[LogIQ API] GET /api/v1/jira/ticket/:ticket_key: missing ticket_key");
+    throw new Error("[LogIQ API] GET /api/v1/jira/tickets/:ticket_key: missing ticket_key");
   }
 
-  const labels = Array.isArray(data.labels)
-    ? data.labels.filter((label): label is string => typeof label === "string")
-    : [];
+  const labels = Array.isArray(source.labels)
+    ? source.labels.filter((label): label is string => typeof label === "string")
+    : Array.isArray(fields?.labels)
+      ? (fields.labels as unknown[]).filter((label): label is string => typeof label === "string")
+      : [];
+
+  const summary =
+    (typeof source.title === "string" ? source.title : "") ||
+    (typeof source.summary === "string" ? source.summary : "") ||
+    (typeof fields?.summary === "string" ? fields.summary : "");
+
+  const description =
+    (typeof source.description === "string" ? source.description : "") ||
+    (typeof source.cleaned_description === "string" ? source.cleaned_description : "") ||
+    (typeof fields?.description === "string" ? fields.description : "");
+
+  const statusRaw =
+    (typeof source.status === "string" ? source.status : "") ||
+    (fields?.status && typeof fields.status === "object" && !Array.isArray(fields.status)
+      ? typeof (fields.status as Record<string, unknown>).name === "string"
+        ? ((fields.status as Record<string, unknown>).name as string)
+        : ""
+      : "");
+
+  const priorityRaw =
+    (typeof source.priority === "string" ? source.priority : "") ||
+    (fields?.priority && typeof fields.priority === "object" && !Array.isArray(fields.priority)
+      ? typeof (fields.priority as Record<string, unknown>).name === "string"
+        ? ((fields.priority as Record<string, unknown>).name as string)
+        : ""
+      : "");
 
   return {
     key: ticketKey,
-    summary: typeof data.title === "string" ? data.title : "",
-    status:
-      typeof data.status === "string" && data.status.trim() ? data.status : "Unknown",
-    priority:
-      typeof data.priority === "string" && data.priority.trim() ? data.priority : "Unknown",
+    summary,
+    status: statusRaw.trim() ? statusRaw : "Unknown",
+    priority: priorityRaw.trim() ? priorityRaw : "Unknown",
     labels,
-    cleanedDescription: typeof data.description === "string" ? data.description : "",
-    extractedHints: [],
+    cleanedDescription: description,
+    extractedHints: Array.isArray(source.extracted_hints)
+      ? source.extracted_hints.filter((h): h is string => typeof h === "string")
+      : [],
   };
 }
 
@@ -149,21 +206,50 @@ function parseJiraSearchHitsJson(json: unknown): JiraTicketSearchHit[] {
   return raw.map(parseJiraSearchHitRow).filter((x): x is JiraTicketSearchHit => x !== null);
 }
 
+/** Routes that do not require a stored JWT (login, signup, password reset). */
+function isAuthExemptRequest(url: string, method: string): boolean {
+  try {
+    const path = new URL(url).pathname;
+    if (path.startsWith("/api/v1/auth/")) return true;
+    if (method === "POST" && path === "/api/v1/users") return true;
+    return false;
+  } catch {
+    return false;
+  }
+}
+
+async function throwSessionExpired(_url: string, status: number, body: string): Promise<never> {
+  clearCurrentUser();
+  const slice = body.slice(0, 280);
+  const suffix = slice.length > 0 ? `: ${slice}` : "";
+  throw new Error(
+    `[LogIQ API] ${AUTH_SESSION_EXPIRED_MARKER} ${status} Authorization required${suffix}`
+  );
+}
+
 /**
- * Wraps `fetch` so offline / DNS / CORS failures surface as
- * `[LogIQ API] Network error (no response): …` instead of a raw TypeError.
- * Does not run for HTTP 4xx/5xx — those are handled after `fetch` returns.
+ * Authenticated HTTP wrapper — attaches `Authorization: Bearer <token>` for protected routes
+ * (same path used by integrations, Jira, jobs, etc.). Raw `fetch` must not be used for API calls.
  */
 async function fetchNetwork(url: string, init?: RequestInit): Promise<Response> {
   const method = init?.method ?? "GET";
   const headers = new Headers(init?.headers);
+  const exempt = isAuthExemptRequest(url, method);
   const token = getAccessToken();
+
+  if (USE_HTTP_API && !exempt && !token?.trim()) {
+    await throwSessionExpired(url, 401, "Authorization Bearer token required");
+  }
+
   if (token && !headers.has("Authorization")) {
     headers.set("Authorization", `Bearer ${token}`);
   }
+
   const requestInit: RequestInit = { ...init, headers };
   if (import.meta.env.DEV) {
-    console.info("[LogIQ API] request", method, url);
+    console.info("[LogIQ API] request", method, url, {
+      hasAuthHeader: headers.has("Authorization"),
+    });
   }
   try {
     const res = await fetch(url, requestInit);
@@ -177,8 +263,15 @@ async function fetchNetwork(url: string, init?: RequestInit): Promise<Response> 
         bodyPreview: text.slice(0, 500),
       });
     }
+    if (USE_HTTP_API && !exempt && res.status === 401) {
+      const body = await res.text().catch(() => "");
+      await throwSessionExpired(url, res.status, body);
+    }
     return res;
   } catch (e: unknown) {
+    if (e instanceof Error && e.message.includes(AUTH_SESSION_EXPIRED_MARKER)) {
+      throw e;
+    }
     const msg = e instanceof Error ? e.message : String(e);
     const browserMsg = msg.toLowerCase();
     const likelyCorsOrUnreachable =
@@ -421,31 +514,48 @@ export function createHttpApi(): LogIQApi {
         const json: unknown = await readJsonOrNull(res);
         return parseJiraSearchHitsJson(json);
       },
-      getTicketSummary: async (ticketKey: string) => {
+      getTicketSummary: async (ticketKey: string, workspaceId: string) => {
         const key = ticketKey.trim().toUpperCase();
+        const workspace_id = workspaceId.trim().toUpperCase();
+        if (!key) {
+          throw new Error("[LogIQ API] getTicketSummary: ticketKey is required");
+        }
+        if (!workspace_id) {
+          throw new Error("[LogIQ API] getTicketSummary: workspaceId is required");
+        }
         const url = joinApiUrl(
           baseUrl,
-          `/api/v1/jira/ticket/${encodeURIComponent(key)}`
+          `/api/v1/jira/tickets/${encodeURIComponent(key)}?workspace_id=${encodeURIComponent(workspace_id)}`
         );
+        console.info("[LogIQ Jira] Fetch ticket request", {
+          url,
+          ticketKey: key,
+          workspace_id,
+          hasAuthToken: Boolean(getAccessToken()),
+        });
         const res = await fetchNetwork(url);
-        console.log("Fetch status:", res.status);
+
+        if (!res.ok) {
+          const body = await res.text().catch(() => "");
+          console.error("[LogIQ Jira] Fetch ticket failed", {
+            url,
+            status: res.status,
+            statusText: res.statusText,
+            ticketKey: key,
+            workspace_id,
+            body,
+          });
+          const reason = res.statusText?.trim() || "Error";
+          const slice = body.slice(0, 280);
+          const suffix = slice.length > 0 ? `: ${slice}` : "";
+          throw new Error(
+            `[LogIQ API] GET /api/v1/jira/tickets/:ticket_key ${res.status} ${reason}${suffix}`
+          );
+        }
+
         const json: unknown = await readJsonOrNull(res);
-        console.log("Fetched ticket:", json);
 
-        if (res.status !== 200) {
-          await httpError(res, "GET /api/v1/jira/ticket/:ticket_key");
-        }
-
-        if (!json || typeof json !== "object") {
-          throw new Error("[LogIQ API] GET /api/v1/jira/ticket/:ticket_key: invalid JSON payload");
-        }
-
-        const data = json as Record<string, unknown>;
-        if (typeof data.ticket_key !== "string" || !data.ticket_key.trim()) {
-          throw new Error("[LogIQ API] GET /api/v1/jira/ticket/:ticket_key: missing ticket_key");
-        }
-
-        return parseJiraTicketFlatJson(data);
+        return parseJiraTicketFlatJson(json);
       },
       runRcaWithTicket: async ({ ticket, logContent }) => {
         const ticketKey = ticket.key;

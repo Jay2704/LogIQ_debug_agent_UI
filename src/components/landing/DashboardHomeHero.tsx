@@ -12,7 +12,7 @@ import {
   Sparkles,
   Upload,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { api } from "@/api";
 import { MCP_UI_ENABLED } from "@/api/config";
 import { useMcpContextPreview, useMcpStatus } from "@/api/hooks";
@@ -23,6 +23,10 @@ import { ProductPreviewCard } from "@/components/landing/ProductPreviewCard";
 import { SplineScene } from "@/components/ui/splite";
 import { Spotlight } from "@/components/ui/spotlight";
 import { ctaButtonGradient, ctaGlowBlueOnly } from "@/lib/ctaTheme";
+import {
+  isAuthSessionExpiredError,
+  SESSION_EXPIRED_USER_MESSAGE,
+} from "@/lib/authSession";
 import { parseUploadedLogFile, SUPPORTED_LOG_EXTENSIONS } from "@/lib/logFileUpload";
 import {
   addRecentInvestigation,
@@ -85,6 +89,9 @@ function applyTicketToFormFields(
 }
 
 function mapTicketError(message: string): string {
+  if (isAuthSessionExpiredError(message)) {
+    return SESSION_EXPIRED_USER_MESSAGE;
+  }
   const safe = message.trim();
   const lower = safe.toLowerCase();
   if (lower.includes("network error (no response)")) {
@@ -98,7 +105,7 @@ function mapTicketError(message: string): string {
     return "Ticket not found";
   }
   if (status === "401" || status === "403") {
-    return "Failed to fetch ticket";
+    return SESSION_EXPIRED_USER_MESSAGE;
   }
   if (status === "500" || status === "502" || status === "503") {
     return "Failed to fetch ticket";
@@ -142,6 +149,7 @@ export function DashboardHomeHero({
   showPreviewCard = true,
   enableMcpPreview = false,
 }: DashboardHomeHeroProps) {
+  const navigate = useNavigate();
   const { user } = useCurrentUser();
   const workspaceId = resolveWorkspaceId(user);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -276,11 +284,12 @@ export function DashboardHomeHero({
   }, [rcaResult]);
 
   async function loadTicketByKey(normalizedKey: string) {
+    const workspace_id = resolveWorkspaceId(user);
     setTicketLoading(true);
     setTicketError(null);
     setWorkflowInfo(null);
     try {
-      const payload = await api.jira.getTicketSummary(normalizedKey);
+      const payload = await api.jira.getTicketSummary(normalizedKey, workspace_id);
       if (!payload.key.trim()) {
         throw new Error("[LogIQ] Ticket response missing ticket_key");
       }
@@ -302,7 +311,17 @@ export function DashboardHomeHero({
       resetMcpContext();
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
+      console.error("[LogIQ Jira] loadTicketByKey failed", {
+        ticketKey: normalizedKey,
+        workspace_id: resolveWorkspaceId(user),
+        error: msg,
+      });
       setTicket(null);
+      if (isAuthSessionExpiredError(msg)) {
+        setTicketError(SESSION_EXPIRED_USER_MESSAGE);
+        navigate("/login", { replace: true, state: { reason: "session_expired" } });
+        return;
+      }
       setTicketError(mapTicketError(msg));
     } finally {
       setTicketLoading(false);
