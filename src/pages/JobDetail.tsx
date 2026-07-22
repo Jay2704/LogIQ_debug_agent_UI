@@ -150,6 +150,16 @@ export function JobDetail() {
     });
   }, [bundle]);
 
+  const displayMcpContext = useMemo(
+    () =>
+      mergeRcaMcpInvestigationContexts(
+        liveMcpContext,
+        liveRca !== undefined ? liveRca?.mcpContext : bundle?.rca?.mcpContext,
+        liveExplanation?.mcpContext
+      ),
+    [liveMcpContext, liveRca, liveExplanation, bundle?.rca?.mcpContext]
+  );
+
   const roleCaps = useRoleUiCapabilities();
   const { user: sessionUser } = useCurrentUser();
 
@@ -322,16 +332,6 @@ export function JobDetail() {
         ? null
         : liveRca
       : rca;
-
-  const displayMcpContext = useMemo(
-    () =>
-      mergeRcaMcpInvestigationContexts(
-        liveMcpContext,
-        liveRca !== undefined ? liveRca?.mcpContext : rca.mcpContext,
-        liveExplanation?.mcpContext
-      ),
-    [liveMcpContext, liveRca, liveExplanation, rca.mcpContext]
-  );
 
   const pipelineSteps = getPipelineSteps(rca.steps);
 

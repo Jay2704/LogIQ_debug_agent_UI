@@ -42,6 +42,7 @@ export const mockJiraService: JiraService = {
     );
   },
   async getTicketSummary(ticketKey: string, _workspaceId: string) {
+    void _workspaceId;
     const normalizedKey = ticketKey.trim().toUpperCase();
     return {
       key: normalizedKey,

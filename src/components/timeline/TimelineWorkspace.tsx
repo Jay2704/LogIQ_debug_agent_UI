@@ -2,12 +2,10 @@ import { useMemo, useState } from "react";
 import {
   TIMELINE_GROUP_LABELS,
   TIMELINE_GROUP_ORDER,
+  applyTimelineFilters,
 } from "@/lib/timelineGroups";
 import type { InvestigationTimeline, TimelineFilters } from "@/types";
-import {
-  applyTimelineFilters,
-  TimelineFilterBar,
-} from "./TimelineFilterBar";
+import { TimelineFilterBar } from "./TimelineFilterBar";
 import { TimelineEventCard } from "./TimelineEventCard";
 import { TimelineLegend } from "./TimelineLegend";
 
