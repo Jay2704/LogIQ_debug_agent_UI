@@ -420,7 +420,7 @@ function StructuredAssistiveBody({ data }: { data: RcaAssistiveExplanation }) {
                 <SectionHeader icon={AlignLeft} tone="neutral">
                   Explanation summary
                 </SectionHeader>
-                <p className="mt-3 text-[15px] leading-[1.7] text-slate-200 sm:text-base">
+                <p className="mt-3 whitespace-pre-line break-words text-[15px] leading-[1.7] text-slate-200 sm:text-base">
                   {data.explanationSummary.trim()}
                 </p>
               </div>
