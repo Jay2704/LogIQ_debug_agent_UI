@@ -15,6 +15,7 @@ export const mockRcaService: RcaService = {
     return { ...rca, mcpContext: MOCK_RCA_MCP_CONTEXT };
   },
   async run(_input: RcaRunInput) {
+    void _input;
     await new Promise((r) => setTimeout(r, 450));
   },
   async getExplanationByAnomalyId(anomalyId: string): Promise<RcaAssistiveExplanation> {

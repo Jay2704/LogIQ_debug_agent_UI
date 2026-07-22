@@ -1,4 +1,4 @@
-import type { InvestigationTimelineEvent, TimelineFilters } from "@/types";
+import type { TimelineFilters } from "@/types";
 import { cn } from "@/lib/utils";
 
 interface TimelineFilterBarProps {
@@ -118,28 +118,4 @@ export function TimelineFilterBar({
       </div>
     </div>
   );
-}
-
-export function applyTimelineFilters(
-  events: InvestigationTimelineEvent[],
-  filters: TimelineFilters
-): InvestigationTimelineEvent[] {
-  return events.filter((event) => {
-    const ts = new Date(event.timestamp).getTime();
-    if (filters.startDate) {
-      const start = new Date(`${filters.startDate}T00:00:00`).getTime();
-      if (ts < start) return false;
-    }
-    if (filters.endDate) {
-      const end = new Date(`${filters.endDate}T23:59:59`).getTime();
-      if (ts > end) return false;
-    }
-    if (filters.eventTypes.length > 0 && !filters.eventTypes.includes(event.eventType)) {
-      return false;
-    }
-    if (filters.sources.length > 0 && !filters.sources.includes(event.source)) {
-      return false;
-    }
-    return true;
-  });
 }

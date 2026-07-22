@@ -1,4 +1,8 @@
-import type { TimelineEventGroup } from "@/types";
+import type {
+  InvestigationTimelineEvent,
+  TimelineEventGroup,
+  TimelineFilters,
+} from "@/types";
 
 export const TIMELINE_GROUP_ORDER: TimelineEventGroup[] = [
   "code_changes",
@@ -60,3 +64,27 @@ export const TIMELINE_GROUP_COLORS: Record<
     text: "#bfdbfe",
   },
 };
+
+export function applyTimelineFilters(
+  events: InvestigationTimelineEvent[],
+  filters: TimelineFilters
+): InvestigationTimelineEvent[] {
+  return events.filter((event) => {
+    const ts = new Date(event.timestamp).getTime();
+    if (filters.startDate) {
+      const start = new Date(`${filters.startDate}T00:00:00`).getTime();
+      if (ts < start) return false;
+    }
+    if (filters.endDate) {
+      const end = new Date(`${filters.endDate}T23:59:59`).getTime();
+      if (ts > end) return false;
+    }
+    if (filters.eventTypes.length > 0 && !filters.eventTypes.includes(event.eventType)) {
+      return false;
+    }
+    if (filters.sources.length > 0 && !filters.sources.includes(event.source)) {
+      return false;
+    }
+    return true;
+  });
+}
